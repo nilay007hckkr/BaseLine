@@ -1,0 +1,20 @@
+{
+  "scenario": "checkout-bad-config",
+  "culprit": "checkoutservice",
+  "description": "checkoutservice points at a payment address that does not exist (hard case)",
+  "synthetic": true,
+  "injected_at": 1793393655,
+  "reverted_at": 1793393760,
+  "deploys": {
+    "guilty": "11a66b24a7478412220244df23d43367601c0212",
+    "decoys": [
+      "0a09588e7f0a763fa05c78706a509ddab4906a42",
+      "48edfe9780a95b4649603560633b88584403e621"
+    ],
+    "deploy_offsets_s": {
+      "11a66b24a7478412220244df23d43367601c0212": 180,
+      "0a09588e7f0a763fa05c78706a509ddab4906a42": 270,
+      "48edfe9780a95b4649603560633b88584403e621": 60
+    }
+  }
+}

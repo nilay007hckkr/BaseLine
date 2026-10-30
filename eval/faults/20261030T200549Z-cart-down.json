@@ -1,0 +1,20 @@
+{
+  "scenario": "cart-down",
+  "culprit": "cartservice",
+  "description": "cartservice scaled to zero (down)",
+  "synthetic": true,
+  "injected_at": 1793390749,
+  "reverted_at": 1793390840,
+  "deploys": {
+    "guilty": "11a66b24a7478412220244df23d43367601c0212",
+    "decoys": [
+      "0a09588e7f0a763fa05c78706a509ddab4906a42",
+      "48edfe9780a95b4649603560633b88584403e621"
+    ],
+    "deploy_offsets_s": {
+      "11a66b24a7478412220244df23d43367601c0212": 540,
+      "0a09588e7f0a763fa05c78706a509ddab4906a42": 450,
+      "48edfe9780a95b4649603560633b88584403e621": 810
+    }
+  }
+}

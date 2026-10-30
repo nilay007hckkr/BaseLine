@@ -1,0 +1,20 @@
+{
+  "scenario": "currency-crash",
+  "culprit": "currencyservice",
+  "description": "currencyservice crash-loops on a bad PORT value",
+  "synthetic": true,
+  "injected_at": 1793393010,
+  "reverted_at": 1793393198,
+  "deploys": {
+    "guilty": "11a66b24a7478412220244df23d43367601c0212",
+    "decoys": [
+      "0a09588e7f0a763fa05c78706a509ddab4906a42",
+      "48edfe9780a95b4649603560633b88584403e621"
+    ],
+    "deploy_offsets_s": {
+      "11a66b24a7478412220244df23d43367601c0212": 210,
+      "0a09588e7f0a763fa05c78706a509ddab4906a42": 450,
+      "48edfe9780a95b4649603560633b88584403e621": 720
+    }
+  }
+}

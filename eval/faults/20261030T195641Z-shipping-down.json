@@ -1,0 +1,20 @@
+{
+  "scenario": "shipping-down",
+  "culprit": "shippingservice",
+  "description": "shippingservice scaled to zero (down)",
+  "synthetic": true,
+  "injected_at": 1793390201,
+  "reverted_at": 1793390290,
+  "deploys": {
+    "guilty": "fc3a1f72ed3b66bc593bedb184a1544016171f89",
+    "decoys": [
+      "0a09588e7f0a763fa05c78706a509ddab4906a42",
+      "48edfe9780a95b4649603560633b88584403e621"
+    ],
+    "deploy_offsets_s": {
+      "fc3a1f72ed3b66bc593bedb184a1544016171f89": 390,
+      "0a09588e7f0a763fa05c78706a509ddab4906a42": 510,
+      "48edfe9780a95b4649603560633b88584403e621": 330
+    }
+  }
+}

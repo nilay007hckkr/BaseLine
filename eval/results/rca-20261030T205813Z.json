@@ -1,0 +1,326 @@
+{
+  "name": "rca_campaign",
+  "synthetic": true,
+  "created_at": "2026-10-30T20:58:13Z",
+  "command": "make eval-rca RUNS=10",
+  "config": {
+    "runs": 10,
+    "healthy_s": 300,
+    "detect_timeout_s": 180,
+    "settle_s": 60,
+    "recovery_s": 120,
+    "warmup_s": 300,
+    "seed": 13,
+    "scenarios": [
+      "payment-down",
+      "productcatalog-down",
+      "currency-down",
+      "shipping-down",
+      "cart-down",
+      "checkout-down",
+      "recommendation-down",
+      "ad-down",
+      "currency-crash",
+      "checkout-bad-config"
+    ]
+  },
+  "n_runs": 10,
+  "detected": 8,
+  "ttd_s": {
+    "median": 16.5,
+    "p90": 28
+  },
+  "false_alerts_per_hour": 0.0,
+  "culprit": {
+    "hindsight": {
+      "top1": {
+        "value": 0.5,
+        "ci_low": 0.2,
+        "ci_high": 0.8
+      },
+      "top3": {
+        "value": 0.5,
+        "ci_low": 0.2,
+        "ci_high": 0.8
+      }
+    },
+    "baseline_most_errors": {
+      "top1": {
+        "value": 0.0,
+        "ci_low": 0.0,
+        "ci_high": 0.0
+      },
+      "top3": {
+        "value": 0.0,
+        "ci_low": 0.0,
+        "ci_high": 0.0
+      }
+    },
+    "baseline_largest_increase": {
+      "top1": {
+        "value": 0.0,
+        "ci_low": 0.0,
+        "ci_high": 0.0
+      },
+      "top3": {
+        "value": 0.0,
+        "ci_low": 0.0,
+        "ci_high": 0.0
+      }
+    }
+  },
+  "correlation": {
+    "hindsight": {
+      "hit1": {
+        "value": 1.0,
+        "ci_low": 1.0,
+        "ci_high": 1.0
+      },
+      "hit3": {
+        "value": 1.0,
+        "ci_low": 1.0,
+        "ci_high": 1.0
+      }
+    },
+    "baseline_most_recent_deploy": {
+      "hit1": {
+        "value": 0.25,
+        "ci_low": 0.0,
+        "ci_high": 0.625
+      },
+      "hit3": {
+        "value": 1.0,
+        "ci_low": 1.0,
+        "ci_high": 1.0
+      }
+    }
+  },
+  "runs": [
+    {
+      "scenario": "payment-down",
+      "truth": "paymentservice",
+      "injected_at": 1793388561,
+      "baseline_most_errors": [
+        "frontend"
+      ],
+      "baseline_largest_increase": [
+        "frontend"
+      ],
+      "detected": true,
+      "incident": 2,
+      "ttd_s": 9,
+      "ranking": [
+        "paymentservice",
+        "frontend"
+      ],
+      "candidates": [
+        "11a66b24a7478412220244df23d43367601c0212",
+        "0a09588e7f0a763fa05c78706a509ddab4906a42",
+        "48edfe9780a95b4649603560633b88584403e621"
+      ],
+      "guilty": "11a66b24a7478412220244df23d43367601c0212",
+      "guilty_rank": 1,
+      "baseline_recent_rank": 1
+    },
+    {
+      "scenario": "productcatalog-down",
+      "truth": "productcatalogservice",
+      "injected_at": 1793389102,
+      "baseline_most_errors": [
+        "frontend"
+      ],
+      "baseline_largest_increase": [
+        "frontend"
+      ],
+      "detected": true,
+      "incident": 3,
+      "ttd_s": 28,
+      "ranking": [
+        "productcatalogservice",
+        "frontend"
+      ],
+      "candidates": [
+        "48edfe9780a95b4649603560633b88584403e621",
+        "11a66b24a7478412220244df23d43367601c0212",
+        "0a09588e7f0a763fa05c78706a509ddab4906a42",
+        "fc3a1f72ed3b66bc593bedb184a1544016171f89"
+      ],
+      "guilty": "48edfe9780a95b4649603560633b88584403e621",
+      "guilty_rank": 1,
+      "baseline_recent_rank": 1
+    },
+    {
+      "scenario": "currency-down",
+      "truth": "currencyservice",
+      "injected_at": 1793389656,
+      "baseline_most_errors": [
+        "frontend"
+      ],
+      "baseline_largest_increase": [
+        "frontend"
+      ],
+      "detected": true,
+      "incident": 4,
+      "ttd_s": 14,
+      "ranking": [
+        "currencyservice",
+        "frontend"
+      ],
+      "candidates": [
+        "11a66b24a7478412220244df23d43367601c0212",
+        "0a09588e7f0a763fa05c78706a509ddab4906a42",
+        "fc3a1f72ed3b66bc593bedb184a1544016171f89",
+        "48edfe9780a95b4649603560633b88584403e621"
+      ],
+      "guilty": "11a66b24a7478412220244df23d43367601c0212",
+      "guilty_rank": 1,
+      "baseline_recent_rank": 2
+    },
+    {
+      "scenario": "shipping-down",
+      "truth": "shippingservice",
+      "injected_at": 1793390201,
+      "baseline_most_errors": [
+        "frontend"
+      ],
+      "baseline_largest_increase": [
+        "frontend"
+      ],
+      "detected": true,
+      "incident": 5,
+      "ttd_s": 19,
+      "ranking": [
+        "shippingservice",
+        "frontend"
+      ],
+      "candidates": [
+        "fc3a1f72ed3b66bc593bedb184a1544016171f89",
+        "11a66b24a7478412220244df23d43367601c0212",
+        "0a09588e7f0a763fa05c78706a509ddab4906a42",
+        "48edfe9780a95b4649603560633b88584403e621"
+      ],
+      "guilty": "fc3a1f72ed3b66bc593bedb184a1544016171f89",
+      "guilty_rank": 1,
+      "baseline_recent_rank": 2
+    },
+    {
+      "scenario": "cart-down",
+      "truth": "cartservice",
+      "injected_at": 1793390749,
+      "baseline_most_errors": [
+        "frontend"
+      ],
+      "baseline_largest_increase": [
+        "frontend"
+      ],
+      "detected": true,
+      "incident": 6,
+      "ttd_s": 21,
+      "ranking": [
+        "cartservice",
+        "frontend"
+      ],
+      "candidates": [
+        "11a66b24a7478412220244df23d43367601c0212",
+        "0a09588e7f0a763fa05c78706a509ddab4906a42",
+        "fc3a1f72ed3b66bc593bedb184a1544016171f89",
+        "48edfe9780a95b4649603560633b88584403e621"
+      ],
+      "guilty": "11a66b24a7478412220244df23d43367601c0212",
+      "guilty_rank": 1,
+      "baseline_recent_rank": 2
+    },
+    {
+      "scenario": "checkout-down",
+      "truth": "checkoutservice",
+      "injected_at": 1793391292,
+      "baseline_most_errors": [
+        "frontend"
+      ],
+      "baseline_largest_increase": [
+        "frontend"
+      ],
+      "detected": false,
+      "ranking": []
+    },
+    {
+      "scenario": "recommendation-down",
+      "truth": "recommendationservice",
+      "injected_at": 1793391933,
+      "baseline_most_errors": [],
+      "baseline_largest_increase": [],
+      "detected": true,
+      "incident": 8,
+      "ttd_s": 7,
+      "ranking": [
+        "frontend"
+      ],
+      "candidates": [
+        "11a66b24a7478412220244df23d43367601c0212",
+        "0a09588e7f0a763fa05c78706a509ddab4906a42",
+        "48edfe9780a95b4649603560633b88584403e621",
+        "fc3a1f72ed3b66bc593bedb184a1544016171f89"
+      ],
+      "guilty": "11a66b24a7478412220244df23d43367601c0212",
+      "guilty_rank": 1,
+      "baseline_recent_rank": 2
+    },
+    {
+      "scenario": "ad-down",
+      "truth": "adservice",
+      "injected_at": 1793392468,
+      "baseline_most_errors": [],
+      "baseline_largest_increase": [],
+      "detected": true,
+      "incident": 9,
+      "ttd_s": 12,
+      "ranking": [
+        "frontend"
+      ],
+      "candidates": [
+        "11a66b24a7478412220244df23d43367601c0212",
+        "0a09588e7f0a763fa05c78706a509ddab4906a42",
+        "48edfe9780a95b4649603560633b88584403e621",
+        "fc3a1f72ed3b66bc593bedb184a1544016171f89"
+      ],
+      "guilty": "11a66b24a7478412220244df23d43367601c0212",
+      "guilty_rank": 1,
+      "baseline_recent_rank": 3
+    },
+    {
+      "scenario": "currency-crash",
+      "truth": "currencyservice",
+      "injected_at": 1793393010,
+      "baseline_most_errors": [],
+      "baseline_largest_increase": [],
+      "detected": false,
+      "ranking": []
+    },
+    {
+      "scenario": "checkout-bad-config",
+      "truth": "checkoutservice",
+      "injected_at": 1793393655,
+      "baseline_most_errors": [
+        "frontend"
+      ],
+      "baseline_largest_increase": [
+        "frontend"
+      ],
+      "detected": true,
+      "incident": 10,
+      "ttd_s": 35,
+      "ranking": [
+        "frontend"
+      ],
+      "candidates": [
+        "11a66b24a7478412220244df23d43367601c0212",
+        "48edfe9780a95b4649603560633b88584403e621",
+        "0a09588e7f0a763fa05c78706a509ddab4906a42",
+        "fc3a1f72ed3b66bc593bedb184a1544016171f89"
+      ],
+      "guilty": "11a66b24a7478412220244df23d43367601c0212",
+      "guilty_rank": 1,
+      "baseline_recent_rank": 2
+    }
+  ]
+}

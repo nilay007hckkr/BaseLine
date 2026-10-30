@@ -1,0 +1,20 @@
+{
+  "scenario": "productcatalog-down",
+  "culprit": "productcatalogservice",
+  "description": "productcatalogservice scaled to zero (down)",
+  "synthetic": true,
+  "injected_at": 1793389102,
+  "reverted_at": 1793389198,
+  "deploys": {
+    "guilty": "48edfe9780a95b4649603560633b88584403e621",
+    "decoys": [
+      "0a09588e7f0a763fa05c78706a509ddab4906a42",
+      "fc3a1f72ed3b66bc593bedb184a1544016171f89"
+    ],
+    "deploy_offsets_s": {
+      "48edfe9780a95b4649603560633b88584403e621": 150,
+      "0a09588e7f0a763fa05c78706a509ddab4906a42": 630,
+      "fc3a1f72ed3b66bc593bedb184a1544016171f89": 720
+    }
+  }
+}

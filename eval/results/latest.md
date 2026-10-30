@@ -33,3 +33,21 @@ Checks that the impact check is not fitted to the main repository. Each reposito
 |  | 140 | Baseline: most frequently changed files | 0.123 [0.097, 0.151] | 0.284 [0.219, 0.345] | 0.421 [0.343, 0.500] |
 
 Result files: `eval/results/impact-20261030T195628Z.json`, `eval/results/impact-20261030T195436Z.json`
+
+## Incident triage (fault campaign, synthetic)
+
+- Runs: **n = 10** (8 detected), one injected fault each, after ≥ 5 min of healthy traffic. Faults and deploys are synthetic.
+- Time to detect: median 16.5 s, p90 28 s
+- False alerts during healthy traffic: 0.0 per hour
+- Result file: `eval/results/rca-20261030T205813Z.json` (created 2026-10-30T20:58:13Z)
+
+| Culprit ranking | Top-1 | Top-3 |
+|---|---|---|
+| Hindsight (culprit vs victim) | 0.500 [0.200, 0.800] | 0.500 [0.200, 0.800] |
+| Baseline: most error lines | 0.000 [0.000, 0.000] | 0.000 [0.000, 0.000] |
+| Baseline: largest error increase | 0.000 [0.000, 0.000] | 0.000 [0.000, 0.000] |
+
+| Incident → change | Hit@1 | Hit@3 |
+|---|---|---|
+| Hindsight (candidates) | 1.000 [1.000, 1.000] | 1.000 [1.000, 1.000] |
+| Baseline: most recent deploy | 0.250 [0.000, 0.625] | 1.000 [1.000, 1.000] |
