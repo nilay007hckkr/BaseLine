@@ -34,6 +34,20 @@ Checks that the impact check is not fitted to the main repository. Each reposito
 
 Result files: `eval/results/impact-20261030T195628Z.json`, `eval/results/impact-20261030T195436Z.json`
 
+## Test healing (mutation harness, synthetic)
+
+- 27 cosmetic and 8 defect mutations of the demo shop's pages, applied in the test browser only; tests: `OB-289BD4D-CART`, `OB-3474`, `OB-3578`, `OB-593-CONTINUE`, `OB-593-PRODUCT`
+- Accept a heal only if similarity ≥ θ 0.75 and ≥ δ 0.15 above the next candidate; 2 re-runs first to rule out flakiness
+- Result file: `eval/results/heal-20261030T211918Z.json` (created 2026-10-30T21:19:18Z)
+
+| Method | Heal rate (broken locators) | Cosmetic kept green | Correct refusals (defects) | False heals | Median heal time |
+|---|---|---|---|---|---|
+| Hindsight healer (Similo-style) | 1.000 [1.000, 1.000] (n=21) | 1.000 [1.000, 1.000] (n=50) | 1.000 [1.000, 1.000] (n=14) | **0** | 7.3 s |
+| Baseline: same tag and text | 0.333 [0.143, 0.524] (n=21) | 0.720 [0.580, 0.840] (n=50) | 1.000 [1.000, 1.000] (n=14) | **0** | 7.1 s |
+| Baseline: no healing | 0.000 [0.000, 0.000] (n=21) | 0.580 [0.440, 0.700] (n=50) | 1.000 [1.000, 1.000] (n=14) | **0** | - |
+
+Heal time includes the re-runs that rule out flakiness.
+
 ## Incident triage (fault campaign, synthetic)
 
 - Runs: **n = 10** (8 detected), one injected fault each, after ≥ 5 min of healthy traffic. Faults and deploys are synthetic.
