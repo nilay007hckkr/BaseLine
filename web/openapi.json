@@ -1,0 +1,2709 @@
+{
+ "openapi": "3.1.0",
+ "info": {
+  "title": "Hindsight",
+  "description": "Project Brain: why was this built this way, and what will this change affect?",
+  "version": "0.1.0"
+ },
+ "paths": {
+  "/api/health": {
+   "get": {
+    "summary": "Health",
+    "operationId": "health_api_health_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "additionalProperties": {
+          "type": "string"
+         },
+         "type": "object",
+         "title": "Response Health Api Health Get"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/repo/stats": {
+   "get": {
+    "summary": "Repo Stats",
+    "operationId": "repo_stats_api_repo_stats_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/RepoStats"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/ask": {
+   "post": {
+    "summary": "Ask",
+    "operationId": "ask_api_ask_post",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/AskRequest"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Answer"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/impact": {
+   "post": {
+    "summary": "Impact",
+    "operationId": "impact_api_impact_post",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/ImpactRequest"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ImpactReport"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/commits": {
+   "get": {
+    "summary": "Commits",
+    "operationId": "commits_api_commits_get",
+    "parameters": [
+     {
+      "name": "limit",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "integer",
+       "maximum": 200,
+       "minimum": 1,
+       "default": 50,
+       "title": "Limit"
+      }
+     },
+     {
+      "name": "include_bots",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "boolean",
+       "default": false,
+       "title": "Include Bots"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/CommitSummary"
+         },
+         "title": "Response Commits Api Commits Get"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/graph": {
+   "get": {
+    "summary": "Graph View",
+    "operationId": "graph_view_api_graph_get",
+    "parameters": [
+     {
+      "name": "key",
+      "in": "query",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Key"
+      }
+     },
+     {
+      "name": "depth",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "integer",
+       "maximum": 2,
+       "minimum": 1,
+       "default": 1,
+       "title": "Depth"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/GraphResponse"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/graph/status": {
+   "get": {
+    "summary": "Graph Status",
+    "operationId": "graph_status_api_graph_status_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/GraphStatus"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/search": {
+   "get": {
+    "summary": "Search Nodes",
+    "operationId": "search_nodes_api_search_get",
+    "parameters": [
+     {
+      "name": "q",
+      "in": "query",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "minLength": 2,
+       "title": "Q"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/SearchHit"
+         },
+         "title": "Response Search Nodes Api Search Get"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/risk": {
+   "get": {
+    "summary": "Risk",
+    "operationId": "risk_api_risk_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/RiskReport"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/scorecard": {
+   "get": {
+    "summary": "Scorecard",
+    "operationId": "scorecard_api_scorecard_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "items": {
+          "$ref": "#/components/schemas/ScoreCard"
+         },
+         "type": "array",
+         "title": "Response Scorecard Api Scorecard Get"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/docs": {
+   "get": {
+    "summary": "Docs",
+    "operationId": "docs_api_docs_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "items": {
+          "$ref": "#/components/schemas/DocInfo"
+         },
+         "type": "array",
+         "title": "Response Docs Api Docs Get"
+        }
+       }
+      }
+     }
+    }
+   },
+   "post": {
+    "summary": "Upload Doc",
+    "operationId": "upload_doc_api_docs_post",
+    "requestBody": {
+     "content": {
+      "multipart/form-data": {
+       "schema": {
+        "$ref": "#/components/schemas/Body_upload_doc_api_docs_post"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/UploadReport"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/docs/blob/{name}": {
+   "get": {
+    "summary": "Doc Blob",
+    "operationId": "doc_blob_api_docs_blob__name__get",
+    "parameters": [
+     {
+      "name": "name",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Name"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/services/{name}/runbooks": {
+   "get": {
+    "summary": "Service Runbooks",
+    "operationId": "service_runbooks_api_services__name__runbooks_get",
+    "parameters": [
+     {
+      "name": "name",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Name"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/RunbookSection"
+         },
+         "title": "Response Service Runbooks Api Services  Name  Runbooks Get"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/qa/tests": {
+   "get": {
+    "summary": "Qa Tests",
+    "operationId": "qa_tests_api_qa_tests_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "items": {
+          "$ref": "#/components/schemas/QaTest"
+         },
+         "type": "array",
+         "title": "Response Qa Tests Api Qa Tests Get"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/qa/tests/{test_id}/run": {
+   "post": {
+    "summary": "Qa Run",
+    "operationId": "qa_run_api_qa_tests__test_id__run_post",
+    "parameters": [
+     {
+      "name": "test_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Test Id"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/QaTest"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/qa/repairs": {
+   "get": {
+    "summary": "Qa Repairs",
+    "operationId": "qa_repairs_api_qa_repairs_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "items": {
+          "$ref": "#/components/schemas/QaRepair"
+         },
+         "type": "array",
+         "title": "Response Qa Repairs Api Qa Repairs Get"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/qa/repairs/{repair_id}/{decision}": {
+   "post": {
+    "summary": "Qa Decide",
+    "operationId": "qa_decide_api_qa_repairs__repair_id___decision__post",
+    "parameters": [
+     {
+      "name": "repair_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Repair Id"
+      }
+     },
+     {
+      "name": "decision",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Decision"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/QaRepair"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/qa/shots/{name}": {
+   "get": {
+    "summary": "Qa Shot",
+    "operationId": "qa_shot_api_qa_shots__name__get",
+    "parameters": [
+     {
+      "name": "name",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Name"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/incidents": {
+   "get": {
+    "summary": "Incidents",
+    "operationId": "incidents_api_incidents_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "items": {
+          "$ref": "#/components/schemas/IncidentSummary"
+         },
+         "type": "array",
+         "title": "Response Incidents Api Incidents Get"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/incidents/{incident_id}": {
+   "get": {
+    "summary": "Incident",
+    "operationId": "incident_api_incidents__incident_id__get",
+    "parameters": [
+     {
+      "name": "incident_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Incident Id"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Incident"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/deploys": {
+   "get": {
+    "summary": "Deploys",
+    "operationId": "deploys_api_deploys_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "items": {
+          "$ref": "#/components/schemas/DeployRecord"
+         },
+         "type": "array",
+         "title": "Response Deploys Api Deploys Get"
+        }
+       }
+      }
+     }
+    }
+   },
+   "post": {
+    "summary": "Add Deploy",
+    "operationId": "add_deploy_api_deploys_post",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/DeployRequest"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/DeployRecord"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  }
+ },
+ "components": {
+  "schemas": {
+   "Answer": {
+    "properties": {
+     "status": {
+      "type": "string",
+      "enum": [
+       "answered",
+       "not_found"
+      ],
+      "title": "Status"
+     },
+     "mode": {
+      "type": "string",
+      "enum": [
+       "llm",
+       "extractive",
+       "none"
+      ],
+      "title": "Mode"
+     },
+     "question": {
+      "type": "string",
+      "title": "Question"
+     },
+     "claims": {
+      "items": {
+       "$ref": "#/components/schemas/Claim"
+      },
+      "type": "array",
+      "title": "Claims"
+     },
+     "evidence": {
+      "items": {
+       "$ref": "#/components/schemas/EvidenceItem"
+      },
+      "type": "array",
+      "title": "Evidence"
+     },
+     "nearest": {
+      "items": {
+       "$ref": "#/components/schemas/EvidenceItem"
+      },
+      "type": "array",
+      "title": "Nearest"
+     },
+     "anchors": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Anchors"
+     },
+     "checker": {
+      "type": "string",
+      "title": "Checker"
+     },
+     "notes": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Notes"
+     }
+    },
+    "type": "object",
+    "required": [
+     "status",
+     "mode",
+     "question",
+     "claims",
+     "evidence",
+     "nearest",
+     "anchors",
+     "checker",
+     "notes"
+    ],
+    "title": "Answer"
+   },
+   "AskRequest": {
+    "properties": {
+     "question": {
+      "type": "string",
+      "maxLength": 500,
+      "minLength": 3,
+      "title": "Question"
+     },
+     "file": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "File"
+     },
+     "line_start": {
+      "anyOf": [
+       {
+        "type": "integer",
+        "minimum": 1.0
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Line Start"
+     },
+     "line_end": {
+      "anyOf": [
+       {
+        "type": "integer",
+        "minimum": 1.0
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Line End"
+     }
+    },
+    "type": "object",
+    "required": [
+     "question"
+    ],
+    "title": "AskRequest"
+   },
+   "Body_upload_doc_api_docs_post": {
+    "properties": {
+     "file": {
+      "type": "string",
+      "contentMediaType": "application/octet-stream",
+      "title": "File",
+      "description": "PDF or Markdown"
+     },
+     "doc_type": {
+      "type": "string",
+      "title": "Doc Type",
+      "default": "other"
+     }
+    },
+    "type": "object",
+    "required": [
+     "file"
+    ],
+    "title": "Body_upload_doc_api_docs_post"
+   },
+   "ChangeCandidate": {
+    "properties": {
+     "commit": {
+      "type": "string",
+      "title": "Commit"
+     },
+     "title": {
+      "type": "string",
+      "title": "Title"
+     },
+     "url": {
+      "type": "string",
+      "title": "Url"
+     },
+     "score": {
+      "type": "number",
+      "title": "Score"
+     },
+     "deployed_at": {
+      "type": "integer",
+      "title": "Deployed At"
+     },
+     "synthetic": {
+      "type": "boolean",
+      "title": "Synthetic"
+     },
+     "evidence": {
+      "additionalProperties": true,
+      "type": "object",
+      "title": "Evidence"
+     }
+    },
+    "type": "object",
+    "required": [
+     "commit",
+     "title",
+     "url",
+     "score",
+     "deployed_at",
+     "synthetic",
+     "evidence"
+    ],
+    "title": "ChangeCandidate"
+   },
+   "Claim": {
+    "properties": {
+     "text": {
+      "type": "string",
+      "title": "Text"
+     },
+     "cites": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Cites"
+     }
+    },
+    "type": "object",
+    "required": [
+     "text",
+     "cites"
+    ],
+    "title": "Claim"
+   },
+   "CommitSummary": {
+    "properties": {
+     "sha": {
+      "type": "string",
+      "title": "Sha"
+     },
+     "title": {
+      "type": "string",
+      "title": "Title"
+     },
+     "ts": {
+      "type": "integer",
+      "title": "Ts"
+     },
+     "author": {
+      "type": "string",
+      "title": "Author"
+     },
+     "n_files": {
+      "type": "integer",
+      "title": "N Files"
+     },
+     "is_bot": {
+      "type": "boolean",
+      "title": "Is Bot"
+     },
+     "url": {
+      "type": "string",
+      "title": "Url"
+     },
+     "pr": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Pr"
+     }
+    },
+    "type": "object",
+    "required": [
+     "sha",
+     "title",
+     "ts",
+     "author",
+     "n_files",
+     "is_bot",
+     "url",
+     "pr"
+    ],
+    "title": "CommitSummary"
+   },
+   "CulpritRank": {
+    "properties": {
+     "service": {
+      "type": "string",
+      "title": "Service"
+     },
+     "role": {
+      "type": "string",
+      "enum": [
+       "culprit",
+       "victim",
+       "affected"
+      ],
+      "title": "Role"
+     },
+     "score": {
+      "type": "number",
+      "title": "Score"
+     },
+     "evidence": {
+      "additionalProperties": true,
+      "type": "object",
+      "title": "Evidence"
+     },
+     "templates": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Templates"
+     },
+     "samples": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Samples"
+     }
+    },
+    "type": "object",
+    "required": [
+     "service",
+     "role",
+     "score",
+     "evidence",
+     "templates",
+     "samples"
+    ],
+    "title": "CulpritRank"
+   },
+   "DeployRecord": {
+    "properties": {
+     "id": {
+      "type": "integer",
+      "title": "Id"
+     },
+     "commit": {
+      "type": "string",
+      "title": "Commit"
+     },
+     "title": {
+      "type": "string",
+      "title": "Title"
+     },
+     "ts": {
+      "type": "integer",
+      "title": "Ts"
+     },
+     "synthetic": {
+      "type": "boolean",
+      "title": "Synthetic"
+     },
+     "note": {
+      "type": "string",
+      "title": "Note"
+     },
+     "predicted_components": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Predicted Components"
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "commit",
+     "title",
+     "ts",
+     "synthetic",
+     "note",
+     "predicted_components"
+    ],
+    "title": "DeployRecord"
+   },
+   "DeployRequest": {
+    "properties": {
+     "commit": {
+      "type": "string",
+      "title": "Commit"
+     },
+     "ts": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Ts"
+     },
+     "note": {
+      "type": "string",
+      "title": "Note",
+      "default": ""
+     }
+    },
+    "type": "object",
+    "required": [
+     "commit"
+    ],
+    "title": "DeployRequest"
+   },
+   "DocInfo": {
+    "properties": {
+     "key": {
+      "type": "string",
+      "title": "Key"
+     },
+     "title": {
+      "type": "string",
+      "title": "Title"
+     },
+     "url": {
+      "type": "string",
+      "title": "Url"
+     },
+     "source": {
+      "type": "string",
+      "enum": [
+       "repo",
+       "upload"
+      ],
+      "title": "Source"
+     },
+     "doc_type": {
+      "type": "string",
+      "title": "Doc Type"
+     },
+     "version": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Version"
+     },
+     "updated_ts": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Updated Ts"
+     },
+     "chunks": {
+      "type": "integer",
+      "title": "Chunks"
+     },
+     "mentions": {
+      "type": "integer",
+      "title": "Mentions"
+     },
+     "runbook_links": {
+      "type": "integer",
+      "title": "Runbook Links"
+     },
+     "flagged": {
+      "type": "integer",
+      "title": "Flagged"
+     },
+     "superseded": {
+      "type": "boolean",
+      "title": "Superseded"
+     },
+     "needs_attention": {
+      "type": "boolean",
+      "title": "Needs Attention"
+     }
+    },
+    "type": "object",
+    "required": [
+     "key",
+     "title",
+     "url",
+     "source",
+     "doc_type",
+     "version",
+     "updated_ts",
+     "chunks",
+     "mentions",
+     "runbook_links",
+     "flagged",
+     "superseded",
+     "needs_attention"
+    ],
+    "title": "DocInfo"
+   },
+   "EvidenceItem": {
+    "properties": {
+     "id": {
+      "type": "string",
+      "title": "Id",
+      "description": "Citation id inside an answer (S1\u2026Sn)"
+     },
+     "node_key": {
+      "type": "string",
+      "title": "Node Key"
+     },
+     "kind": {
+      "type": "string",
+      "title": "Kind"
+     },
+     "span_kind": {
+      "type": "string",
+      "title": "Span Kind"
+     },
+     "title": {
+      "type": "string",
+      "title": "Title"
+     },
+     "url": {
+      "type": "string",
+      "title": "Url"
+     },
+     "snippet": {
+      "type": "string",
+      "title": "Snippet"
+     },
+     "ts": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Ts"
+     },
+     "flagged": {
+      "type": "boolean",
+      "title": "Flagged",
+      "description": "Contains instruction-like text; shown, never followed",
+      "default": false
+     },
+     "path": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Path",
+      "description": "How this evidence was reached from the anchor"
+     },
+     "score": {
+      "type": "number",
+      "title": "Score",
+      "default": 0.0
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "node_key",
+     "kind",
+     "span_kind",
+     "title",
+     "url",
+     "snippet",
+     "ts",
+     "flagged",
+     "path",
+     "score"
+    ],
+    "title": "EvidenceItem"
+   },
+   "GraphEdge": {
+    "properties": {
+     "source": {
+      "type": "string",
+      "title": "Source"
+     },
+     "target": {
+      "type": "string",
+      "title": "Target"
+     },
+     "kind": {
+      "type": "string",
+      "title": "Kind"
+     },
+     "provenance": {
+      "type": "string",
+      "enum": [
+       "explicit",
+       "api",
+       "static",
+       "statistical",
+       "runtime",
+       "heuristic"
+      ],
+      "title": "Provenance"
+     },
+     "evidence": {
+      "additionalProperties": true,
+      "type": "object",
+      "title": "Evidence"
+     }
+    },
+    "type": "object",
+    "required": [
+     "source",
+     "target",
+     "kind",
+     "provenance",
+     "evidence"
+    ],
+    "title": "GraphEdge"
+   },
+   "GraphNode": {
+    "properties": {
+     "id": {
+      "type": "string",
+      "title": "Id"
+     },
+     "kind": {
+      "type": "string",
+      "title": "Kind"
+     },
+     "label": {
+      "type": "string",
+      "title": "Label"
+     },
+     "url": {
+      "type": "string",
+      "title": "Url",
+      "default": ""
+     },
+     "ts": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Ts"
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "kind",
+     "label",
+     "url",
+     "ts"
+    ],
+    "title": "GraphNode"
+   },
+   "GraphResponse": {
+    "properties": {
+     "center": {
+      "type": "string",
+      "title": "Center"
+     },
+     "nodes": {
+      "items": {
+       "$ref": "#/components/schemas/GraphNode"
+      },
+      "type": "array",
+      "title": "Nodes"
+     },
+     "edges": {
+      "items": {
+       "$ref": "#/components/schemas/GraphEdge"
+      },
+      "type": "array",
+      "title": "Edges"
+     },
+     "truncated": {
+      "type": "boolean",
+      "title": "Truncated"
+     },
+     "backend": {
+      "type": "string",
+      "title": "Backend",
+      "default": "sqlite"
+     }
+    },
+    "type": "object",
+    "required": [
+     "center",
+     "nodes",
+     "edges",
+     "truncated",
+     "backend"
+    ],
+    "title": "GraphResponse"
+   },
+   "GraphStatus": {
+    "properties": {
+     "backend": {
+      "type": "string",
+      "title": "Backend"
+     },
+     "configured": {
+      "type": "string",
+      "title": "Configured"
+     },
+     "neo4j_reachable": {
+      "type": "boolean",
+      "title": "Neo4J Reachable"
+     },
+     "namespace": {
+      "type": "string",
+      "title": "Namespace"
+     },
+     "synced_at": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Synced At"
+     },
+     "in_sync": {
+      "type": "boolean",
+      "title": "In Sync"
+     },
+     "nodes": {
+      "type": "integer",
+      "title": "Nodes"
+     },
+     "edges": {
+      "type": "integer",
+      "title": "Edges"
+     },
+     "browser_url": {
+      "type": "string",
+      "title": "Browser Url"
+     }
+    },
+    "type": "object",
+    "required": [
+     "backend",
+     "configured",
+     "neo4j_reachable",
+     "namespace",
+     "synced_at",
+     "in_sync",
+     "nodes",
+     "edges",
+     "browser_url"
+    ],
+    "title": "GraphStatus"
+   },
+   "HTTPValidationError": {
+    "properties": {
+     "detail": {
+      "items": {
+       "$ref": "#/components/schemas/ValidationError"
+      },
+      "type": "array",
+      "title": "Detail"
+     }
+    },
+    "type": "object",
+    "title": "HTTPValidationError"
+   },
+   "ImpactItem": {
+    "properties": {
+     "target_kind": {
+      "type": "string",
+      "enum": [
+       "file",
+       "service",
+       "component",
+       "doc",
+       "test",
+       "person"
+      ],
+      "title": "Target Kind"
+     },
+     "target": {
+      "type": "string",
+      "title": "Target"
+     },
+     "score": {
+      "type": "number",
+      "title": "Score"
+     },
+     "reasons": {
+      "items": {
+       "$ref": "#/components/schemas/Reason"
+      },
+      "type": "array",
+      "title": "Reasons"
+     },
+     "url": {
+      "type": "string",
+      "title": "Url",
+      "default": ""
+     }
+    },
+    "type": "object",
+    "required": [
+     "target_kind",
+     "target",
+     "score",
+     "reasons",
+     "url"
+    ],
+    "title": "ImpactItem"
+   },
+   "ImpactReport": {
+    "properties": {
+     "changed_files": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Changed Files"
+     },
+     "commit": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Commit"
+     },
+     "as_of_ts": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "As Of Ts"
+     },
+     "components": {
+      "items": {
+       "$ref": "#/components/schemas/ImpactItem"
+      },
+      "type": "array",
+      "title": "Components"
+     },
+     "files": {
+      "items": {
+       "$ref": "#/components/schemas/ImpactItem"
+      },
+      "type": "array",
+      "title": "Files"
+     },
+     "tests": {
+      "items": {
+       "$ref": "#/components/schemas/ImpactItem"
+      },
+      "type": "array",
+      "title": "Tests"
+     },
+     "docs": {
+      "items": {
+       "$ref": "#/components/schemas/ImpactItem"
+      },
+      "type": "array",
+      "title": "Docs"
+     },
+     "people": {
+      "items": {
+       "$ref": "#/components/schemas/ImpactItem"
+      },
+      "type": "array",
+      "title": "People"
+     },
+     "runbooks": {
+      "items": {
+       "$ref": "#/components/schemas/ImpactItem"
+      },
+      "type": "array",
+      "title": "Runbooks"
+     },
+     "weights": {
+      "additionalProperties": {
+       "type": "number"
+      },
+      "type": "object",
+      "title": "Weights"
+     },
+     "notes": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Notes"
+     }
+    },
+    "type": "object",
+    "required": [
+     "changed_files",
+     "commit",
+     "as_of_ts",
+     "components",
+     "files",
+     "tests",
+     "docs",
+     "people",
+     "runbooks",
+     "weights",
+     "notes"
+    ],
+    "title": "ImpactReport"
+   },
+   "ImpactRequest": {
+    "properties": {
+     "files": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Files"
+     },
+     "commit": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Commit"
+     }
+    },
+    "type": "object",
+    "title": "ImpactRequest"
+   },
+   "Incident": {
+    "properties": {
+     "id": {
+      "type": "integer",
+      "title": "Id"
+     },
+     "opened_at": {
+      "type": "integer",
+      "title": "Opened At"
+     },
+     "updated_at": {
+      "type": "integer",
+      "title": "Updated At"
+     },
+     "closed_at": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Closed At"
+     },
+     "source": {
+      "type": "string",
+      "title": "Source"
+     },
+     "ranking": {
+      "items": {
+       "$ref": "#/components/schemas/CulpritRank"
+      },
+      "type": "array",
+      "title": "Ranking"
+     },
+     "templates": {
+      "items": {
+       "$ref": "#/components/schemas/IncidentTemplate"
+      },
+      "type": "array",
+      "title": "Templates"
+     },
+     "anomalies": {
+      "items": {
+       "additionalProperties": true,
+       "type": "object"
+      },
+      "type": "array",
+      "title": "Anomalies"
+     },
+     "candidates": {
+      "items": {
+       "$ref": "#/components/schemas/ChangeCandidate"
+      },
+      "type": "array",
+      "title": "Candidates"
+     },
+     "runbooks": {
+      "items": {
+       "$ref": "#/components/schemas/RunbookSection"
+      },
+      "type": "array",
+      "title": "Runbooks"
+     },
+     "timeline": {
+      "additionalProperties": {
+       "items": {
+        "$ref": "#/components/schemas/TimelinePoint"
+       },
+       "type": "array"
+      },
+      "type": "object",
+      "title": "Timeline"
+     },
+     "summary": {
+      "type": "string",
+      "title": "Summary"
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "opened_at",
+     "updated_at",
+     "closed_at",
+     "source",
+     "ranking",
+     "templates",
+     "anomalies",
+     "candidates",
+     "runbooks",
+     "timeline",
+     "summary"
+    ],
+    "title": "Incident"
+   },
+   "IncidentSummary": {
+    "properties": {
+     "id": {
+      "type": "integer",
+      "title": "Id"
+     },
+     "opened_at": {
+      "type": "integer",
+      "title": "Opened At"
+     },
+     "updated_at": {
+      "type": "integer",
+      "title": "Updated At"
+     },
+     "closed_at": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Closed At"
+     },
+     "source": {
+      "type": "string",
+      "title": "Source"
+     },
+     "culprit": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Culprit"
+     },
+     "services": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Services"
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "opened_at",
+     "updated_at",
+     "closed_at",
+     "source",
+     "culprit",
+     "services"
+    ],
+    "title": "IncidentSummary"
+   },
+   "IncidentTemplate": {
+    "properties": {
+     "id": {
+      "type": "string",
+      "title": "Id"
+     },
+     "service": {
+      "type": "string",
+      "title": "Service"
+     },
+     "text": {
+      "type": "string",
+      "title": "Text"
+     },
+     "severity": {
+      "type": "string",
+      "title": "Severity"
+     },
+     "count": {
+      "type": "integer",
+      "title": "Count"
+     },
+     "samples": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Samples"
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "service",
+     "text",
+     "severity",
+     "count",
+     "samples"
+    ],
+    "title": "IncidentTemplate"
+   },
+   "QaGrounding": {
+    "properties": {
+     "step": {
+      "type": "integer",
+      "title": "Step"
+     },
+     "text": {
+      "type": "string",
+      "title": "Text"
+     },
+     "found": {
+      "type": "boolean",
+      "title": "Found"
+     },
+     "file": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "File"
+     },
+     "line": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Line"
+     },
+     "origin_commit": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Origin Commit"
+     }
+    },
+    "type": "object",
+    "required": [
+     "step",
+     "text",
+     "found",
+     "file",
+     "line",
+     "origin_commit"
+    ],
+    "title": "QaGrounding"
+   },
+   "QaRepair": {
+    "properties": {
+     "id": {
+      "type": "integer",
+      "title": "Id"
+     },
+     "test_id": {
+      "type": "string",
+      "title": "Test Id"
+     },
+     "run_id": {
+      "type": "integer",
+      "title": "Run Id"
+     },
+     "step": {
+      "type": "integer",
+      "title": "Step"
+     },
+     "line": {
+      "type": "string",
+      "title": "Line"
+     },
+     "status": {
+      "type": "string",
+      "title": "Status"
+     },
+     "old_locator": {
+      "additionalProperties": {
+       "type": "string"
+      },
+      "type": "object",
+      "title": "Old Locator"
+     },
+     "new_locator": {
+      "additionalProperties": {
+       "type": "string"
+      },
+      "type": "object",
+      "title": "New Locator"
+     },
+     "score": {
+      "anyOf": [
+       {
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Score"
+     },
+     "runner_up": {
+      "anyOf": [
+       {
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Runner Up"
+     },
+     "breakdown": {
+      "additionalProperties": {
+       "type": "number"
+      },
+      "type": "object",
+      "title": "Breakdown"
+     },
+     "before_shot": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Before Shot"
+     },
+     "after_shot": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "After Shot"
+     },
+     "patch": {
+      "type": "string",
+      "title": "Patch"
+     },
+     "created_at": {
+      "type": "integer",
+      "title": "Created At"
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "test_id",
+     "run_id",
+     "step",
+     "line",
+     "status",
+     "old_locator",
+     "new_locator",
+     "score",
+     "runner_up",
+     "breakdown",
+     "before_shot",
+     "after_shot",
+     "patch",
+     "created_at"
+    ],
+    "title": "QaRepair"
+   },
+   "QaRun": {
+    "properties": {
+     "id": {
+      "type": "integer",
+      "title": "Id"
+     },
+     "test_id": {
+      "type": "string",
+      "title": "Test Id"
+     },
+     "version": {
+      "type": "integer",
+      "title": "Version"
+     },
+     "outcome": {
+      "type": "string",
+      "title": "Outcome"
+     },
+     "reason": {
+      "type": "string",
+      "title": "Reason"
+     },
+     "started_at": {
+      "type": "integer",
+      "title": "Started At"
+     },
+     "duration_ms": {
+      "type": "integer",
+      "title": "Duration Ms"
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "test_id",
+     "version",
+     "outcome",
+     "reason",
+     "started_at",
+     "duration_ms"
+    ],
+    "title": "QaRun"
+   },
+   "QaTest": {
+    "properties": {
+     "id": {
+      "type": "string",
+      "title": "Id"
+     },
+     "title": {
+      "type": "string",
+      "title": "Title"
+     },
+     "status": {
+      "type": "string",
+      "title": "Status"
+     },
+     "reason": {
+      "type": "string",
+      "title": "Reason"
+     },
+     "version": {
+      "type": "integer",
+      "title": "Version"
+     },
+     "source_key": {
+      "type": "string",
+      "title": "Source Key"
+     },
+     "source_kind": {
+      "type": "string",
+      "title": "Source Kind"
+     },
+     "source_title": {
+      "type": "string",
+      "title": "Source Title"
+     },
+     "source_url": {
+      "type": "string",
+      "title": "Source Url"
+     },
+     "services": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Services"
+     },
+     "steps": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Steps"
+     },
+     "grounding": {
+      "items": {
+       "$ref": "#/components/schemas/QaGrounding"
+      },
+      "type": "array",
+      "title": "Grounding"
+     },
+     "code": {
+      "type": "string",
+      "title": "Code"
+     },
+     "last_run": {
+      "anyOf": [
+       {
+        "$ref": "#/components/schemas/QaRun"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "title",
+     "status",
+     "reason",
+     "version",
+     "source_key",
+     "source_kind",
+     "source_title",
+     "source_url",
+     "services",
+     "steps",
+     "grounding",
+     "code",
+     "last_run"
+    ],
+    "title": "QaTest"
+   },
+   "Reason": {
+    "properties": {
+     "text": {
+      "type": "string",
+      "title": "Text"
+     },
+     "provenance": {
+      "type": "string",
+      "enum": [
+       "explicit",
+       "api",
+       "static",
+       "statistical",
+       "runtime",
+       "heuristic"
+      ],
+      "title": "Provenance"
+     },
+     "url": {
+      "type": "string",
+      "title": "Url",
+      "default": ""
+     }
+    },
+    "type": "object",
+    "required": [
+     "text",
+     "provenance",
+     "url"
+    ],
+    "title": "Reason"
+   },
+   "RepoStats": {
+    "properties": {
+     "repo": {
+      "anyOf": [
+       {
+        "additionalProperties": true,
+        "type": "object"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Repo"
+     },
+     "stats": {
+      "anyOf": [
+       {
+        "additionalProperties": true,
+        "type": "object"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Stats"
+     },
+     "github": {
+      "anyOf": [
+       {
+        "additionalProperties": true,
+        "type": "object"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Github"
+     },
+     "ingested_at": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Ingested At"
+     }
+    },
+    "type": "object",
+    "required": [
+     "repo",
+     "stats",
+     "github",
+     "ingested_at"
+    ],
+    "title": "RepoStats"
+   },
+   "RiskComponent": {
+    "properties": {
+     "component": {
+      "type": "string",
+      "title": "Component"
+     },
+     "changes": {
+      "type": "integer",
+      "title": "Changes"
+     },
+     "authors": {
+      "type": "integer",
+      "title": "Authors"
+     },
+     "bus_factor": {
+      "type": "integer",
+      "title": "Bus Factor",
+      "description": "Fewest authors who together made at least half of the changes"
+     },
+     "top_author": {
+      "type": "string",
+      "title": "Top Author"
+     },
+     "top_share": {
+      "type": "number",
+      "title": "Top Share"
+     }
+    },
+    "type": "object",
+    "required": [
+     "component",
+     "changes",
+     "authors",
+     "bus_factor",
+     "top_author",
+     "top_share"
+    ],
+    "title": "RiskComponent"
+   },
+   "RiskFile": {
+    "properties": {
+     "path": {
+      "type": "string",
+      "title": "Path"
+     },
+     "component": {
+      "type": "string",
+      "title": "Component"
+     },
+     "changes": {
+      "type": "integer",
+      "title": "Changes"
+     },
+     "authors": {
+      "type": "integer",
+      "title": "Authors"
+     },
+     "top_author": {
+      "type": "string",
+      "title": "Top Author"
+     },
+     "top_share": {
+      "type": "number",
+      "title": "Top Share"
+     },
+     "single_owner": {
+      "type": "boolean",
+      "title": "Single Owner"
+     },
+     "top_author_last_active_ts": {
+      "type": "integer",
+      "title": "Top Author Last Active Ts"
+     },
+     "top_author_active": {
+      "type": "boolean",
+      "title": "Top Author Active"
+     },
+     "url": {
+      "type": "string",
+      "title": "Url",
+      "default": ""
+     }
+    },
+    "type": "object",
+    "required": [
+     "path",
+     "component",
+     "changes",
+     "authors",
+     "top_author",
+     "top_share",
+     "single_owner",
+     "top_author_last_active_ts",
+     "top_author_active",
+     "url"
+    ],
+    "title": "RiskFile"
+   },
+   "RiskReport": {
+    "properties": {
+     "files": {
+      "items": {
+       "$ref": "#/components/schemas/RiskFile"
+      },
+      "type": "array",
+      "title": "Files"
+     },
+     "components": {
+      "items": {
+       "$ref": "#/components/schemas/RiskComponent"
+      },
+      "type": "array",
+      "title": "Components"
+     },
+     "min_changes": {
+      "type": "integer",
+      "title": "Min Changes"
+     },
+     "inactive_after_days": {
+      "type": "integer",
+      "title": "Inactive After Days"
+     }
+    },
+    "type": "object",
+    "required": [
+     "files",
+     "components",
+     "min_changes",
+     "inactive_after_days"
+    ],
+    "title": "RiskReport"
+   },
+   "RunbookSection": {
+    "properties": {
+     "chunk_key": {
+      "type": "string",
+      "title": "Chunk Key"
+     },
+     "title": {
+      "type": "string",
+      "title": "Title"
+     },
+     "section": {
+      "type": "string",
+      "title": "Section"
+     },
+     "url": {
+      "type": "string",
+      "title": "Url"
+     },
+     "snippet": {
+      "type": "string",
+      "title": "Snippet"
+     },
+     "updated_ts": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Updated Ts"
+     }
+    },
+    "type": "object",
+    "required": [
+     "chunk_key",
+     "title",
+     "section",
+     "url",
+     "snippet",
+     "updated_ts"
+    ],
+    "title": "RunbookSection"
+   },
+   "ScoreCard": {
+    "properties": {
+     "suite": {
+      "type": "string",
+      "title": "Suite"
+     },
+     "synthetic": {
+      "type": "boolean",
+      "title": "Synthetic"
+     },
+     "note": {
+      "type": "string",
+      "title": "Note"
+     },
+     "metric": {
+      "type": "string",
+      "title": "Metric"
+     },
+     "method": {
+      "type": "string",
+      "title": "Method"
+     },
+     "value": {
+      "type": "number",
+      "title": "Value"
+     },
+     "ci_low": {
+      "type": "number",
+      "title": "Ci Low"
+     },
+     "ci_high": {
+      "type": "number",
+      "title": "Ci High"
+     },
+     "baseline": {
+      "type": "string",
+      "title": "Baseline"
+     },
+     "baseline_value": {
+      "type": "number",
+      "title": "Baseline Value"
+     },
+     "n": {
+      "type": "integer",
+      "title": "N"
+     },
+     "command": {
+      "type": "string",
+      "title": "Command"
+     },
+     "result_file": {
+      "type": "string",
+      "title": "Result File"
+     }
+    },
+    "type": "object",
+    "required": [
+     "suite",
+     "synthetic",
+     "note",
+     "metric",
+     "method",
+     "value",
+     "ci_low",
+     "ci_high",
+     "baseline",
+     "baseline_value",
+     "n",
+     "command",
+     "result_file"
+    ],
+    "title": "ScoreCard"
+   },
+   "SearchHit": {
+    "properties": {
+     "key": {
+      "type": "string",
+      "title": "Key"
+     },
+     "kind": {
+      "type": "string",
+      "title": "Kind"
+     },
+     "label": {
+      "type": "string",
+      "title": "Label"
+     },
+     "url": {
+      "type": "string",
+      "title": "Url",
+      "default": ""
+     }
+    },
+    "type": "object",
+    "required": [
+     "key",
+     "kind",
+     "label",
+     "url"
+    ],
+    "title": "SearchHit"
+   },
+   "TimelinePoint": {
+    "properties": {
+     "ts": {
+      "type": "integer",
+      "title": "Ts"
+     },
+     "count": {
+      "type": "integer",
+      "title": "Count"
+     },
+     "errors": {
+      "type": "integer",
+      "title": "Errors"
+     }
+    },
+    "type": "object",
+    "required": [
+     "ts",
+     "count",
+     "errors"
+    ],
+    "title": "TimelinePoint"
+   },
+   "UploadReport": {
+    "properties": {
+     "doc_key": {
+      "type": "string",
+      "title": "Doc Key"
+     },
+     "filename": {
+      "type": "string",
+      "title": "Filename"
+     },
+     "version": {
+      "type": "integer",
+      "title": "Version"
+     },
+     "doc_type": {
+      "type": "string",
+      "title": "Doc Type"
+     },
+     "status": {
+      "type": "string",
+      "enum": [
+       "created",
+       "unchanged",
+       "needs_attention"
+      ],
+      "title": "Status"
+     },
+     "chunks": {
+      "type": "integer",
+      "title": "Chunks"
+     },
+     "mentions": {
+      "type": "integer",
+      "title": "Mentions"
+     },
+     "runbook_links": {
+      "type": "integer",
+      "title": "Runbook Links"
+     },
+     "flagged_sections": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Flagged Sections"
+     },
+     "warnings": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Warnings"
+     }
+    },
+    "type": "object",
+    "required": [
+     "doc_key",
+     "filename",
+     "version",
+     "doc_type",
+     "status",
+     "chunks",
+     "mentions",
+     "runbook_links",
+     "flagged_sections",
+     "warnings"
+    ],
+    "title": "UploadReport"
+   },
+   "ValidationError": {
+    "properties": {
+     "loc": {
+      "items": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "integer"
+        }
+       ]
+      },
+      "type": "array",
+      "title": "Location"
+     },
+     "msg": {
+      "type": "string",
+      "title": "Message"
+     },
+     "type": {
+      "type": "string",
+      "title": "Error Type"
+     },
+     "input": {
+      "title": "Input"
+     },
+     "ctx": {
+      "type": "object",
+      "title": "Context"
+     }
+    },
+    "type": "object",
+    "required": [
+     "loc",
+     "msg",
+     "type"
+    ],
+    "title": "ValidationError"
+   }
+  }
+ }
+}
