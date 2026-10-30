@@ -84,6 +84,60 @@
     }
    }
   },
+  "/api/answer-checks": {
+   "get": {
+    "summary": "Answer Checks",
+    "operationId": "answer_checks_api_answer_checks_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/AnswerCheckSummary"
+        }
+       }
+      }
+     }
+    }
+   },
+   "post": {
+    "summary": "Rate Answer",
+    "operationId": "rate_answer_api_answer_checks_post",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/AnswerCheckRequest"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/AnswerCheckSummary"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
   "/api/impact": {
    "post": {
     "summary": "Impact",
@@ -835,6 +889,117 @@
      "notes"
     ],
     "title": "Answer"
+   },
+   "AnswerCheck": {
+    "properties": {
+     "question": {
+      "type": "string",
+      "title": "Question"
+     },
+     "status": {
+      "type": "string",
+      "title": "Status"
+     },
+     "verdict": {
+      "type": "string",
+      "title": "Verdict"
+     },
+     "created_at": {
+      "type": "integer",
+      "title": "Created At"
+     }
+    },
+    "type": "object",
+    "required": [
+     "question",
+     "status",
+     "verdict",
+     "created_at"
+    ],
+    "title": "AnswerCheck"
+   },
+   "AnswerCheckRequest": {
+    "properties": {
+     "question": {
+      "type": "string",
+      "maxLength": 500,
+      "minLength": 3,
+      "title": "Question"
+     },
+     "status": {
+      "type": "string",
+      "enum": [
+       "answered",
+       "not_found"
+      ],
+      "title": "Status"
+     },
+     "mode": {
+      "type": "string",
+      "maxLength": 20,
+      "title": "Mode"
+     },
+     "verdict": {
+      "type": "string",
+      "enum": [
+       "supported",
+       "unsupported",
+       "right_not_found",
+       "should_have_answered"
+      ],
+      "title": "Verdict"
+     }
+    },
+    "type": "object",
+    "required": [
+     "question",
+     "status",
+     "mode",
+     "verdict"
+    ],
+    "title": "AnswerCheckRequest",
+    "description": "A visitor's verdict on an answer they asked for (a live spot check, not a benchmark)."
+   },
+   "AnswerCheckSummary": {
+    "properties": {
+     "n": {
+      "type": "integer",
+      "title": "N"
+     },
+     "answered_rated": {
+      "type": "integer",
+      "title": "Answered Rated"
+     },
+     "supported": {
+      "type": "integer",
+      "title": "Supported"
+     },
+     "not_found_rated": {
+      "type": "integer",
+      "title": "Not Found Rated"
+     },
+     "right_not_found": {
+      "type": "integer",
+      "title": "Right Not Found"
+     },
+     "recent": {
+      "items": {
+       "$ref": "#/components/schemas/AnswerCheck"
+      },
+      "type": "array",
+      "title": "Recent"
+     }
+    },
+    "type": "object",
+    "required": [
+     "n",
+     "answered_rated",
+     "supported",
+     "not_found_rated",
+     "right_not_found",
+     "recent"
+    ],
+    "title": "AnswerCheckSummary"
    },
    "AskRequest": {
     "properties": {

@@ -22,6 +22,8 @@ export type DeployRecord = S["DeployRecord"];
 export type GraphStatus = S["GraphStatus"];
 export type QaTest = S["QaTest"];
 export type QaRepair = S["QaRepair"];
+export type AnswerCheckRequest = S["AnswerCheckRequest"];
+export type AnswerCheckSummary = S["AnswerCheckSummary"];
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const res = await fetch(`/api${path}`, init);
@@ -42,6 +44,8 @@ function post<T>(path: string, body: unknown): Promise<T> {
 export const api = {
   stats: () => request<RepoStats>("/repo/stats"),
   ask: (body: AskRequest) => post<Answer>("/ask", body),
+  answerChecks: () => request<AnswerCheckSummary>("/answer-checks"),
+  rateAnswer: (body: AnswerCheckRequest) => post<AnswerCheckSummary>("/answer-checks", body),
   impact: (body: ImpactRequest) => post<ImpactReport>("/impact", body),
   commits: () => request<CommitSummary[]>("/commits?limit=40"),
   graph: (key: string, depth: number) =>

@@ -147,6 +147,15 @@ CREATE TABLE IF NOT EXISTS span_vectors(
   created_at INTEGER NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS answer_checks(
+  id INTEGER PRIMARY KEY,
+  question TEXT NOT NULL,
+  status TEXT NOT NULL CHECK (status IN ('answered', 'not_found')),
+  mode TEXT NOT NULL,
+  verdict TEXT NOT NULL CHECK (verdict IN ('supported', 'unsupported', 'right_not_found', 'should_have_answered')),
+  created_at INTEGER NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS qa_tests(
   id TEXT PRIMARY KEY,
   title TEXT NOT NULL,

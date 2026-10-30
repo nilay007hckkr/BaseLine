@@ -95,6 +95,17 @@ a claim without a clear "supported" verdict is removed. Retrieval is measured au
 `make eval-retrieval` (find the issue a PR or commit links to from its title alone, as of its time);
 the answer-level question set of EVALUATION §3 is still to be written by the team.
 
+**Subject check:** when the question names a service or file (and gives no line range), evidence
+must be about it: either reached from it in the graph (its commits, their PRs and issues, docs
+that mention it), or containing one sentence that names it and another key word of the question.
+Without this, a false-premise question ("Why was paymentservice rewritten in Rust?") was answered
+from unrelated text that happened to share its rare words ("no Rust toolchain" in a load-generator
+PR, "currencyservice has been rewritten in TypeScript").
+
+**Live spot checks:** on the Ask page, visitors rate the answer to their own question (backed by
+its sources or not; "not found" right or not). The tally is shown with n and labelled as a spot
+check, not a benchmark (`GET/POST /api/answer-checks`).
+
 ## 4. Docs RAG-lite
 
 - **Sources:** in-repo `README*` and `docs/**` (versioned by git), plus uploads (PDF, Markdown) with an optional `doc_type` (`runbook | design | spec`).

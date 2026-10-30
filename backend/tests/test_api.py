@@ -102,3 +102,33 @@ def test_scorecard_reads_both_result_files(tmp_path):
     assert culprit.synthetic and culprit.n == 4 and culprit.baseline_value == 0.25
     assert cards[3].n == 3 and "3 of 4" in cards[3].note
     assert scorecard(tmp_path / "missing") == []
+
+
+def test_visitors_can_rate_answers_and_see_the_tally(fx, tmp_path):
+    import shutil
+
+    from hindsight.core.config import load_settings
+
+    db = tmp_path / "copy.db"
+    shutil.copy(fx.settings.db_path, db)
+    settings = load_settings({"DATA_DIR": str(fx.settings.data_dir), "DB_PATH": str(db)})
+    app_module.app.dependency_overrides[app_module.get_settings] = lambda: settings
+    c = TestClient(app_module.app)
+    assert c.get("/api/answer-checks").json()["n"] == 0
+    good = {
+        "question": "Why USD?",
+        "status": "answered",
+        "mode": "extractive",
+        "verdict": "supported",
+    }
+    c.post("/api/answer-checks", json=good)
+    c.post("/api/answer-checks", json={**good, "verdict": "unsupported"})
+    tally = c.post(
+        "/api/answer-checks",
+        json={**good, "status": "not_found", "mode": "none", "verdict": "right_not_found"},
+    ).json()
+    assert (tally["n"], tally["answered_rated"], tally["supported"]) == (3, 2, 1)
+    assert (tally["not_found_rated"], tally["right_not_found"]) == (1, 1)
+    # a verdict that does not fit the answer is rejected
+    bad = c.post("/api/answer-checks", json={**good, "verdict": "right_not_found"})
+    assert bad.status_code == 422

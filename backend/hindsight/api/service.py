@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import sqlite3
+import time
 from pathlib import Path
 
 from hindsight.brain.ask import ask
@@ -19,7 +20,15 @@ from hindsight.core.graphstore import (
     neo4j_driver,
 )
 from hindsight.core.llm import Chain
-from hindsight.core.schemas import Answer, CommitSummary, GraphStatus, ScoreCard
+from hindsight.core.schemas import (
+    Answer,
+    AnswerCheck,
+    AnswerCheckRequest,
+    AnswerCheckSummary,
+    CommitSummary,
+    GraphStatus,
+    ScoreCard,
+)
 
 RESULTS_DIR = ROOT / "eval" / "results"
 
@@ -271,3 +280,40 @@ def scorecard(results_dir: Path = RESULTS_DIR, primary: str | None = None) -> li
                 result_file=heal[-1],
             )
     return cards
+
+
+VERDICTS = {
+    "answered": ("supported", "unsupported"),
+    "not_found": ("right_not_found", "should_have_answered"),
+}
+
+
+def record_answer_check(conn: sqlite3.Connection, check: AnswerCheckRequest) -> AnswerCheckSummary:
+    if check.verdict not in VERDICTS[check.status]:
+        raise ValueError(
+            f"verdict {check.verdict!r} does not fit an answer that is {check.status!r}"
+        )
+    conn.execute(
+        "INSERT INTO answer_checks(question, status, mode, verdict, created_at) VALUES (?, ?, ?, ?, ?)",
+        (check.question.strip(), check.status, check.mode, check.verdict, int(time.time())),
+    )
+    return answer_check_summary(conn)
+
+
+def answer_check_summary(conn: sqlite3.Connection) -> AnswerCheckSummary:
+    counts = dict(
+        conn.execute("SELECT verdict, COUNT(*) FROM answer_checks GROUP BY verdict").fetchall()
+    )
+    recent = conn.execute(
+        "SELECT question, status, verdict, created_at FROM answer_checks ORDER BY id DESC LIMIT 10"
+    ).fetchall()
+    return AnswerCheckSummary(
+        n=sum(counts.values()),
+        answered_rated=counts.get("supported", 0) + counts.get("unsupported", 0),
+        supported=counts.get("supported", 0),
+        not_found_rated=counts.get("right_not_found", 0) + counts.get("should_have_answered", 0),
+        right_not_found=counts.get("right_not_found", 0),
+        recent=[
+            AnswerCheck(question=r[0], status=r[1], verdict=r[2], created_at=r[3]) for r in recent
+        ],
+    )

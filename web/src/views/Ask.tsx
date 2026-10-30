@@ -1,13 +1,84 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState, type SyntheticEvent } from "react";
-import { api, type Answer, type EvidenceItem } from "../api/client";
+import { api, type Answer, type AnswerCheckRequest, type EvidenceItem } from "../api/client";
 import { ErrorBox, Kind, Section, fmtDate } from "../ui";
 
 const EXAMPLES = [
   "Why does checkoutservice convert currency to USD?",
+  "Why was currencyservice rewritten in TypeScript?",
   "Why does the cart service use Redis?",
-  "Why was paymentservice rewritten in Rust?",
 ];
+// paymentservice is written in Node.js: the history cannot explain a rewrite that never happened
+const TRICK = "Why was paymentservice rewritten in Rust?";
+
+function Tally() {
+  const tally = useQuery({ queryKey: ["answer-checks"], queryFn: api.answerChecks });
+  const t = tally.data;
+  if (!t) return null;
+  if (!t.n) {
+    return <p className="small muted">No live checks yet: be the first to rate an answer.</p>;
+  }
+  return (
+    <p className="small">
+      <span className="badge">checked live</span> {t.supported} of {t.answered_rated} rated answers
+      were backed by their sources · {t.right_not_found} of {t.not_found_rated} “not found” replies
+      were judged right · n = {t.n} visitor ratings (a spot check, not a benchmark)
+    </p>
+  );
+}
+
+type Verdict = AnswerCheckRequest["verdict"];
+
+function Rate({ answer }: { answer: Answer }) {
+  const client = useQueryClient();
+  const rate = useMutation({
+    mutationFn: (verdict: Verdict) =>
+      api.rateAnswer({
+        question: answer.question,
+        status: answer.status === "not_found" ? "not_found" : "answered",
+        mode: answer.mode,
+        verdict,
+      }),
+    onSuccess: (summary) => {
+      client.setQueryData(["answer-checks"], summary);
+    },
+  });
+  const options: [Verdict, string][] =
+    answer.status === "not_found"
+      ? [
+          ["right_not_found", "Right, the history can't answer this"],
+          ["should_have_answered", "It should have answered"],
+        ]
+      : [
+          ["supported", "Sources back it up ✓"],
+          ["unsupported", "They don't ✗"],
+        ];
+  return (
+    <Section
+      title="Does it hold up?"
+      hint="Open one cited source (it links to the real commit, pull request or issue), then rate the answer."
+    >
+      {rate.isSuccess ? (
+        <p className="small">Thanks, recorded. The tally above now includes your rating.</p>
+      ) : (
+        <div className="row">
+          {options.map(([verdict, label]) => (
+            <button
+              key={verdict}
+              disabled={rate.isPending}
+              onClick={() => {
+                rate.mutate(verdict);
+              }}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+      )}
+      {rate.isError ? <ErrorBox error={rate.error} /> : null}
+    </Section>
+  );
+}
 
 function Evidence({ item }: { item: EvidenceItem }) {
   return (
@@ -101,10 +172,12 @@ export function Ask() {
   const [file, setFile] = useState("");
   const [lines, setLines] = useState("");
   const mutation = useMutation({ mutationFn: api.ask });
+  const [asked, setAsked] = useState(0);
 
   function submit(event: SyntheticEvent) {
     event.preventDefault();
     const [start, end] = lines.split("-").map((x) => Number.parseInt(x, 10));
+    setAsked((n) => n + 1);
     mutation.mutate({
       question,
       file: file.trim() || null,
@@ -117,8 +190,9 @@ export function Ask() {
     <>
       <Section
         title="Why is the code like this?"
-        hint="Answers come only from commits, pull requests, issues, discussions and docs, with every source linked."
+        hint="Answers come only from commits, pull requests, issues, discussions and docs, with every source linked. One-minute check: ask your own question, open a cited source, then rate the answer."
       >
+        <Tally />
         <form onSubmit={submit} className="stack">
           <input
             value={question}
@@ -164,10 +238,24 @@ export function Ask() {
               {ex}
             </button>
           ))}
+          {" · Trick question (should say not found): "}
+          <button
+            className="link"
+            onClick={() => {
+              setQuestion(TRICK);
+            }}
+          >
+            {TRICK}
+          </button>
         </p>
       </Section>
       {mutation.isError ? <ErrorBox error={mutation.error} /> : null}
-      {mutation.data ? <Result answer={mutation.data} /> : null}
+      {mutation.data ? (
+        <>
+          <Result answer={mutation.data} />
+          <Rate key={asked} answer={mutation.data} />
+        </>
+      ) : null}
     </>
   );
 }

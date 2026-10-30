@@ -36,6 +36,8 @@ from hindsight.core.db import connect, get_meta
 from hindsight.core.graphstore import GraphReader, GraphUnavailableError, graph_reader
 from hindsight.core.schemas import (
     Answer,
+    AnswerCheckRequest,
+    AnswerCheckSummary,
     AskRequest,
     CommitSummary,
     DeployRecord,
@@ -118,6 +120,20 @@ def ask(req: AskRequest, conn: Conn, settings: Cfg, graph: Graph) -> Answer:
     return service.ask_question(
         conn, settings, req.question, req.file, req.line_start, req.line_end, graph
     )
+
+
+@app.get("/api/answer-checks", response_model=AnswerCheckSummary)
+def answer_checks(conn: Conn) -> AnswerCheckSummary:
+    return service.answer_check_summary(conn)
+
+
+@app.post("/api/answer-checks", response_model=AnswerCheckSummary)
+def rate_answer(check: AnswerCheckRequest, conn: Conn) -> AnswerCheckSummary:
+    try:
+        with conn:
+            return service.record_answer_check(conn, check)
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
 
 
 @app.post("/api/impact", response_model=ImpactReport)

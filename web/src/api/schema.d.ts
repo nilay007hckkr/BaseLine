@@ -55,6 +55,24 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/answer-checks": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Answer Checks */
+        get: operations["answer_checks_api_answer_checks_get"];
+        put?: never;
+        /** Rate Answer */
+        post: operations["rate_answer_api_answer_checks_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/impact": {
         parameters: {
             query?: never;
@@ -393,6 +411,52 @@ export interface components {
             checker: string;
             /** Notes */
             notes: string[];
+        };
+        /** AnswerCheck */
+        AnswerCheck: {
+            /** Question */
+            question: string;
+            /** Status */
+            status: string;
+            /** Verdict */
+            verdict: string;
+            /** Created At */
+            created_at: number;
+        };
+        /**
+         * AnswerCheckRequest
+         * @description A visitor's verdict on an answer they asked for (a live spot check, not a benchmark).
+         */
+        AnswerCheckRequest: {
+            /** Question */
+            question: string;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "answered" | "not_found";
+            /** Mode */
+            mode: string;
+            /**
+             * Verdict
+             * @enum {string}
+             */
+            verdict: "supported" | "unsupported" | "right_not_found" | "should_have_answered";
+        };
+        /** AnswerCheckSummary */
+        AnswerCheckSummary: {
+            /** N */
+            n: number;
+            /** Answered Rated */
+            answered_rated: number;
+            /** Supported */
+            supported: number;
+            /** Not Found Rated */
+            not_found_rated: number;
+            /** Right Not Found */
+            right_not_found: number;
+            /** Recent */
+            recent: components["schemas"]["AnswerCheck"][];
         };
         /** AskRequest */
         AskRequest: {
@@ -1139,6 +1203,59 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Answer"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    answer_checks_api_answer_checks_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AnswerCheckSummary"];
+                };
+            };
+        };
+    };
+    rate_answer_api_answer_checks_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AnswerCheckRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AnswerCheckSummary"];
                 };
             };
             /** @description Validation Error */

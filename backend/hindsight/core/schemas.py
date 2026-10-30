@@ -365,3 +365,28 @@ class QaRepair(Contract):
     after_shot: str | None
     patch: str
     created_at: int
+
+
+class AnswerCheckRequest(Contract):
+    """A visitor's verdict on an answer they asked for (a live spot check, not a benchmark)."""
+
+    question: str = Field(min_length=3, max_length=500)
+    status: Literal["answered", "not_found"]
+    mode: str = Field(max_length=20)
+    verdict: Literal["supported", "unsupported", "right_not_found", "should_have_answered"]
+
+
+class AnswerCheck(Contract):
+    question: str
+    status: str
+    verdict: str
+    created_at: int
+
+
+class AnswerCheckSummary(Contract):
+    n: int
+    answered_rated: int
+    supported: int
+    not_found_rated: int
+    right_not_found: int
+    recent: list[AnswerCheck]
