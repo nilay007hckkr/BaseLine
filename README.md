@@ -29,8 +29,10 @@ Phase 2 additions (in progress; see [docs/PLAN.md](docs/PLAN.md)):
 | Test the shop from real tickets | Tickets cite the issue, PR or commit they come from (e.g. issue #3578: the cart keeps items after an order). Each becomes a browser test; every quoted UI text is traced to the template line and commit that introduced it. When a button is renamed or restyled, the test heals itself; when something is really broken, it fails and says why. Repairs wait for a person to approve |
 | Better answers, still checked | Semantic search with a local embedding model finds evidence that uses different words. A local model (Ollama) can phrase answers, and a second check removes any claim its sources do not support. Nothing leaves the machine |
 
-The dashboard opens with a two-minute guided tour (skippable at any time), then a home page with
-quests, plain-language results and a manual; every technical word has a plain explanation on hover.
+The dashboard opens with a short guided run (skippable at any time): a wireframe ship flies a
+vector grid and stops at six gates, each explaining one feature with a live example. Then come a
+minimal home page, one page per feature (sub-pages instead of long scrolls), plain-language results
+and a manual; every technical word has a plain explanation on hover.
 
 Requirement-by-requirement mapping: [docs/PS06.md](docs/PS06.md).
 
@@ -42,7 +44,15 @@ make setup         # backend and web dependencies
 make ingest        # clone + read the history of Online Boutique (or REPO=<github url>)
 make eval          # measure the impact check → eval/results/
 make dev           # API on :8000 + dashboard on http://localhost:5173
+make run           # one command, two dashboards: the demo on :8000, your own repo on :8080
 ```
+
+`make run` serves the demo (Online Boutique) on http://localhost:8000 and an empty **workspace**
+on http://localhost:8080: paste a public GitHub URL, and Hindsight reads that repository into its
+own folder (`data/workspace/`), then measures the impact check on its history. The onboarding run
+plays while it reads, using the demo's examples. Incidents and Tests need the demo shop, so the
+workspace leaves them out. **More › Settings** picks the model provider order and model names;
+API keys stay in `.env` and are never shown or typed in the browser.
 
 Optional graph database: `make graph-up && make graph-sync` copies the graph into Neo4j (Docker). The Map,
 the "why" path and impact structure then read it with Cypher, and the Neo4j Browser on

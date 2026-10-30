@@ -61,6 +61,26 @@ impact replay and the fault campaign, each card marked with its suite and whethe
 API: `GET /graph/status` (which store answers, sync state, counts, Neo4j Browser link);
 `GET /graph` responses carry `backend`. Example Cypher queries: `docs/GRAPH.md`.
 
+### 0.3 Workspace instance and model settings (2026-10-31, ADR 0002)
+
+`make run` (`scripts/run.sh`) starts two API processes from one command: the demo on :8000 and a
+workspace on :8080 (`HINDSIGHT_MODE=workspace`). A workspace starts empty; each connected
+repository gets its own folder under `data/workspace/repos-by-name/<owner>__<name>/` (database,
+clone, GitHub cache, uploads, `results/`), and `active.json` names the one on screen.
+
+| Method | Path | Purpose |
+|---|---|---|
+| GET | `/config` | `mode` (demo / workspace), the demo's port, the repository, the pages this instance shows |
+| POST | `/workspace/connect` `{url}` | Start ingest + impact replay in a background thread (202; 409 while one runs; 422 for a non-GitHub URL) |
+| GET | `/workspace/status` | Repository on screen, job state, stage, progress, whether it was measured |
+| GET · PUT | `/settings/llm` | Provider order and model names (non-secret, `<DATA_DIR>/settings.json`); keys are reported as set or not, never returned |
+| GET | `/settings/llm/{provider}/models` | Models the configured key can use (Gemini `models.list` filtered to `generateContent`, Groq `/openai/v1/models`, Ollama `/api/tags`) |
+
+The workspace's tour calls the demo's API, so the demo allows the workspace origin through
+`CORS_ORIGINS`. Only `https://github.com/<owner>/<name>` URLs are accepted, and `git clone` runs
+with `GIT_TERMINAL_PROMPT=0` so a missing or private repository fails at once instead of waiting
+for a username.
+
 ## 1. Architecture
 
 ```
@@ -164,11 +184,15 @@ TestRun, Repair, LogTemplate, Incident, Deploy`.
 
 All configuration comes from `.env` (see `.env.example`). The key variables are
 `LLM_PROVIDER_ORDER`, `LLM_CACHE_MODE`, `LLM_ALLOW_EXTERNAL`, the API keys, `TARGET_URL`,
-`KIND_CLUSTER_NAME`, `ALERT_WEBHOOK_URL`, `GITHUB_TOKEN` and `DATA_DIR`.
+`KIND_CLUSTER_NAME`, `ALERT_WEBHOOK_URL`, `GITHUB_TOKEN` and `DATA_DIR`. Instance variables
+(set by `scripts/run.sh`): `HINDSIGHT_MODE`, `DEMO_PORT`, `CORS_ORIGINS`, `RESULTS_DIR`. Model
+choices saved from the dashboard (`<DATA_DIR>/settings.json`) override `LLM_PROVIDER_ORDER` and the
+`*_MODEL` variables; they hold no secrets.
 
 ## 7. Security and safety
 
-- Keys come from `.env` only. Never log key values.
+- Keys come from `.env` only. Never log key values. The Settings page shows whether a key is set,
+  never its value, and has no field to type one.
 - A scrubber runs before any external LLM call, catching tokens, keys and emails.
 - Uploaded docs default to local-only LLM processing (`DOCS_ALLOW_EXTERNAL=false`).
 - Ingested text is wrapped as delimited evidence and never treated as instructions. Instruction-like passages are flagged at ingest.

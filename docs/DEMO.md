@@ -1,16 +1,16 @@
 # Hindsight: Demo script (3 minutes) and judge Q&A
 
-**Setup on stage:** cluster running with the load generator, dashboard open on the Change view, Discord visible.
+**Setup on stage:** cluster running with the load generator, dashboard open on Home (tour skipped; **Tour** replays it), Discord visible.
 **Fallback:** `make demo-replay`, plus the backup video.
 
 | Time | Action | What to say |
 |---|---|---|
-| 0:00–0:20 | Title slide → Overview | "When seniors leave, the *why* leaves. Evidence about a change is scattered across git, PRs, docs, tests and logs. We connected it into one graph, on Google's own Online Boutique." Show repo stats, including the bot share we filter out. |
+| 0:00–0:20 | Title slide → Home, then **More › The data** | "When seniors leave, the *why* leaves. Evidence about a change is scattered across git, PRs, docs, tests and logs. We connected it into one graph, on Google's own Online Boutique." Show repo stats, including the bot share we filter out. |
 | 0:20–0:45 | **Ask** | "Why does checkout charge in USD?" → claims with citation chips; click one to open the PR. Then an unanswerable question → **Not found**. "It admits ignorance instead of guessing." |
-| 0:45–1:15 | **Change** | Select the "Speed up checkout" commit → affected services with reasons, 3 of N tests to run, a runbook section flagged as possibly stale. |
+| 0:45–1:15 | **Impact** | Select the "Speed up checkout" commit → affected services with reasons, 3 of N tests to run, a runbook section flagged as possibly stale. |
 | 1:15–1:50 | **Tests** | Run the selected tests. The renamed button is **healed** (score breakdown + diff, awaiting approval). place_order is a **GENUINE FAILURE: healing refused**, with the reasons shown. "Self-healing that hides bugs is worse than no tests." |
 | 1:50–2:30 | **Incidents** | Deploy → Discord alert → incident: **checkoutservice = culprit, frontend = victim**, with template evidence; runbook steps; the candidate commit is the one we just reviewed. |
-| 2:30–3:00 | **Scorecard** | Blast radius vs. baseline, false heals = 0 of N real bugs, culprit top-1/top-3, citation validity, each with n and a CI. "One graph: what breaks, what to test, what caused it, and how often we're right." |
+| 2:30–3:00 | **Proof** | Blast radius vs. baseline, false heals = 0 of N real bugs, culprit top-1/top-3, citation validity, each with n and a CI. "One graph: what breaks, what to test, what caused it, and how often we're right." |
 
 ## Judge Q&A
 

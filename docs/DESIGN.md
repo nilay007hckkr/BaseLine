@@ -219,6 +219,30 @@ score(s)   = base(s) + callee transfers + graph(s)
 - Provenance badges are shown on edges.
 - "Not found" and "genuine failure" are presented as normal outcomes, not errors.
 
+### 8.1 As built (2026-10-31)
+
+Black, minimal, pixel type: uppercase pixel labels (VT323), dot-matrix numbers (Doto), thin Inter
+headlines. Pages: Home · Ask · Impact · Map · Incidents · Tests · Proof · More (Bus factor, Docs,
+The data, Settings, Manual, Profile); busy pages split into sub-tabs. Copy is one line per idea.
+Numbers sit in rounded cards with a small label above (`cm-card`, `cm-stats`, `cm-rows`).
+
+Every colour means one thing, everywhere (legend in Manual › Colours):
+
+| Colour | Meaning | Examples |
+|---|---|---|
+| Green | Confirmed: stated, passed, ready | `explicit` links, Hindsight's bars, tests on the map, call to action |
+| Blue | History | commits, pull requests, issues, `api` links, the likely change of an incident |
+| Orange | Learned | co-change (`statistical`) links, predictions |
+| Red | Runtime | `runtime` links, the culprit, errors |
+| White | The project's files | services, folders, files, docs, `static` links |
+| Grey | Simple rule, baseline, inactive | `heuristic` links, simple-method bars, victims |
+| Gold | People | authors, owners, your XP and badges |
+
+The onboarding run is an original wireframe runner (three.js): six gates, one feature each, with a
+live "try it" against the demo's API. The Map draws items as wireframe shapes (shape = kind,
+colour = meaning) with the same glow. A workspace opens on a connect screen, plays the run while
+the repository is read, then shows a progress card until it is ready.
+
 ## 9. LLM layer
 
 - `llm.complete(task, prompt, schema)` walks the provider chain in order.
