@@ -227,7 +227,7 @@ class _Shop(http.server.BaseHTTPRequestHandler):
             self._send(302, location="/cart")
         elif self.path == "/cart/empty":
             self.carts[sid] = 0
-            self._send(302, location="/cart")
+            self._send(302, location="/")  # as the shop does (frontend emptyCartHandler)
         elif self.path == "/cart/checkout":
             self.carts[sid] = 0
             self._send(200, "done.html")
