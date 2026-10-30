@@ -95,6 +95,7 @@ def main(argv: list[str] | None = None) -> int:
     p_fault.add_argument(
         "--deploys", action="store_true", help="also record synthetic deploys first"
     )
+    sub.add_parser("embed", help="index citable text with the local embedding model (Ollama)")
     p_sync = sub.add_parser("graph-sync", help="copy the graph into Neo4j (make graph-up first)")
     p_sync.add_argument(
         "--drop", metavar="NAMESPACE", help="remove a namespace (e.g. a test run) instead"
@@ -143,6 +144,17 @@ def main(argv: list[str] | None = None) -> int:
 
             graph = graph_reader(conn, settings)
             _print(impact_report(conn, files=args.files, commit=args.commit, graph=graph))
+        elif args.cmd == "embed":
+            from hindsight.core.embed import OllamaEmbedder, index_spans
+
+            embedder = OllamaEmbedder(settings.ollama_host, settings.embed_model)
+            if not embedder.available():
+                print(
+                    f"Ollama is not running or {settings.embed_model} is not pulled"
+                    f" (ollama pull {settings.embed_model})"
+                )
+                return 1
+            _print(index_spans(conn, embedder))
         elif args.cmd == "graph-sync":
             from hindsight.core.graphsync import drop_namespace, sync
 

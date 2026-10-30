@@ -85,6 +85,38 @@ def rca_markdown(result: dict[str, Any]) -> str:
     return "\n".join(lines)
 
 
+def retrieval_markdown(result: dict[str, Any]) -> str:
+    repo = result.get("repo") or {}
+    lines = [
+        "## Finding the evidence (retrieval, automatic proxy)",
+        "",
+        f"- Task: from a pull request's or commit's title alone (\"#N\" removed), find the issue it links to in"
+        f" {repo.get('owner', '?')}/{repo.get('name', '?')}. Only text recorded before that PR or commit is"
+        ' searched. `fixes` uses explicit "Fixes #N" links; `references` uses plain "#N" mentions (weaker key).',
+        f"- Semantic search: local embeddings (`{result['embed_model']}`); hybrid = rank fusion of keyword and semantic,"
+        " as the answers use it.",
+        f"- Result file: `{Path(result['result_file']).relative_to(ROOT)}` (created {result['created_at']})",
+        "",
+        "| Answer key | n | Method | Hit@1 | Hit@5 | Hit@10 | MRR |",
+        "|---|---|---|---|---|---|---|",
+    ]
+    names = {
+        "keyword": "Keyword (BM25)",
+        "semantic": "Semantic only",
+        "hybrid": "Hybrid (used by answers)",
+    }
+    for key, block in result["sets"].items():
+        first = True
+        for name, metrics in block["methods"].items():
+            label = f"{key} | {block['n_queries']}" if first else " | "
+            lines.append(
+                f"| {label} | {names.get(name, name)} | " + " | ".join(_cells(metrics)) + " |"
+            )
+            first = False
+    lines.append("")
+    return "\n".join(lines)
+
+
 def heal_markdown(result: dict[str, Any]) -> str:
     cfg = result["config"]
     n = cfg["n_mutations"]
@@ -169,6 +201,11 @@ def write_latest(primary: str | None = None) -> str:
             others.append(data)
     if others:
         parts.append(others_markdown(others))
+    retrieval = sorted(RESULTS_DIR.glob("retrieval-*.json"))
+    if retrieval:
+        data = json.loads(retrieval[-1].read_text())
+        data["result_file"] = str(retrieval[-1])
+        parts.append(retrieval_markdown(data))
     heal = sorted(RESULTS_DIR.glob("heal-*.json"))
     if heal:
         data = json.loads(heal[-1].read_text())
@@ -188,7 +225,7 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="hs-eval", description=__doc__)
     parser.add_argument(
         "what",
-        choices=["impact", "rca", "heal", "all", "report"],
+        choices=["impact", "rca", "heal", "retrieval", "all", "report"],
         help="impact: history replay (fast); rca: fault campaign on the local cluster (slow);"
         " report: only rewrite eval/results/latest.md from the result files",
     )
@@ -209,6 +246,19 @@ def main(argv: list[str] | None = None) -> int:
             conn.close()
     if args.what == "rca":
         campaign(settings, runs=args.runs, healthy_s=args.healthy, out_dir=RESULTS_DIR)
+    if args.what == "retrieval":
+        from hindsight.core.embed import OllamaEmbedder, has_index
+        from hindsight.eval.retrieval import run as run_retrieval
+
+        embedder = OllamaEmbedder(settings.ollama_host, settings.embed_model)
+        conn = connect(settings.db_path)
+        try:
+            if not has_index(conn, settings.embed_model):
+                print("no semantic index yet: run `make embed` first")
+                return 1
+            run_retrieval(conn, embedder, RESULTS_DIR)
+        finally:
+            conn.close()
     if args.what == "heal":
         from hindsight.eval.heal import evaluate
         from hindsight.sentinel.service import generate_all

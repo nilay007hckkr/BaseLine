@@ -139,6 +139,14 @@ CREATE TABLE IF NOT EXISTS llm_cache(
   created_at INTEGER NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS span_vectors(
+  span_id INTEGER PRIMARY KEY REFERENCES spans(id),
+  model TEXT NOT NULL,
+  text_hash TEXT NOT NULL,
+  vec BLOB NOT NULL,
+  created_at INTEGER NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS qa_tests(
   id TEXT PRIMARY KEY,
   title TEXT NOT NULL,

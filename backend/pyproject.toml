@@ -9,6 +9,7 @@ dependencies = [
   "httpx>=0.28.1",
   "neo4j>=6.4.1",
   "networkx>=3.7",
+  "numpy>=2.5.4",
   "playwright>=1.64.1",
   "pydantic>=2.14.2",
   "pymupdf>=2.0",

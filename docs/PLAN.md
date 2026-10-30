@@ -24,8 +24,8 @@ Built on top of phase 1, in this order (TRD §0.1 lists how each one differs fro
 |---|---|---|---|
 | A | Document upload (Markdown, PDF), versions, superseded docs, runbooks linked to services | Upload twice → `@v2`, old version leaves answers; impact lists the service's runbooks | done |
 | B | LogSense on the local shop: collector, templates, detectors, culprit vs victim, incident → change, fault scripts, Incidents view | Injected fault → incident naming the right culprit; `make eval-rca` writes `eval/results/rca-*.json` | in progress |
-| C | SentinelQA: tickets → tests, runner, healer with refusal rules, mutation harness | Cosmetic mutations healed, defect mutations refused, 0 false heals | next |
-| D | Smarter answers: local model, embeddings, meaning check | Answers still pass the citation check; abstention unchanged on unanswerable questions | after C |
+| C | SentinelQA: tickets (from the repository's issues, PRs and commits) → tests, runner, healer with refusal rules, mutation harness | Cosmetic mutations healed, defect mutations refused, 0 false heals | built; live run pending |
+| D | Smarter answers: local model, embeddings, meaning check | Answers still pass the citation check; abstention unchanged on unanswerable questions; `make eval-retrieval` compares keyword, semantic and hybrid search | built; live run pending |
 | E | Neo4j graph layer (ADR 0001): sync, Cypher reads with SQLite fallback, Map badge, Neo4j Browser queries | Parity test: identical reads and outputs on both stores | done |
 | F | Same impact protocol on more public repositories (OpenTelemetry Demo, .NET eShop) | `make try-repo` writes their results into `eval/results/latest.md` | done |
 

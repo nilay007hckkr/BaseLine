@@ -47,6 +47,8 @@ class Settings:
     kind_cluster: str = "hs-target"
     target_url: str = "http://localhost:8081"  # the demo shop
     alert_webhook: str = ""
+    embed_model: str = "nomic-embed-text"  # local (Ollama); semantic search once indexed
+    answer_support_check: bool = True  # a configured model re-checks claims (can only remove)
     # auto: Neo4j when it is running and in sync with SQLite, else SQLite | sqlite | neo4j
     graph_backend: str = "auto"
     neo4j_uri: str = "bolt://localhost:7687"
@@ -96,6 +98,8 @@ def load_settings(env: dict[str, str] | None = None) -> Settings:
         kind_cluster=get("KIND_CLUSTER_NAME", "hs-target"),
         target_url=get("TARGET_URL", "http://localhost:8081"),
         alert_webhook=get("ALERT_WEBHOOK_URL"),
+        embed_model=get("OLLAMA_EMBED_MODEL", "nomic-embed-text"),
+        answer_support_check=get("ANSWER_SUPPORT_CHECK", "true").lower() == "true",
         graph_backend=get("GRAPH_BACKEND", "auto").lower(),
         neo4j_uri=get("NEO4J_URI", "bolt://localhost:7687"),
         neo4j_user=get("NEO4J_USER", "neo4j"),

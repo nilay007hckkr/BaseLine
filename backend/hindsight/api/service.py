@@ -10,6 +10,7 @@ from hindsight.brain.ask import ask
 from hindsight.brain.ingest import parse_github
 from hindsight.core.config import ROOT, Settings
 from hindsight.core.db import connect, get_meta
+from hindsight.core.embed import OllamaEmbedder, dense_search, has_index
 from hindsight.core.graphstore import (
     GraphReader,
     graph_counts,
@@ -45,6 +46,13 @@ def ask_question(
     graph: GraphReader | None = None,
 ) -> Answer:
     chain = Chain.from_settings(conn, settings)
+    dense = None
+    if settings.embed_model and has_index(conn, settings.embed_model):
+        embedder = OllamaEmbedder(settings.ollama_host, settings.embed_model, timeout=10)
+
+        def dense(question: str) -> list[int]:
+            return dense_search(conn, embedder, question)
+
     return ask(
         conn,
         question,
@@ -55,6 +63,8 @@ def ask_question(
         chain=chain,
         uploads_to_external=settings.docs_allow_external,
         graph=graph,
+        dense=dense,
+        support_check=settings.answer_support_check,
     )
 
 

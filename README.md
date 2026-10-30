@@ -26,6 +26,8 @@ Phase 2 additions (in progress; see [docs/PLAN.md](docs/PLAN.md)):
 | Add your own docs | Upload Markdown or PDF. A new upload with the same title becomes the next version; the old one stops being used in answers. Runbooks are linked to the services they mention and shown in impact reports |
 | Know what broke | LogSense watches the demo shop's logs, groups lines into templates, and opens an incident on a new error pattern or a spike. It separates the service that broke from the services that only suffered |
 | Know which change did it | Each incident lists recent deploys ranked by timing, whether they touched the broken service, and whether the impact check had predicted it, with the reason shown |
+| Test the shop from real tickets | Tickets cite the issue, PR or commit they come from (e.g. issue #3578: the cart keeps items after an order). Each becomes a browser test; every quoted UI text is traced to the template line and commit that introduced it. When a button is renamed or restyled, the test heals itself; when something is really broken, it fails and says why. Repairs wait for a person to approve |
+| Better answers, still checked | Semantic search with a local embedding model finds evidence that uses different words. A local model (Ollama) can phrase answers, and a second check removes any claim its sources do not support. Nothing leaves the machine |
 
 Requirement-by-requirement mapping: [docs/PS06.md](docs/PS06.md).
 
@@ -55,7 +57,14 @@ make collect                            # stream the shop's logs into LogSense (
 make fault SCENARIO=payment-down DEPLOYS=1   # break one service on purpose; records synthetic deploys
 make fault-revert SCENARIO=payment-down
 make eval-rca RUNS=10                   # repeat inject → detect → revert and score it (slow, ~2 h)
+make qa-generate qa-validate qa-run     # tickets → browser tests (3/3 on the healthy shop) → run
+make eval-heal                          # mutation harness: heals, refusals, false heals (synthetic)
 ```
+
+Local models (optional, [Ollama](https://ollama.com)): `ollama pull nomic-embed-text` and
+`ollama pull gemma3:4b`, then
+`make embed` builds the semantic index and `make eval-retrieval` measures keyword vs semantic vs
+hybrid search. Set `OLLAMA_CHAT_MODEL=gemma3:4b` in `.env` to let the local model phrase answers.
 
 No keys are needed. Optional settings in `.env`:
 - `GITHUB_TOKEN`: faster GitHub reads. Without it GitHub allows 60 requests an hour, so issue and PR text

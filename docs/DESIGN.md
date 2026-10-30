@@ -87,6 +87,14 @@ The LLM never writes reasons.
    - if nothing survives, or the top retrieval score is below τ_ret, answer `not_found` with the 3 nearest items.
 7. Thresholds are calibrated on the question set's validation half and recorded in `eval/results/`.
 
+**As built (phase 2):** semantic search covers all spans (not only the anchor's neighbourhood) and
+joins the RRF with the graph path and BM25; `not_found` is still decided by the IDF-weighted lexical
+coverage of the best evidence (τ = 0.6), so adding semantic search cannot loosen abstention. The NLI
+step is a model support check: one call judges every surviving claim against its cited text, and
+a claim without a clear "supported" verdict is removed. Retrieval is measured automatically by
+`make eval-retrieval` (find the issue a PR or commit links to from its title alone, as of its time);
+the answer-level question set of EVALUATION §3 is still to be written by the team.
+
 ## 4. Docs RAG-lite
 
 - **Sources:** in-repo `README*` and `docs/**` (versioned by git), plus uploads (PDF, Markdown) with an optional `doc_type` (`runbook | design | spec`).
