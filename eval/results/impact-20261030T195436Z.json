@@ -1,0 +1,104 @@
+{
+  "name": "impact_replay",
+  "created_at": "2026-10-30T19:54:36+00:00",
+  "command": "make try-repo REPO=https://github.com/open-telemetry/opentelemetry-demo",
+  "repo": {
+    "url": "https://github.com/open-telemetry/opentelemetry-demo",
+    "web": "https://github.com/open-telemetry/opentelemetry-demo",
+    "owner": "open-telemetry",
+    "name": "opentelemetry-demo",
+    "path": "/home/nilay/code/hindsight/data/other/open-telemetry__opentelemetry-demo/repos/open-telemetry__opentelemetry-demo",
+    "head_sha": "33bd823107b1b38eaa88dd4ef625cc16d60475d4",
+    "head_ts": 1793274596
+  },
+  "config": {
+    "split": {
+      "statistics": 0.7,
+      "validation": 0.15,
+      "test": 0.15
+    },
+    "seed": 13,
+    "bootstrap_resamples": 1000,
+    "weights": {
+      "cochange": 0.45,
+      "static": 0.25,
+      "same_component": 0.15,
+      "recency": 0.15
+    },
+    "weights_tuned": false,
+    "query_files": "2 to 30 non-generated files",
+    "filters": "bot, sweep (>30 files), merge commits and generated files excluded"
+  },
+  "bot_share": 0.4379,
+  "n_queries": 140,
+  "methods": {
+    "hindsight": {
+      "P@5": {
+        "value": 0.15,
+        "ci_low": 0.1186,
+        "ci_high": 0.1814
+      },
+      "R@10": {
+        "value": 0.3559,
+        "ci_low": 0.2891,
+        "ci_high": 0.4229
+      },
+      "Hit@3": {
+        "value": 0.45,
+        "ci_low": 0.3643,
+        "ci_high": 0.5357
+      }
+    },
+    "cochange_only": {
+      "P@5": {
+        "value": 0.1043,
+        "ci_low": 0.0786,
+        "ci_high": 0.1329
+      },
+      "R@10": {
+        "value": 0.2898,
+        "ci_low": 0.2235,
+        "ci_high": 0.361
+      },
+      "Hit@3": {
+        "value": 0.3357,
+        "ci_low": 0.25,
+        "ci_high": 0.4214
+      }
+    },
+    "same_directory": {
+      "P@5": {
+        "value": 0.1043,
+        "ci_low": 0.0786,
+        "ci_high": 0.1343
+      },
+      "R@10": {
+        "value": 0.2158,
+        "ci_low": 0.1597,
+        "ci_high": 0.2751
+      },
+      "Hit@3": {
+        "value": 0.3071,
+        "ci_low": 0.2357,
+        "ci_high": 0.3786
+      }
+    },
+    "most_frequent": {
+      "P@5": {
+        "value": 0.1229,
+        "ci_low": 0.0971,
+        "ci_high": 0.1514
+      },
+      "R@10": {
+        "value": 0.284,
+        "ci_low": 0.2192,
+        "ci_high": 0.3452
+      },
+      "Hit@3": {
+        "value": 0.4214,
+        "ci_low": 0.3429,
+        "ci_high": 0.5
+      }
+    }
+  }
+}
