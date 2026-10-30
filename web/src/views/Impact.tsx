@@ -1,5 +1,6 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useApp } from "../state";
 import { api, type ImpactItem } from "../api/client";
 import { ErrorBox, Provenance, ScoreBar, Section, fmtDate } from "../ui";
 
@@ -42,8 +43,21 @@ function Items({ items, empty }: { items: ImpactItem[]; empty: string }) {
 export function Impact() {
   const commits = useQuery({ queryKey: ["commits"], queryFn: api.commits });
   const [commit, setCommit] = useState("");
-  const [files, setFiles] = useState("");
-  const mutation = useMutation({ mutationFn: api.impact });
+  const { takePreset, unlock } = useApp();
+  // a quest hands over the files to check when it opens this page
+  const [preset] = useState(() => takePreset("impact"));
+  const [files, setFiles] = useState((preset?.files ?? []).join("\n"));
+  const mutation = useMutation({
+    mutationFn: api.impact,
+    onSuccess: () => {
+      unlock("impact");
+    },
+  });
+  const { mutate } = mutation;
+
+  useEffect(() => {
+    if (preset?.run && preset.files?.length) mutate({ files: preset.files, commit: null });
+  }, [preset, mutate]);
   const report = mutation.data;
 
   return (

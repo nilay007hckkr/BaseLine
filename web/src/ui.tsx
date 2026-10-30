@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { GLOSSARY } from "./glossary";
 
 export const PROVENANCE_HELP: Record<string, string> = {
   explicit: "Stated directly in the data, e.g. a diff or a 'fixes #N'",
@@ -21,7 +22,7 @@ export function pct(value: number): string {
 export function Provenance({ value }: { value: string }) {
   return (
     <span className={`badge prov-${value}`} title={PROVENANCE_HELP[value] ?? value}>
-      {value}
+      {GLOSSARY[value]?.term ?? value}
     </span>
   );
 }

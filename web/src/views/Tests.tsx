@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
+import { useApp } from "../state";
 import { api, type QaRepair, type QaTest } from "../api/client";
 import { ErrorBox, Loading, Section, fmtDate } from "../ui";
 
@@ -17,14 +18,17 @@ function locator(l: Record<string, string>): string {
 
 function TestRow({ test }: { test: QaTest }) {
   const client = useQueryClient();
+  const { unlock } = useApp();
   const [open, setOpen] = useState(false);
   const run = useMutation({
     mutationFn: () => api.runTest(test.id),
-    onSuccess: () =>
-      Promise.all([
+    onSuccess: async () => {
+      unlock("test");
+      await Promise.all([
         client.invalidateQueries({ queryKey: ["qa-tests"] }),
         client.invalidateQueries({ queryKey: ["qa-repairs"] }),
-      ]),
+      ]);
+    },
   });
   const last = test.last_run;
   return (

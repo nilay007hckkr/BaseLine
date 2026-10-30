@@ -1,5 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState, type SyntheticEvent } from "react";
+import { useEffect, useState, type SyntheticEvent } from "react";
+import { Term } from "../glossary";
+import { useApp } from "../state";
 import { api, type Answer, type AnswerCheckRequest, type EvidenceItem } from "../api/client";
 import { ErrorBox, Kind, Section, fmtDate } from "../ui";
 
@@ -31,6 +33,7 @@ type Verdict = AnswerCheckRequest["verdict"];
 
 function Rate({ answer }: { answer: Answer }) {
   const client = useQueryClient();
+  const { unlock } = useApp();
   const rate = useMutation({
     mutationFn: (verdict: Verdict) =>
       api.rateAnswer({
@@ -41,6 +44,7 @@ function Rate({ answer }: { answer: Answer }) {
       }),
     onSuccess: (summary) => {
       client.setQueryData(["answer-checks"], summary);
+      unlock("rate");
     },
   });
   const options: [Verdict, string][] =
@@ -104,11 +108,22 @@ function Evidence({ item }: { item: EvidenceItem }) {
   );
 }
 
+/** Server notes, reworded for people who do not know what an LLM provider is. */
+function plainNote(note: string): string {
+  if (note.startsWith("no LLM provider answered")) {
+    return "quoted word for word from the sources (no AI rewording)";
+  }
+  return note;
+}
+
 function Result({ answer }: { answer: Answer }) {
   if (answer.status === "not_found") {
     return (
       <Section title="Not found in project history">
-        <p>There isn't enough recorded evidence to answer this, so Hindsight won't guess.</p>
+        <p>
+          The project's history has no source that answers this, so Hindsight says{" "}
+          <Term id="notfound">not found</Term> instead of guessing.
+        </p>
         {answer.notes.length ? (
           <ul className="muted small">
             {answer.notes.map((n) => (
@@ -154,7 +169,9 @@ function Result({ answer }: { answer: Answer }) {
         {answer.anchors.length ? (
           <p className="muted small">Started from: {answer.anchors.join(", ")}</p>
         ) : null}
-        {answer.notes.length ? <p className="muted small">{answer.notes.join(" · ")}</p> : null}
+        {answer.notes.length ? (
+          <p className="muted small">{answer.notes.map(plainNote).join(" · ")}</p>
+        ) : null}
       </Section>
       <Section title="Sources" hint={`Checked with: ${answer.checker}`}>
         <ul className="plain">
@@ -168,11 +185,26 @@ function Result({ answer }: { answer: Answer }) {
 }
 
 export function Ask() {
-  const [question, setQuestion] = useState("");
+  const { takePreset, unlock } = useApp();
+  // a quest hands over a question when it opens this page
+  const [preset] = useState(() => takePreset("ask"));
+  const [question, setQuestion] = useState(preset?.question ?? "");
   const [file, setFile] = useState("");
   const [lines, setLines] = useState("");
-  const mutation = useMutation({ mutationFn: api.ask });
-  const [asked, setAsked] = useState(0);
+  const mutation = useMutation({
+    mutationFn: api.ask,
+    onSuccess: (answer) => {
+      unlock(answer.status === "not_found" ? "trick" : "ask");
+    },
+  });
+  const [asked, setAsked] = useState(preset?.run ? 1 : 0);
+  const { mutate } = mutation;
+
+  useEffect(() => {
+    if (preset?.run && preset.question) {
+      mutate({ question: preset.question, file: null, line_start: null, line_end: null });
+    }
+  }, [preset, mutate]);
 
   function submit(event: SyntheticEvent) {
     event.preventDefault();
