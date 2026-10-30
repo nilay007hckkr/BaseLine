@@ -7,6 +7,7 @@ import sqlite3
 from collections.abc import Iterator
 from typing import Annotated
 
+import httpx
 from fastapi import (
     BackgroundTasks,
     Depends,
@@ -17,10 +18,12 @@ from fastapi import (
     Query,
     UploadFile,
 )
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
-from hindsight.api import service
+from hindsight.api import llm_settings, service
+from hindsight.api.workspace import Workspace
 from hindsight.brain.graph import neighbourhood, search
 from hindsight.brain.impact import impact_report
 from hindsight.brain.risk import knowledge_at_risk
@@ -38,17 +41,24 @@ from hindsight.core.schemas import (
     Answer,
     AnswerCheckRequest,
     AnswerCheckSummary,
+    AppConfig,
     AskRequest,
     CommitSummary,
+    ConnectRequest,
     DeployRecord,
     DeployRequest,
     DocInfo,
+    Feature,
     GraphResponse,
     GraphStatus,
     ImpactReport,
     ImpactRequest,
     Incident,
     IncidentSummary,
+    LlmSettings,
+    LlmSettingsUpdate,
+    ModelList,
+    ProviderName,
     QaRepair,
     QaTest,
     RepoStats,
@@ -57,6 +67,7 @@ from hindsight.core.schemas import (
     ScoreCard,
     SearchHit,
     UploadReport,
+    WorkspaceStatus,
 )
 from hindsight.correlate.deploys import list_deploys, record_deploy
 from hindsight.logsense.incidents import get_incident, list_incidents
@@ -71,11 +82,53 @@ app = FastAPI(
     version="0.1.0",
     description="Project Brain: why was this built this way, and what will this change affect?",
 )
-_settings = load_settings()
+_base = load_settings()
+_prefs = llm_settings.Prefs(_base.data_dir / "settings.json")
+_workspace = Workspace(_base) if _base.mode == "workspace" else None
+if _base.cors_origins:  # e.g. the workspace instance's tour calls the demo's API
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=list(_base.cors_origins),
+        allow_methods=["GET", "POST"],
+        allow_headers=["Content-Type"],
+    )
+
+DEMO_FEATURES: tuple[Feature, ...] = (
+    "ask",
+    "impact",
+    "map",
+    "incidents",
+    "tests",
+    "proof",
+    "risk",
+    "docs",
+    "data",
+)
+# incidents and tests need the demo shop (its logs and browser tests)
+WORKSPACE_FEATURES: tuple[Feature, ...] = ("ask", "impact", "map", "proof", "risk", "docs", "data")
 
 
-def get_settings() -> Settings:
-    return _settings
+def get_base_settings() -> Settings:
+    """This instance's settings with the dashboard's model choices applied."""
+    return _prefs.apply(_base)
+
+
+def get_settings(base: Annotated[Settings, Depends(get_base_settings)]) -> Settings:
+    """Per request: in workspace mode, the folders of the repository on screen."""
+    return _workspace.current(base) if _workspace else base
+
+
+def get_prefs() -> llm_settings.Prefs:
+    return _prefs
+
+
+def get_workspace() -> Workspace | None:
+    return _workspace
+
+
+def get_http() -> Iterator[httpx.Client]:
+    with httpx.Client(timeout=10) as client:
+        yield client
 
 
 def get_conn(settings: Annotated[Settings, Depends(get_settings)]) -> Iterator[sqlite3.Connection]:
@@ -88,6 +141,10 @@ def get_conn(settings: Annotated[Settings, Depends(get_settings)]) -> Iterator[s
 
 Conn = Annotated[sqlite3.Connection, Depends(get_conn)]
 Cfg = Annotated[Settings, Depends(get_settings)]
+BaseCfg = Annotated[Settings, Depends(get_base_settings)]
+PrefsDep = Annotated[llm_settings.Prefs, Depends(get_prefs)]
+WorkspaceDep = Annotated[Workspace | None, Depends(get_workspace)]
+Http = Annotated[httpx.Client, Depends(get_http)]
 
 
 def get_graph(conn: Conn, settings: Cfg) -> GraphReader:
@@ -103,6 +160,66 @@ Graph = Annotated[GraphReader, Depends(get_graph)]
 @app.get("/api/health")
 def health() -> dict[str, str]:
     return {"status": "ok"}
+
+
+@app.get("/api/config", response_model=AppConfig)
+def app_config(settings: Cfg, workspace: WorkspaceDep) -> AppConfig:
+    if workspace is None:
+        return AppConfig(
+            mode="demo",
+            demo_port=settings.demo_port,
+            repo=service.primary_web(settings),
+            features=list(DEMO_FEATURES),
+        )
+    return AppConfig(
+        mode="workspace",
+        demo_port=settings.demo_port,
+        repo=workspace.repo(),
+        features=list(WORKSPACE_FEATURES),
+    )
+
+
+def _need_workspace(workspace: Workspace | None) -> Workspace:
+    if workspace is None:
+        raise HTTPException(status_code=404, detail="only on the workspace instance (make run)")
+    return workspace
+
+
+@app.get("/api/workspace/status", response_model=WorkspaceStatus)
+def workspace_status(workspace: WorkspaceDep) -> WorkspaceStatus:
+    return _need_workspace(workspace).status()
+
+
+@app.post("/api/workspace/connect", response_model=WorkspaceStatus, status_code=202)
+def workspace_connect(
+    req: ConnectRequest, workspace: WorkspaceDep, base: BaseCfg
+) -> WorkspaceStatus:
+    ws = _need_workspace(workspace)
+    try:
+        return ws.connect(base, req.url)
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    except RuntimeError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
+
+
+@app.get("/api/settings/llm", response_model=LlmSettings)
+def llm_view(settings: Cfg) -> LlmSettings:
+    return llm_settings.view(settings)
+
+
+@app.put("/api/settings/llm", response_model=LlmSettings)
+def llm_save(update: LlmSettingsUpdate, prefs: PrefsDep, base: BaseCfg) -> LlmSettings:
+    try:
+        prefs.save(update)
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    return llm_settings.view(prefs.apply(base))
+
+
+@app.get("/api/settings/llm/{provider}/models", response_model=ModelList)
+def llm_models(provider: ProviderName, settings: Cfg, http: Http) -> ModelList:
+    return llm_settings.list_models(settings, provider, http)
 
 
 @app.get("/api/repo/stats", response_model=RepoStats)
@@ -176,8 +293,8 @@ def risk(conn: Conn) -> RiskReport:
 
 
 @app.get("/api/scorecard", response_model=list[ScoreCard])
-def scorecard(settings: Annotated[Settings, Depends(get_settings)]) -> list[ScoreCard]:
-    return service.scorecard(primary=service.primary_web(settings))
+def scorecard(settings: Cfg) -> list[ScoreCard]:
+    return service.scorecard(settings.results_dir, primary=service.primary_web(settings))
 
 
 @app.post("/api/docs", response_model=UploadReport)

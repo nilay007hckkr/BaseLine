@@ -398,3 +398,66 @@ class AnswerCheckSummary(Contract):
     not_found_rated: int
     right_not_found: int
     recent: list[AnswerCheck]
+
+
+Feature = Literal["ask", "impact", "map", "incidents", "tests", "proof", "risk", "docs", "data"]
+
+
+class AppConfig(Contract):
+    """What this instance is: the demo (Online Boutique) or a workspace for your own repository."""
+
+    mode: Literal["demo", "workspace"]
+    demo_port: int
+    repo: str | None = None
+    features: list[Feature]
+
+
+class ConnectRequest(Contract):
+    url: str = Field(min_length=19, max_length=200, description="https://github.com/<owner>/<name>")
+
+
+class WorkspaceStatus(Contract):
+    """The repository on screen, and the connect job (ingest, then the accuracy replay)."""
+
+    repo: str | None = None
+    job: Literal["idle", "running", "failed"]
+    job_repo: str | None = None
+    stage: str = ""
+    progress: float = 0.0
+    error: str | None = None
+    measured: bool = False
+    measure_note: str | None = None
+
+
+ProviderName = Literal["gemini", "groq", "ollama"]
+
+
+class LlmProvider(Contract):
+    """A model provider. Keys live in .env only: this reports whether one is set, never its value."""
+
+    name: ProviderName
+    label: str
+    external: bool
+    key_env: str | None = None
+    key_set: bool
+    model: str
+    model_env: str
+    ready: bool
+
+
+class LlmSettings(Contract):
+    order: list[ProviderName]
+    providers: list[LlmProvider]
+    allow_external: bool
+    active: ProviderName | None = None
+
+
+class LlmSettingsUpdate(Contract):
+    order: list[ProviderName] = Field(max_length=3)
+    models: dict[ProviderName, str] = Field(default_factory=dict)
+
+
+class ModelList(Contract):
+    provider: ProviderName
+    models: list[str]
+    error: str | None = None

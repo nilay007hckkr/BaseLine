@@ -4,6 +4,7 @@ read-only GitHub cache → linking → co-change → statistics. Every step is i
 from __future__ import annotations
 
 import hashlib
+import os
 import re
 import sqlite3
 import subprocess
@@ -49,7 +50,20 @@ def ensure_clone(url: str, dest: Path, log: Log) -> Path:
         return dest
     dest.parent.mkdir(parents=True, exist_ok=True)
     log(f"cloning {url} → {dest}")
-    subprocess.run(["git", "clone", "--quiet", url, str(dest)], check=True)
+    # never wait for a username: a missing or private repository fails at once
+    done = subprocess.run(
+        ["git", "clone", "--quiet", url, str(dest)],
+        env={**os.environ, "GIT_TERMINAL_PROMPT": "0"},
+        stdin=subprocess.DEVNULL,
+        capture_output=True,
+        text=True,
+    )
+    if done.returncode != 0:
+        lines = done.stderr.strip().splitlines()
+        reason = lines[-1] if lines else f"git exited with {done.returncode}"
+        if "could not read Username" in reason or "not found" in reason:
+            reason = "not found, or private"
+        raise RuntimeError(f"could not clone {url}: {reason.removeprefix('fatal: ')}")
     return dest
 
 

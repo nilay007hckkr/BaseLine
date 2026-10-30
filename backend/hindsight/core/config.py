@@ -54,6 +54,11 @@ class Settings:
     neo4j_uri: str = "bolt://localhost:7687"
     neo4j_user: str = "neo4j"
     neo4j_password: str = ""
+    # demo: the Online Boutique dashboard | workspace: an empty instance for your own repository
+    mode: str = "demo"
+    demo_port: int = 8000  # where a workspace instance finds the demo (its tour uses it)
+    cors_origins: tuple[str, ...] = ()  # browser origins allowed to call this API
+    results_dir: Path = ROOT / "eval" / "results"
 
     @property
     def repos_dir(self) -> Path:
@@ -104,6 +109,10 @@ def load_settings(env: dict[str, str] | None = None) -> Settings:
         neo4j_uri=get("NEO4J_URI", "bolt://localhost:7687"),
         neo4j_user=get("NEO4J_USER", "neo4j"),
         neo4j_password=get("NEO4J_PASSWORD") or _local_secret(NEO4J_PASSWORD_FILE),
+        mode="workspace" if get("HINDSIGHT_MODE", "demo").lower() == "workspace" else "demo",
+        demo_port=int(get("DEMO_PORT", "8000")),
+        cors_origins=tuple(o.strip() for o in get("CORS_ORIGINS").split(",") if o.strip()),
+        results_dir=_path(get("RESULTS_DIR", "eval/results")),
     )
 
 
