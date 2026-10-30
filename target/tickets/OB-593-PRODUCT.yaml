@@ -1,0 +1,9 @@
+# Written by the team; source: the pull request that introduced the current product page.
+id: OB-593-PRODUCT
+title: A product page shows the product's name and price
+source: {github: 593}
+services: [frontend, productcatalogservice, currencyservice]
+acceptance_criteria:
+  - Given the customer opens the page "/product/OLJCESPC7Z"
+  - Then the heading "Sunglasses" is shown
+  - And the text "$19.99" is shown

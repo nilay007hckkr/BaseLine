@@ -1,0 +1,9 @@
+# Written by the team; source: the pull request that introduced the "Continue Shopping" button.
+id: OB-593-CONTINUE
+title: From an empty cart, the customer can go back to the shop
+source: {github: 593}
+services: [frontend, cartservice, productcatalogservice]
+acceptance_criteria:
+  - Given the customer opens the page "/cart"
+  - When the customer clicks the button "Continue Shopping"
+  - Then the heading "Hot Products" is shown

@@ -1,0 +1,14 @@
+# Written by the team from a real report in the target repository (not a fixture).
+# Expected behaviour behind the bug: after a successful order, the purchased items leave the cart.
+id: OB-3578
+title: After an order is placed, the cart is empty
+source: {github: 3578}
+services: [frontend, productcatalogservice, cartservice, checkoutservice, paymentservice, shippingservice, emailservice, currencyservice]
+acceptance_criteria:
+  - Given the customer opens the page "/product/OLJCESPC7Z"
+  - And the customer clicks the button "Add To Cart"
+  - When the customer clicks the button "Place Order"
+  - Then the heading "Your order is complete!" is shown
+  - 'And the text "Confirmation #" is shown'
+  - When the customer opens the page "/cart"
+  - Then the heading "Your shopping cart is empty!" is shown

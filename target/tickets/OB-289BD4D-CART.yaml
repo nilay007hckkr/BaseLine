@@ -1,0 +1,13 @@
+# Written by the team; source: the commit that introduced the cart ("view cart, add to cart,
+# empty cart").
+id: OB-289BD4D-CART
+title: A customer can add a product to the cart and empty it again
+source: {commit: 289bd4db13129c1e1ffd1660929da1aba931ccaf}
+services: [frontend, productcatalogservice, cartservice]
+acceptance_criteria:
+  - Given the customer opens the page "/product/OLJCESPC7Z"
+  - When the customer clicks the button "Add To Cart"
+  - Then the heading "Cart (1)" is shown
+  - And the text "Sunglasses" is shown
+  - When the customer clicks the button "Empty Cart"
+  - Then the heading "Your shopping cart is empty!" is shown

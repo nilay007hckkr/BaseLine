@@ -1,0 +1,12 @@
+# Written by the team from a real report in the target repository (not a fixture).
+# The report: checkout waits on slow payment/shipping/email calls. The expectation: an order on a
+# healthy shop completes within a few seconds.
+id: OB-3474
+title: Placing an order completes within 5 seconds
+source: {github: 3474}
+services: [frontend, cartservice, checkoutservice, paymentservice, shippingservice, emailservice, currencyservice]
+acceptance_criteria:
+  - Given the customer opens the page "/product/OLJCESPC7Z"
+  - And the customer clicks the button "Add To Cart"
+  - When the customer clicks the button "Place Order"
+  - Then the heading "Your order is complete!" is shown within 5 seconds
