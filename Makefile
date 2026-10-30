@@ -38,7 +38,7 @@ gen-api: ## Regenerate web API types from the backend's OpenAPI schema
 	@cd $(WEB) && pnpm -s gen:api && pnpm -s exec prettier --write src/api/schema.d.ts >/dev/null
 
 ## ---------- run ----------
-.PHONY: ingest embed stats dev serve
+.PHONY: ingest embed stats dev serve run
 ingest: ## Ingest history: make ingest [REPO=<github url>] (default TARGET_REPO_URL or Online Boutique)
 	@cd $(BE) && uv run hindsight ingest $${REPO:-}
 embed: ## Index citable text with the local embedding model (needs Ollama + OLLAMA_EMBED_MODEL)
@@ -47,6 +47,8 @@ stats: ## Print ingest statistics
 	@cd $(BE) && uv run hindsight stats
 dev: ## API with reload on :8000 + web dev server on :5173
 	@bash scripts/dev.sh
+run: ## Demo on :8000 + a fresh workspace on :8080 for your own repo (one command, Ctrl-C stops both)
+	@bash scripts/run.sh
 serve: ## Build the web app and serve everything from the API on :8000
 	@cd $(WEB) && pnpm -s build
 	@cd $(BE) && uv run uvicorn hindsight.api.app:app --host $${API_HOST:-127.0.0.1} --port $${API_PORT:-8000}
