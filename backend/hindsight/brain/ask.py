@@ -4,7 +4,8 @@
 2. Graph path: anchor → commits → PR → issues → discussion, plus docs that mention the anchor.
 3. Keyword search (SQLite FTS5 BM25) over every citable span, and semantic search with a local
    embedding model when its index exists; the lists are fused with Reciprocal Rank Fusion.
-4. Abstain ("not found") when the best evidence covers too little of the question (IDF-weighted).
+4. Abstain ("not found") when the best evidence covers too little of the question (IDF-weighted),
+   or when the question names a service or file and no matching evidence is about it.
 5. Claims are quoted from the evidence, or phrased by an LLM and then checked: every citation must
    exist in the evidence pack and the cited text must contain the claim's key terms. Optionally a
    model then judges whether each cited text supports its claim; it can only remove claims."""
@@ -104,6 +105,35 @@ def _anchors(conn: sqlite3.Connection, question: str, file: str | None) -> list[
         if len(by_base.get(word, [])) == 1:
             ids.append(by_base[word][0])
     return list(dict.fromkeys(ids))
+
+
+def _subjects(conn: sqlite3.Connection, anchors: list[int]) -> dict[str, list[str]]:
+    """For each anchored service or file: the words that show a text is about it."""
+    out: dict[str, list[str]] = {}
+    for a in anchors:
+        row = conn.execute("SELECT kind, title FROM nodes WHERE id = ?", (a,)).fetchone()
+        name = row["title"].lower()
+        if row["kind"] == "Service":
+            base = name.removesuffix("service")
+            out[name] = [name, f"{base} service", *([base] if len(base) >= 4 else [])]
+        elif row["kind"] == "File":
+            out[name] = [name, name.rsplit("/", 1)[-1]]
+    return out
+
+
+def _mentions(text: str, words: list[str]) -> bool:
+    lowered = text.lower()
+    return any(re.search(rf"(?<![a-z0-9]){re.escape(w)}(?![a-z0-9])", lowered) for w in words)
+
+
+def _about(text: str, words: list[str], others: set[str]) -> bool:
+    """One sentence names the subject and also contains another key word of the question."""
+    for sentence in sentences(text) or [text]:
+        if _mentions(sentence, words) and (
+            not others or {stem(t) for t in tokens(sentence)} & others
+        ):
+            return True
+    return False
 
 
 def _expand(
@@ -314,7 +344,20 @@ def ask(
         cov = weighted_coverage(terms, weights, row["text"])
         scored.append((cov, rrf[span], span, row["node_id"], row["text"]))
     scored.sort(key=lambda s: (-round(s[0], 1), -s[1]))
-    pack = [s for s in scored if s[0] > 0][:PACK_SIZE]
+    candidates = scored
+    subjects = _subjects(conn, anchors) if not lines else {}
+    if subjects:
+        # the question is about something specific: text that only shares its words is not evidence
+        words = [w for ws in subjects.values() for w in ws]
+        others = {stem(t) for t in terms if not _mentions(t, words)}
+        candidates = [s for s in scored if s[3] in g.reached or _about(s[4], words, others)]
+        if len(candidates) < len(scored) and (not candidates or candidates[0][0] < tau):
+            notes.append(
+                "text matching the question's words is not about "
+                + ", ".join(sorted(subjects))
+                + ", so it is not used"
+            )
+    pack = [s for s in candidates if s[0] > 0][:PACK_SIZE]
     anchor_labels = [
         label(conn.execute("SELECT kind, key, title FROM nodes WHERE id = ?", (a,)).fetchone())
         for a in anchors

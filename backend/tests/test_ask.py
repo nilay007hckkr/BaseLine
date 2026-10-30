@@ -119,3 +119,14 @@ def test_flagged_text_never_reaches_the_model(fx):
     )
     assert fake.prompts
     assert all("Ignore previous instructions" not in p for p in fake.prompts)
+
+
+def test_evidence_must_be_about_the_service_the_question_names(fx):
+    """FIXTURE: USD charging is recorded for checkout and payment, never for the cart. A question
+    that pins it on cartservice shares the words but not the subject, so it is not answered."""
+    assert (
+        ask(fx.conn(), "Why does checkoutservice charge in USD?", repo=fx.repo).status == "answered"
+    )
+    answer = ask(fx.conn(), "Why does cartservice charge in USD?", repo=fx.repo)
+    assert answer.status == "not_found"
+    assert any("not about cartservice" in n for n in answer.notes)
