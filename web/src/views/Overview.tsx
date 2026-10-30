@@ -61,7 +61,13 @@ export function Overview() {
     ["People", stats.human_authors, "human authors"],
     ["Pull requests", kinds.PR ?? 0, "linked from commits and GitHub"],
     ["Issues", kinds.Issue ?? 0, "tickets"],
-    ["Discussions", (kinds.Comment ?? 0) + (kinds.Review ?? 0), "PR and issue comments"],
+    [
+      "Discussions",
+      (kinds.Comment ?? 0) + (kinds.Review ?? 0) || "not yet",
+      (kinds.Comment ?? 0) + (kinds.Review ?? 0)
+        ? "PR and issue comments"
+        : "comments arrive over later runs (GitHub's hourly limit)",
+    ],
     ["Doc sections", kinds.DocChunk ?? 0, `from ${String(kinds.Doc ?? 0)} Markdown files`],
   ];
   return (

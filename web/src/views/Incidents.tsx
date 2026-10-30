@@ -1,5 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { AlertTriangle, ArrowRight, GitCommitHorizontal, Users } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Term } from "../glossary";
+import { useApp } from "../state";
 import { api, type Incident } from "../api/client";
 import { ErrorBox, Loading, ScoreBar, Section, fmtDate } from "../ui";
 
@@ -14,12 +17,14 @@ function Lane({
   points,
   start,
   end,
+  marker,
   role,
 }: {
   name: string;
   points: Lane;
   start: number;
   end: number;
+  marker: number;
   role?: string;
 }) {
   const width = 600;
@@ -46,13 +51,99 @@ function Lane({
             </g>
           );
         })}
+        <line
+          x1={((marker - start) / span) * width}
+          x2={((marker - start) / span) * width}
+          y1={0}
+          y2={24}
+          className="lane-opened"
+        />
       </svg>
     </div>
   );
 }
 
+function minutes(seconds: number): string {
+  const m = Math.round(seconds / 60);
+  return m < 1 ? "under a minute" : `${String(m)} min`;
+}
+
+/** What broke → who felt it → the change most likely behind it, in one line. */
+function Story({ incident }: { incident: Incident }) {
+  const culprit = incident.ranking.find((r) => r.role === "culprit");
+  const victims = incident.ranking.filter((r) => r.role !== "culprit");
+  const top = incident.candidates[0];
+  const lasted = (incident.closed_at ?? incident.updated_at) - incident.opened_at;
+  const namedBy = (culprit?.evidence.named_by ?? []) as { service: string; errors: number }[];
+  return (
+    <section className="card">
+      <h2>
+        Incident #{incident.id}: opened {fmtDate(incident.opened_at)} {clock(incident.opened_at)}{" "}
+        UTC
+      </h2>
+      <p className="muted small">
+        {incident.closed_at ? `Lasted ${minutes(lasted)}.` : "Still open."} Faults in the demo shop
+        were injected on purpose (<Term id="synthetic">synthetic</Term>).
+      </p>
+      <div className="story">
+        <div className="story-step broke">
+          <div className="story-label">
+            <AlertTriangle size={16} aria-hidden="true" /> What broke
+          </div>
+          <div className="story-main">{culprit?.service ?? "unclear"}</div>
+          <div className="small muted">
+            <Term id="culprit">culprit</Term>
+            {namedBy.length
+              ? `: named in ${String(namedBy.reduce((n, x) => n + x.errors, 0))} error lines from ${namedBy.map((x) => x.service).join(", ")}`
+              : ": its own logs changed first"}
+          </div>
+        </div>
+        <ArrowRight className="story-arrow" aria-hidden="true" />
+        <div className="story-step felt">
+          <div className="story-label">
+            <Users size={16} aria-hidden="true" /> Who felt it
+          </div>
+          <div className="story-main">
+            {victims.length ? victims.map((v) => v.service).join(", ") : "no other service"}
+          </div>
+          <div className="small muted">
+            <Term id="victim">victims</Term>: they showed errors because of the culprit
+          </div>
+        </div>
+        <ArrowRight className="story-arrow" aria-hidden="true" />
+        <div className="story-step change">
+          <div className="story-label">
+            <GitCommitHorizontal size={16} aria-hidden="true" /> Most likely change
+          </div>
+          {top ? (
+            <>
+              <div className="story-main">
+                <a href={top.url} target="_blank" rel="noreferrer">
+                  {top.title}
+                </a>
+              </div>
+              <div className="small muted">
+                deployed {minutes(Number(top.evidence.gap_s))} before
+                {top.evidence.touches_culprit ? ", changed the broken service" : ""}
+                {top.synthetic ? " · synthetic deploy" : ""} · a lead, not proof
+              </div>
+            </>
+          ) : (
+            <div className="story-main muted">no deploys recorded</div>
+          )}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function Detail({ id }: { id: number }) {
+  const { unlock } = useApp();
   const q = useQuery({ queryKey: ["incident", id], queryFn: () => api.incident(id) });
+  const loaded = q.isSuccess;
+  useEffect(() => {
+    if (loaded) unlock("incident");
+  }, [loaded, unlock]);
   if (q.isPending) return <Loading />;
   if (q.isError) return <ErrorBox error={q.error} />;
   const inc = q.data;
@@ -64,15 +155,10 @@ function Detail({ id }: { id: number }) {
   );
   return (
     <>
-      <Section
-        title={`Incident #${String(inc.id)}`}
-        hint={`Opened ${fmtDate(inc.opened_at)} ${clock(inc.opened_at)} UTC · ${inc.closed_at ? `closed ${clock(inc.closed_at)}` : "still open"} · source: ${inc.source}`}
-      >
-        <p>{inc.summary}</p>
-      </Section>
+      <Story incident={inc} />
       <Section
         title="Timeline"
-        hint="Log volume per service in 10-second windows; errors in red. The marker shows when the incident opened."
+        hint="How much each service logged, in 10-second steps; errors in red. The yellow line is when the incident opened."
       >
         <div className="lanes">
           {lanes.map(([name, points]) => (
@@ -82,21 +168,16 @@ function Detail({ id }: { id: number }) {
               points={points}
               start={start}
               end={end}
+              marker={inc.opened_at}
               role={roles[name]}
             />
           ))}
-          <div
-            className="lane-marker"
-            style={{
-              left: `calc(140px + ${String(((inc.opened_at - start) / (end - start)) * 100)}% * (1 - 140 / 100%))`,
-            }}
-          />
         </div>
       </Section>
       <div className="grid">
         <Section
-          title="Culprit or victim?"
-          hint="Errors that name another service move suspicion to it. The service that logs the most errors is often a victim."
+          title="Why this service?"
+          hint="Errors that name another service move suspicion to it: the service that logs the most errors is often only a victim."
         >
           <ul className="plain">
             {inc.ranking.map((r) => (
@@ -117,7 +198,7 @@ function Detail({ id }: { id: number }) {
                   {r.evidence.spike_z ? (
                     <li>error spike, robust z = {Number(r.evidence.spike_z).toFixed(1)}</li>
                   ) : null}
-                  {r.templates.length ? <li>patterns: {r.templates.join(", ")}</li> : null}
+                  {r.templates.length ? <li>new log patterns: {r.templates.length}</li> : null}
                   {r.samples.slice(0, 2).map((s) => (
                     <li key={s} className="mono small">
                       {s}
@@ -129,8 +210,8 @@ function Detail({ id }: { id: number }) {
           </ul>
         </Section>
         <Section
-          title="Which change might have caused it?"
-          hint="Deploys in the 24 hours before the incident. This is correlation, not proof."
+          title="Recent changes, most likely first"
+          hint="Deploys in the 24 hours before the incident, ranked by timing and by whether they touched the broken service. A lead, not proof."
         >
           {inc.candidates.length === 0 ? (
             <p className="muted">No deploys recorded before this incident.</p>
@@ -214,8 +295,8 @@ export function Incidents() {
   return (
     <>
       <Section
-        title="Incidents"
-        hint="Detected from the shop's logs: new error patterns and error spikes, grouped when they happen within two minutes."
+        title="Incidents in the demo shop"
+        hint="Hindsight reads the shop's logs and opens an incident on a new kind of error or a sudden jump in errors. Pick one to see what broke and why."
       >
         {list.data.length === 0 ? (
           <p className="muted">
@@ -232,7 +313,7 @@ export function Incidents() {
                   setSelected(i.id);
                 }}
               >
-                #{i.id} · {fmtDate(i.opened_at)} {clock(i.opened_at)} · {i.culprit ?? "?"}
+                #{i.id} · {clock(i.opened_at).slice(0, 5)} · broke: {i.culprit ?? "?"}
               </button>
             ))}
           </div>

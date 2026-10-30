@@ -29,6 +29,9 @@ Phase 2 additions (in progress; see [docs/PLAN.md](docs/PLAN.md)):
 | Test the shop from real tickets | Tickets cite the issue, PR or commit they come from (e.g. issue #3578: the cart keeps items after an order). Each becomes a browser test; every quoted UI text is traced to the template line and commit that introduced it. When a button is renamed or restyled, the test heals itself; when something is really broken, it fails and says why. Repairs wait for a person to approve |
 | Better answers, still checked | Semantic search with a local embedding model finds evidence that uses different words. A local model (Ollama) can phrase answers, and a second check removes any claim its sources do not support. Nothing leaves the machine |
 
+The dashboard opens with a two-minute guided tour (skippable at any time), then a home page with
+quests, plain-language results and a manual; every technical word has a plain explanation on hover.
+
 Requirement-by-requirement mapping: [docs/PS06.md](docs/PS06.md).
 
 ## Quick start (WSL Ubuntu or Linux)

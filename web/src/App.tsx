@@ -1,6 +1,7 @@
 import {
   Activity,
   BookOpen,
+  Database,
   FileText,
   FlaskConical,
   Home as HomeIcon,
@@ -23,6 +24,7 @@ import { Home } from "./views/Home";
 import { Impact } from "./views/Impact";
 import { Incidents } from "./views/Incidents";
 import { Manual } from "./views/Manual";
+import { Overview } from "./views/Overview";
 import { Risk } from "./views/Risk";
 import { Scorecard } from "./views/Scorecard";
 import { Tests } from "./views/Tests";
@@ -66,6 +68,12 @@ export const VIEWS: Record<ViewKey, ViewDef> = {
     view: Scorecard,
     blurb: "How good is it, measured",
   },
+  data: {
+    label: "The data",
+    icon: Database,
+    view: Overview,
+    blurb: "What was collected, and how it links",
+  },
   manual: { label: "Manual", icon: BookOpen, view: Manual, blurb: "How to use Hindsight" },
 };
 
@@ -73,7 +81,7 @@ const GROUPS: { title: string; items: ViewKey[] }[] = [
   { title: "", items: ["home"] },
   { title: "Understand the code", items: ["ask", "impact", "graph", "risk", "docs"] },
   { title: "Keep it running", items: ["incidents", "tests"] },
-  { title: "Proof", items: ["scorecard"] },
+  { title: "Proof", items: ["scorecard", "data"] },
   { title: "Help", items: ["manual"] },
 ];
 

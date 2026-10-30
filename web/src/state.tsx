@@ -19,6 +19,7 @@ export type ViewKey =
   | "incidents"
   | "tests"
   | "scorecard"
+  | "data"
   | "manual";
 
 /** What a quest or the tour hands to a page: an example to fill in, and whether to run it. */

@@ -297,6 +297,13 @@ class RepoStats(Contract):
     ingested_at: int | None
 
 
+class MethodScore(Contract):
+    name: str  # 'hindsight' or a baseline's name
+    value: float
+    ci_low: float
+    ci_high: float
+
+
 class ScoreCard(Contract):
     suite: str  # "impact" (history replay) or "rca" (fault campaign)
     synthetic: bool
@@ -311,6 +318,7 @@ class ScoreCard(Contract):
     n: int
     command: str
     result_file: str
+    methods: list[MethodScore]  # Hindsight first, then every baseline
 
 
 class QaRun(Contract):

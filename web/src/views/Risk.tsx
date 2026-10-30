@@ -7,8 +7,25 @@ export function Risk() {
   if (q.isPending) return <Loading />;
   if (q.isError) return <ErrorBox error={q.error} />;
   const { files, components, min_changes, inactive_after_days } = q.data;
+  const owners = new Set(files.map((f) => f.top_author));
+  const gone = new Set(files.filter((f) => !f.top_author_active).map((f) => f.top_author));
+  const orphaned = files.filter((f) => !f.top_author_active).length;
   return (
     <>
+      <section className="hero compact">
+        <div>
+          <div className="eyebrow">Bus factor</div>
+          <h2 className="hero-title">
+            {files.length} files depend on one person; {orphaned} of them on someone no longer
+            active.
+          </h2>
+          <p className="hero-text">
+            {owners.size} people each hold most of the know-how for some files, and {gone.size} of
+            them have not committed for over {Math.round(inactive_after_days / 30)} months. Those
+            files are the first to document or pair on.
+          </p>
+        </div>
+      </section>
       <Section
         title="Knowledge at risk"
         hint={`Files where one person made at least 80% of ${String(min_changes)}+ human changes. "Inactive" means no commits in the last ${String(inactive_after_days)} days of the project's history.`}

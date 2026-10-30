@@ -1181,3 +1181,222 @@ details.card[open] > summary {
   font-size: 0.8rem;
   padding: 5px 10px;
 }
+
+/* ---------- accuracy charts (colours validated: dark #16a34a/#5f6b78, light #15803d/#7f9688) ---------- */
+:root {
+  --chart-ours: #16a34a;
+  --chart-base: #5f6b78;
+}
+:root[data-theme="light"] {
+  --chart-ours: #15803d;
+  --chart-base: #7f9688;
+}
+.lead {
+  font-size: 1.05rem;
+  margin: 4px 0 8px;
+}
+.mcharts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(440px, 1fr));
+  gap: 14px 22px;
+  margin: 8px 0 4px;
+}
+.mchart {
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: var(--card-2);
+  border: 1px solid var(--line);
+}
+.mchart-title {
+  font-weight: 700;
+  font-size: 0.95rem;
+  margin-bottom: 8px;
+}
+.mchart-row {
+  display: grid;
+  grid-template-columns: 170px 1fr 48px;
+  gap: 10px;
+  align-items: center;
+  height: 30px;
+  border-radius: 6px;
+  outline-offset: 1px;
+}
+.mchart-row:hover,
+.mchart-row:focus {
+  background: var(--accent-soft);
+}
+.mchart-name {
+  font-size: 0.82rem;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.mchart-name.ours {
+  color: var(--text);
+  font-weight: 800;
+}
+.mchart-track {
+  position: relative;
+  height: 16px;
+  /* hairline gridlines at 25 / 50 / 75 % */
+  background:
+    linear-gradient(var(--line), var(--line)) 25% 0 / 1px 100% no-repeat,
+    linear-gradient(var(--line), var(--line)) 50% 0 / 1px 100% no-repeat,
+    linear-gradient(var(--line), var(--line)) 75% 0 / 1px 100% no-repeat;
+}
+.mchart-bar {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 16px;
+  background: var(--chart-base);
+  border-radius: 0 4px 4px 0;
+}
+.mchart-bar.ours {
+  background: var(--chart-ours);
+}
+.mchart-ci {
+  position: absolute;
+  top: 7px;
+  height: 2px;
+  background: var(--text);
+  opacity: 0.8;
+}
+.mchart-ci::before,
+.mchart-ci::after {
+  content: "";
+  position: absolute;
+  top: -4px;
+  width: 2px;
+  height: 10px;
+  background: var(--text);
+}
+.mchart-ci::before {
+  left: 0;
+}
+.mchart-ci::after {
+  right: 0;
+}
+.mchart-value {
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.mchart-tip {
+  position: absolute;
+  left: 0;
+  bottom: calc(100% + 8px);
+  z-index: 20;
+  width: max-content;
+  max-width: 280px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+  font-size: 0.8rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.12s ease;
+}
+.mchart-row:hover .mchart-tip,
+.mchart-row:focus .mchart-tip {
+  opacity: 1;
+}
+.mchart-axis {
+  height: 18px;
+  font-size: 0.72rem;
+  color: var(--muted);
+}
+.mchart-axis:hover {
+  background: none;
+}
+.mchart-scale {
+  display: flex;
+  justify-content: space-between;
+}
+.legend-ci {
+  display: inline-block;
+  width: 18px;
+  height: 2px;
+  background: var(--text);
+  vertical-align: middle;
+}
+.table-view {
+  margin: 10px 0;
+}
+.table-view summary {
+  cursor: pointer;
+  color: var(--accent);
+}
+
+/* ---------- incident story ---------- */
+.story {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr auto 1fr;
+  gap: 12px;
+  align-items: stretch;
+  margin-top: 10px;
+}
+.story-step {
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: var(--card-2);
+}
+.story-step.broke {
+  border-color: var(--error);
+}
+.story-step.felt {
+  border-color: var(--warn);
+}
+.story-step.change {
+  border-color: var(--accent);
+}
+.story-label {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+.story-main {
+  font-family: "Nunito Variable", Nunito, sans-serif;
+  font-size: 1.15rem;
+  font-weight: 800;
+  margin: 6px 0 4px;
+  word-break: break-word;
+}
+.story-arrow {
+  align-self: center;
+  color: var(--muted);
+}
+.lane-opened {
+  stroke: var(--sun);
+  stroke-width: 2;
+  vector-effect: non-scaling-stroke;
+}
+@media (max-width: 900px) {
+  .story {
+    grid-template-columns: 1fr;
+  }
+  .story-arrow {
+    transform: rotate(90deg);
+    justify-self: center;
+  }
+}
+
+.hero.compact {
+  grid-template-columns: 1fr;
+  padding: 20px 24px;
+  margin-bottom: 16px;
+}
+.hero.compact .hero-title {
+  font-size: 1.55rem;
+}

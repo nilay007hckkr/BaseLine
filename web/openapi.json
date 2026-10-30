@@ -2052,6 +2052,34 @@
     ],
     "title": "IncidentTemplate"
    },
+   "MethodScore": {
+    "properties": {
+     "name": {
+      "type": "string",
+      "title": "Name"
+     },
+     "value": {
+      "type": "number",
+      "title": "Value"
+     },
+     "ci_low": {
+      "type": "number",
+      "title": "Ci Low"
+     },
+     "ci_high": {
+      "type": "number",
+      "title": "Ci High"
+     }
+    },
+    "type": "object",
+    "required": [
+     "name",
+     "value",
+     "ci_low",
+     "ci_high"
+    ],
+    "title": "MethodScore"
+   },
    "QaGrounding": {
     "properties": {
      "step": {
@@ -2688,6 +2716,13 @@
      "result_file": {
       "type": "string",
       "title": "Result File"
+     },
+     "methods": {
+      "items": {
+       "$ref": "#/components/schemas/MethodScore"
+      },
+      "type": "array",
+      "title": "Methods"
      }
     },
     "type": "object",
@@ -2704,7 +2739,8 @@
      "baseline_value",
      "n",
      "command",
-     "result_file"
+     "result_file",
+     "methods"
     ],
     "title": "ScoreCard"
    },

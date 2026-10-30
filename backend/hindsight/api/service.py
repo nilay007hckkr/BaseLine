@@ -27,6 +27,7 @@ from hindsight.core.schemas import (
     AnswerCheckSummary,
     CommitSummary,
     GraphStatus,
+    MethodScore,
     ScoreCard,
 )
 
@@ -181,6 +182,12 @@ def _cards(
                 n=n,
                 command=command,
                 result_file=shown,
+                methods=[
+                    MethodScore(
+                        name=name, **{k: m[metric][k] for k in ("value", "ci_low", "ci_high")}
+                    )
+                    for name, m in [("hindsight", ours), *baselines.items()]
+                ],
             )
         )
     return cards

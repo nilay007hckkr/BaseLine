@@ -838,6 +838,17 @@ export interface components {
             /** Samples */
             samples: string[];
         };
+        /** MethodScore */
+        MethodScore: {
+            /** Name */
+            name: string;
+            /** Value */
+            value: number;
+            /** Ci Low */
+            ci_low: number;
+            /** Ci High */
+            ci_high: number;
+        };
         /** QaGrounding */
         QaGrounding: {
             /** Step */
@@ -1069,6 +1080,8 @@ export interface components {
             command: string;
             /** Result File */
             result_file: string;
+            /** Methods */
+            methods: components["schemas"]["MethodScore"][];
         };
         /** SearchHit */
         SearchHit: {

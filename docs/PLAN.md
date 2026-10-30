@@ -27,6 +27,7 @@ Built on top of phase 1, in this order (TRD §0.1 lists how each one differs fro
 | C | SentinelQA: tickets (from the repository's issues, PRs and commits) → tests, runner, healer with refusal rules, mutation harness | Cosmetic mutations healed, defect mutations refused, 0 false heals | built; live run pending |
 | D | Smarter answers: local model, embeddings, meaning check | Answers still pass the citation check; abstention unchanged on unanswerable questions; `make eval-retrieval` compares keyword, semantic and hybrid search | built; live run pending |
 | E | Neo4j graph layer (ADR 0001): sync, Cypher reads with SQLite fallback, Map badge, Neo4j Browser queries | Parity test: identical reads and outputs on both stores | done |
+| G | Dashboard for non-technical and technical visitors: guided 3D tour (three.js), quests and badges, plain-language results with charts, incident story, 3D map, manual and glossary | Every page loads with real data; tour skippable; web tests pass | done |
 | F | Same impact protocol on more public repositories (OpenTelemetry Demo, .NET eShop) | `make try-repo` writes their results into `eval/results/latest.md` | done |
 
 ## Phase 2: the 36-hour blocks

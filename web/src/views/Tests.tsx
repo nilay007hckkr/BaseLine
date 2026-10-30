@@ -208,6 +208,47 @@ function Repair({ repair }: { repair: QaRepair }) {
   );
 }
 
+function RunAll({ tests }: { tests: QaTest[] }) {
+  const client = useQueryClient();
+  const { unlock } = useApp();
+  const active = tests.filter((t) => t.status === "active");
+  const run = useMutation({
+    mutationFn: async () => {
+      for (const t of active) await api.runTest(t.id); // one browser at a time
+    },
+    onSuccess: async () => {
+      unlock("test");
+      await Promise.all([
+        client.invalidateQueries({ queryKey: ["qa-tests"] }),
+        client.invalidateQueries({ queryKey: ["qa-repairs"] }),
+      ]);
+    },
+  });
+  const passed = tests.filter((t) => t.last_run?.outcome === "passed").length;
+  const ran = tests.filter((t) => t.last_run).length;
+  return (
+    <div className="row">
+      <button
+        className="primary"
+        disabled={!active.length || run.isPending}
+        onClick={() => {
+          run.mutate();
+        }}
+      >
+        {run.isPending
+          ? `Running ${String(active.length)} tests in a real browser…`
+          : `Run all ${String(active.length)} tests`}
+      </button>
+      {ran ? (
+        <span className="small muted">
+          Last runs: {passed} of {ran} passed.
+        </span>
+      ) : null}
+      {run.isError ? <ErrorBox error={run.error} /> : null}
+    </div>
+  );
+}
+
 export function Tests() {
   const tests = useQuery({ queryKey: ["qa-tests"], queryFn: api.qaTests });
   const repairs = useQuery({ queryKey: ["qa-repairs"], queryFn: api.qaRepairs });
@@ -219,6 +260,7 @@ export function Tests() {
       >
         {tests.isPending ? <Loading /> : null}
         {tests.isError ? <ErrorBox error={tests.error} /> : null}
+        {tests.data?.length ? <RunAll tests={tests.data} /> : null}
         {tests.data && !tests.data.length ? (
           <p>
             No tests yet: run <code>make qa-generate qa-validate</code> with the shop running.
