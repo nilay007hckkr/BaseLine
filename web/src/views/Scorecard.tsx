@@ -1,9 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { api, type ScoreCard } from "../api/client";
 import { Term } from "../glossary";
+import { useInstance } from "../instance";
 import { useApp } from "../state";
-import { ErrorBox, Loading, Section } from "../ui";
+import { ErrorBox, Loading, PageHead, Section, SubTabs } from "../ui";
 
 /** Plain names for every method a result file compares. */
 const METHOD: Record<string, string> = {
@@ -35,24 +36,22 @@ const METRIC: Record<string, { title: string; term?: string }> = {
 const SUITES: Record<string, { title: string; plain: string; unit: string; synthetic: string }> = {
   impact: {
     title: "What will a change affect?",
-    plain:
-      "Replayed on the project's own past changes: one changed file is revealed and Hindsight must find the others, using only history from before that change.",
+    plain: "Past changes replayed: one file shown, find the rest from earlier history only.",
     unit: "past changes",
     synthetic: "",
   },
   rca: {
     title: "What broke, and which change did it?",
-    plain:
-      "Services in the demo shop were switched off or misconfigured on purpose, one at a time, after healthy traffic. Each fault came with a recorded deploy of the guilty change and two decoys.",
+    plain: "Demo-shop services broken on purpose, each with the guilty deploy and two decoys.",
     unit: "injected faults",
-    synthetic: "Faults and deploys were made on purpose; these are not production incidents.",
+    synthetic: "Synthetic faults, not production incidents.",
   },
   heal: {
     title: "Do tests survive UI changes without hiding bugs?",
     plain:
-      "The shop's pages were changed in the test browser only: cosmetic changes (renamed labels, restyled or wrapped buttons) should be healed; real defects (missing or disabled buttons, server errors, a wrong price, the cart bug from issue #3578) must fail.",
+      "Pages changed in the test browser: cosmetic changes should heal, real defects must fail.",
     unit: "test runs",
-    synthetic: "Page changes were made on purpose, in the test browser only.",
+    synthetic: "Synthetic page changes, test browser only.",
   },
 };
 
@@ -178,7 +177,7 @@ function OtherRepos({ cards }: { cards: ScoreCard[] }) {
   return (
     <Section
       title="Same check on other public projects"
-      hint="The impact check, unchanged and with nothing tuned, on two more public projects: it is not fitted to one codebase."
+      hint="Same check, nothing tuned, on other public projects."
     >
       <div className="mcharts">
         {repos.map((repo) => {
@@ -206,60 +205,85 @@ function OtherRepos({ cards }: { cards: ScoreCard[] }) {
   );
 }
 
+type Tab = "impact" | "rca" | "heal" | "elsewhere";
+const TABS: { key: Tab; label: string }[] = [
+  { key: "impact", label: "Impact" },
+  { key: "rca", label: "Incidents" },
+  { key: "heal", label: "Healing" },
+  { key: "elsewhere", label: "Elsewhere" },
+];
+
+function Suite({ suite, cards }: { suite: string; cards: ScoreCard[] }) {
+  const meta = SUITES[suite];
+  const first = cards[0];
+  if (!meta || !first) return <p className="muted">No results for this yet.</p>;
+  return (
+    <>
+      <h2 className="thin" style={{ fontSize: "2rem", margin: "0 0 6px" }}>
+        {meta.title}
+      </h2>
+      <p className="page-lede">{meta.plain}</p>
+      {meta.synthetic ? (
+        <p className="small">
+          <span className="badge">
+            <Term id="synthetic">synthetic</Term>
+          </span>{" "}
+          {meta.synthetic}
+        </p>
+      ) : null}
+      <div className="mcharts">
+        {cards.map((card) => (
+          <MethodChart key={card.metric} card={card} unit={meta.unit} />
+        ))}
+      </div>
+      <Legend />
+      {first.note && suite !== "impact" ? <p className="small">{first.note}</p> : null}
+      <TableView cards={cards} />
+      <p className="muted small">
+        Reproduce with <code>{first.command}</code> · result file <code>{first.result_file}</code>
+      </p>
+    </>
+  );
+}
+
 export function Scorecard() {
   const { unlock } = useApp();
+  const [tab, setTab] = useState<Tab>("impact");
   const q = useQuery({ queryKey: ["scorecard"], queryFn: api.scorecard });
+  const { mode } = useInstance();
+  const status = useQuery({
+    queryKey: ["workspace"],
+    queryFn: api.workspaceStatus,
+    enabled: mode === "workspace",
+  });
   useEffect(() => {
     unlock("proof");
   }, [unlock]);
-  if (q.isPending) return <Loading />;
-  if (q.isError) return <ErrorBox error={q.error} />;
-  if (!q.data.length) {
-    return (
-      <Section title="No results yet">
-        <p>
-          Run <code>make eval</code> to measure the impact check on the project&apos;s own history,
-          and <code>make eval-rca</code> to measure incident triage on the demo shop.
-        </p>
-      </Section>
-    );
-  }
+  const tabs = mode === "workspace" ? TABS.filter((t) => t.key === "impact") : TABS;
   return (
     <>
-      <p className="lead">
-        Every number here comes from a test anyone can re-run, compared with simple methods that
-        need no Hindsight. Hover a bar for details.
-      </p>
-      {Object.entries(SUITES).map(([suite, meta]) => {
-        const cards = q.data.filter((card) => card.suite === suite);
-        const first = cards[0];
-        if (!first) return null;
-        return (
-          <Section key={suite} title={meta.title} hint={meta.plain}>
-            {meta.synthetic ? (
-              <p className="small">
-                <span className="badge">
-                  <Term id="synthetic">synthetic</Term>
-                </span>{" "}
-                {meta.synthetic}
-              </p>
-            ) : null}
-            <div className="mcharts">
-              {cards.map((card) => (
-                <MethodChart key={card.metric} card={card} unit={meta.unit} />
-              ))}
-            </div>
-            <Legend />
-            {first.note && suite !== "impact" ? <p className="small">{first.note}</p> : null}
-            <TableView cards={cards} />
-            <p className="muted small">
-              Reproduce with <code>{first.command}</code> · result file{" "}
-              <code>{first.result_file}</code>
-            </p>
-          </Section>
-        );
-      })}
-      <OtherRepos cards={q.data.filter((card) => card.suite === "impact-other")} />
+      <PageHead
+        label="Proof"
+        title="Measured, not claimed."
+        lede="Every number re-runs. Grey bars are simple methods."
+      />
+      <SubTabs tabs={tabs} value={tab} onChange={setTab} />
+      {q.isPending ? <Loading /> : null}
+      {q.isError ? <ErrorBox error={q.error} /> : null}
+      {q.data && !q.data.length ? (
+        <p className="muted">
+          {mode === "workspace"
+            ? (status.data?.measure_note ?? "Measuring on your repo's history…")
+            : "No results yet: run make eval."}
+        </p>
+      ) : null}
+      {q.data?.length ? (
+        tab === "elsewhere" ? (
+          <OtherRepos cards={q.data.filter((card) => card.suite === "impact-other")} />
+        ) : (
+          <Suite suite={tab} cards={q.data.filter((card) => card.suite === tab)} />
+        )
+      ) : null}
     </>
   );
 }

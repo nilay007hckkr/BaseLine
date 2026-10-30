@@ -20,7 +20,9 @@ export type ViewKey =
   | "tests"
   | "scorecard"
   | "data"
-  | "manual";
+  | "manual"
+  | "profile"
+  | "settings";
 
 /** What a quest or the tour hands to a page: an example to fill in, and whether to run it. */
 export interface Preset {
@@ -43,7 +45,7 @@ export const ACHIEVEMENTS = {
 export type AchievementId = keyof typeof ACHIEVEMENTS;
 
 const LEVELS = ["Seed", "Sprout", "Sapling", "Tree", "Grove", "Forest"];
-const XP_PER_LEVEL = 300;
+export const XP_PER_LEVEL = 300;
 
 type Theme = "dark" | "light";
 

@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { useApp } from "../state";
 import { api, type QaRepair, type QaTest } from "../api/client";
-import { ErrorBox, Loading, Section, fmtDate } from "../ui";
+import { ErrorBox, Loading, PageHead, Section, SubTabs, fmtDate } from "../ui";
 
 const OUTCOME: Record<string, string> = {
   passed: "passed",
@@ -36,7 +36,7 @@ function TestRow({ test }: { test: QaTest }) {
       <tr>
         <td>
           <button
-            className="link"
+            className="link test-id"
             onClick={() => {
               setOpen(!open);
             }}
@@ -249,54 +249,70 @@ function RunAll({ tests }: { tests: QaTest[] }) {
   );
 }
 
+type Tab = "tests" | "repairs";
+
 export function Tests() {
   const tests = useQuery({ queryKey: ["qa-tests"], queryFn: api.qaTests });
   const repairs = useQuery({ queryKey: ["qa-repairs"], queryFn: api.qaRepairs });
+  const [tab, setTab] = useState<Tab>("tests");
+  const pending = (repairs.data ?? []).filter((r) => r.status === "proposed").length;
   return (
     <>
-      <Section
-        title="Tests from tickets"
-        hint="Each ticket cites the issue, pull request or commit it comes from in the target repository. Its Given/When/Then lines become a browser test, kept only if it passes 3 times out of 3 on the healthy shop. When a button's label or markup changes, the healer finds the same control; it refuses when something is really broken (an assertion fails, the server errors, the control is disabled, or an incident is open)."
-      >
-        {tests.isPending ? <Loading /> : null}
-        {tests.isError ? <ErrorBox error={tests.error} /> : null}
-        {tests.data?.length ? <RunAll tests={tests.data} /> : null}
-        {tests.data && !tests.data.length ? (
-          <p>
-            No tests yet: run <code>make qa-generate qa-validate</code> with the shop running.
+      <PageHead
+        label="Tests"
+        title="Tests that heal themselves, never hide a bug."
+        lede="From real tickets. Renames heal, real bugs fail."
+      />
+      <SubTabs
+        tabs={[
+          { key: "tests", label: `Tests ${String(tests.data?.length ?? 0)}` },
+          { key: "repairs", label: `Repairs ${String(pending)}` },
+        ]}
+        value={tab}
+        onChange={setTab}
+      />
+      {tab === "tests" ? (
+        <>
+          {tests.isPending ? <Loading /> : null}
+          {tests.isError ? <ErrorBox error={tests.error} /> : null}
+          {tests.data?.length ? <RunAll tests={tests.data} /> : null}
+          {tests.data && !tests.data.length ? (
+            <p>
+              No tests yet: run <code>make qa-generate qa-validate</code> with the shop running.
+            </p>
+          ) : null}
+          {tests.data?.length ? (
+            <table>
+              <thead>
+                <tr>
+                  <th>Test</th>
+                  <th>What it checks</th>
+                  <th>Source</th>
+                  <th>Status</th>
+                  <th>Last run</th>
+                  <th />
+                </tr>
+              </thead>
+              <tbody>
+                {tests.data.map((t) => (
+                  <TestRow key={t.id} test={t} />
+                ))}
+              </tbody>
+            </table>
+          ) : null}
+          <p className="muted small">
+            {Object.entries(OUTCOME)
+              .map(([k, v]) => `${k}: ${v.split(": ")[1] ?? v}`)
+              .join(" · ")}
           </p>
-        ) : null}
-        {tests.data?.length ? (
-          <table>
-            <thead>
-              <tr>
-                <th>Test</th>
-                <th>What it checks</th>
-                <th>Source</th>
-                <th>Status</th>
-                <th>Last run</th>
-                <th />
-              </tr>
-            </thead>
-            <tbody>
-              {tests.data.map((t) => (
-                <TestRow key={t.id} test={t} />
-              ))}
-            </tbody>
-          </table>
-        ) : null}
-        <p className="muted small">
-          {Object.entries(OUTCOME)
-            .map(([k, v]) => `${k}: ${v.split(": ")[1] ?? v}`)
-            .join(" · ")}
-        </p>
-      </Section>
-      {repairs.data?.length ? (
+        </>
+      ) : repairs.data?.length ? (
         repairs.data.map((r) => <Repair key={r.id} repair={r} />)
       ) : (
-        <Section title="Repairs">
-          <p className="muted">No repairs proposed yet.</p>
-        </Section>
+        <p className="muted">
+          No repairs proposed yet. Run the tests after a button changes and a proposed repair
+          appears here for you to approve or reject.
+        </p>
       )}
     </>
   );

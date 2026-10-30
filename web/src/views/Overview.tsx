@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { api } from "../api/client";
-import { ErrorBox, Loading, Provenance, Section, fmtDate, pct } from "../ui";
+import { ErrorBox, Loading, PageHead, Provenance, Section, fmtDate, pct } from "../ui";
 
 interface Stats {
   commits: number;
@@ -48,80 +48,57 @@ export function Overview() {
       stats.commits,
       `${fmtDate(stats.first_commit_ts)} → ${fmtDate(stats.last_commit_ts)}`,
     ],
-    [
-      "Used for statistics",
-      stats.commits_used_for_statistics,
-      "after removing bot, bulk and merge commits",
-    ],
-    [
-      "Bot commits",
-      pct(stats.bot_share),
-      `${String(stats.bot_commits)} automated updates, filtered out`,
-    ],
-    ["People", stats.human_authors, "human authors"],
-    ["Pull requests", kinds.PR ?? 0, "linked from commits and GitHub"],
+    ["Counted", stats.commits_used_for_statistics, "bots, bulk and merges out"],
+    ["Bots", pct(stats.bot_share), `${String(stats.bot_commits)} filtered`],
+    ["People", stats.human_authors, "authors"],
+    ["Pull requests", kinds.PR ?? 0, "linked"],
     ["Issues", kinds.Issue ?? 0, "tickets"],
     [
       "Discussions",
-      (kinds.Comment ?? 0) + (kinds.Review ?? 0) || "not yet",
-      (kinds.Comment ?? 0) + (kinds.Review ?? 0)
-        ? "PR and issue comments"
-        : "comments arrive over later runs (GitHub's hourly limit)",
+      (kinds.Comment ?? 0) + (kinds.Review ?? 0) || "—",
+      (kinds.Comment ?? 0) + (kinds.Review ?? 0) ? "comments" : "next run (GitHub limit)",
     ],
-    ["Doc sections", kinds.DocChunk ?? 0, `from ${String(kinds.Doc ?? 0)} Markdown files`],
+    ["Doc sections", kinds.DocChunk ?? 0, `${String(kinds.Doc ?? 0)} files`],
   ];
   return (
     <>
-      <Section
-        title="Project history collected"
-        hint={repo?.web ? `Source: ${repo.web} at ${repo.head_sha?.slice(0, 7) ?? ""}` : undefined}
-      >
-        <div className="tiles">
-          {tiles.map(([label, value, note]) => (
-            <div className="tile" key={label}>
-              <div className="tile-value">{value}</div>
-              <div className="tile-label">{label}</div>
-              <div className="muted small">{note}</div>
-            </div>
-          ))}
-        </div>
-      </Section>
-      <Section
-        title="How items are connected"
-        hint="Every link records how it was found, so you can judge how much to trust it."
-      >
-        <table>
-          <thead>
-            <tr>
-              <th>Link</th>
-              <th>Found by</th>
-              <th className="num">Count</th>
-            </tr>
-          </thead>
-          <tbody>
-            {stats.edges_by_kind_and_provenance.map((e) => (
-              <tr key={`${e.kind}-${e.provenance}`}>
-                <td>{e.kind.replaceAll("_", " ").toLowerCase()}</td>
-                <td>
-                  <Provenance value={e.provenance} />
-                </td>
-                <td className="num">{e.n}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </Section>
+      <PageHead
+        label="The data"
+        title="What Hindsight read."
+        lede={
+          repo?.web
+            ? `${repo.web.replace("https://github.com/", "")} @ ${repo.head_sha?.slice(0, 7) ?? ""}`
+            : undefined
+        }
+      />
+      <div className="cm-label">History</div>
+      <div className="cm-card cm-stats">
+        {tiles.map(([label, value, note]) => (
+          <div className="cm-stat" key={label}>
+            <div className="cm-stat-label">{label}</div>
+            <div className="cm-stat-value">{value}</div>
+            <div className="cm-stat-sub">{note}</div>
+          </div>
+        ))}
+      </div>
+      <div className="cm-label">Links · colour = how it was found</div>
+      <div className="cm-card cm-rows">
+        {stats.edges_by_kind_and_provenance.map((e) => (
+          <div className="cm-row" key={`${e.kind}-${e.provenance}`}>
+            <span className={`prov-text-${e.provenance}`}>
+              {e.kind.replaceAll("_", " ").toLowerCase()}
+            </span>
+            <Provenance value={e.provenance} />
+            <span className="cm-row-value">{e.n.toLocaleString()}</span>
+          </div>
+        ))}
+      </div>
       {github ? (
-        <Section title="GitHub data (read-only)">
-          <p className="muted">
-            Pages cached: issues {github.pages.issues ?? 0}, pull requests {github.pages.pulls ?? 0}
-            , comments {github.pages.issue_comments ?? 0}, review comments{" "}
-            {github.pages.review_comments ?? 0}.{" "}
-            {github.done
-              ? "Complete."
-              : `Partial${github.stopped ? `: ${github.stopped}` : ""}. Run make ingest again later to continue.`}
-          </p>
-        </Section>
+        <p className="small muted">
+          GitHub: {github.pages.issues ?? 0} issue pages · {github.pages.pulls ?? 0} PR pages ·{" "}
+          {(github.pages.issue_comments ?? 0) + (github.pages.review_comments ?? 0)} comment pages ·{" "}
+          {github.done ? "complete" : "partial, next ingest continues"}
+        </p>
       ) : null}
     </>
   );

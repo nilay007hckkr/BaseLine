@@ -1,104 +1,64 @@
-import {
-  Activity,
-  BookOpen,
-  Database,
-  FileText,
-  FlaskConical,
-  Home as HomeIcon,
-  Map as MapIcon,
-  MessageCircleQuestion,
-  Moon,
-  Network,
-  Sprout,
-  Sun,
-  Trophy,
-  UsersRound,
-  type LucideIcon,
-} from "lucide-react";
-import { Suspense, lazy, type ComponentType } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { Repeat, Trophy } from "lucide-react";
+import { Suspense, lazy, useEffect, useMemo, useRef, useState, type ComponentType } from "react";
+import { api, type AppConfig, type Feature, type WorkspaceStatus } from "./api/client";
+import { DEMO_CONFIG, InstanceProvider, toInstance, useInstance } from "./instance";
 import { ACHIEVEMENTS, AppStateProvider, useApp, type ViewKey } from "./state";
+import { Connect, Connecting } from "./views/Connect";
 import { Ask } from "./views/Ask";
-import { Docs } from "./views/Docs";
 import { Graph } from "./views/Graph";
 import { Home } from "./views/Home";
 import { Impact } from "./views/Impact";
 import { Incidents } from "./views/Incidents";
-import { Manual } from "./views/Manual";
-import { Overview } from "./views/Overview";
-import { Risk } from "./views/Risk";
+import { More, MORE_PAGES } from "./views/More";
 import { Scorecard } from "./views/Scorecard";
 import { Tests } from "./views/Tests";
 
 const Journey = lazy(() => import("./journey/Journey").then((m) => ({ default: m.Journey })));
 
-interface ViewDef {
-  label: string;
-  icon: LucideIcon;
-  view: ComponentType;
-  blurb: string;
-}
-
-export const VIEWS: Record<ViewKey, ViewDef> = {
-  home: { label: "Home", icon: HomeIcon, view: Home, blurb: "Your quests and results" },
-  ask: {
-    label: "Ask why",
-    icon: MessageCircleQuestion,
-    view: Ask,
-    blurb: "Why is the code like this?",
-  },
-  impact: { label: "Impact", icon: Network, view: Impact, blurb: "What will my change affect?" },
-  graph: { label: "Map", icon: MapIcon, view: Graph, blurb: "Explore how everything connects" },
-  risk: {
-    label: "Knowledge at risk",
-    icon: UsersRound,
-    view: Risk,
-    blurb: "Code only one person knows",
-  },
-  docs: { label: "Docs", icon: FileText, view: Docs, blurb: "Add runbooks and design docs" },
-  incidents: {
-    label: "Incidents",
-    icon: Activity,
-    view: Incidents,
-    blurb: "What broke, and which change did it?",
-  },
-  tests: { label: "Tests", icon: FlaskConical, view: Tests, blurb: "Tests that heal themselves" },
-  scorecard: {
-    label: "Accuracy",
-    icon: Trophy,
-    view: Scorecard,
-    blurb: "How good is it, measured",
-  },
-  data: {
-    label: "The data",
-    icon: Database,
-    view: Overview,
-    blurb: "What was collected, and how it links",
-  },
-  manual: { label: "Manual", icon: BookOpen, view: Manual, blurb: "How to use Hindsight" },
-};
-
-const GROUPS: { title: string; items: ViewKey[] }[] = [
-  { title: "", items: ["home"] },
-  { title: "Understand the code", items: ["ask", "impact", "graph", "risk", "docs"] },
-  { title: "Keep it running", items: ["incidents", "tests"] },
-  { title: "Proof", items: ["scorecard", "data"] },
-  { title: "Help", items: ["manual"] },
+/** The top-level pages, in the order of the top bar. */
+const TABS: { key: ViewKey; label: string; view: ComponentType; needs?: Feature }[] = [
+  { key: "home", label: "Home", view: Home },
+  { key: "ask", label: "Ask", view: Ask, needs: "ask" },
+  { key: "impact", label: "Impact", view: Impact, needs: "impact" },
+  { key: "graph", label: "Map", view: Graph, needs: "map" },
+  { key: "incidents", label: "Incidents", view: Incidents, needs: "incidents" },
+  { key: "tests", label: "Tests", view: Tests, needs: "tests" },
+  { key: "scorecard", label: "Proof", view: Scorecard, needs: "proof" },
 ];
 
-function XpChip() {
-  const { xp, level, unlocked } = useApp();
+function RepoChip() {
+  const { switchRepo } = useInstance();
+  const status = useQuery({ queryKey: ["workspace"], queryFn: api.workspaceStatus });
+  if (!switchRepo) return null;
   return (
-    <div
-      className="xp"
-      title={`${String(unlocked.length)} of ${String(Object.keys(ACHIEVEMENTS).length)} achievements`}
-    >
-      <Sprout size={18} aria-hidden="true" />
-      <div>
-        <div className="xp-label">
-          Level {level.number} · {level.name} · {xp} XP
+    <button className="ghost repo-chip" onClick={switchRepo} title="Connect another repository">
+      <Repeat size={14} aria-hidden="true" />
+      {(status.data?.repo ?? "").replace("https://github.com/", "")}
+    </button>
+  );
+}
+
+function Status() {
+  const { xp, level, setOnboarded } = useApp();
+  const health = useQuery({ queryKey: ["health"], queryFn: api.health, refetchInterval: 15000 });
+  return (
+    <div className="status">
+      <RepoChip />
+      <button
+        className="ghost"
+        onClick={() => {
+          setOnboarded(false);
+        }}
+      >
+        Tour
+      </button>
+      <div className="status-id">
+        <div>
+          LVL {level.number} · {level.name.toUpperCase()} · {xp} XP
         </div>
-        <div className="xp-bar" aria-hidden="true">
-          <span style={{ width: `${String(Math.round(level.progress * 100))}%` }} />
+        <div className={health.isSuccess ? "live" : "muted"}>
+          {health.isSuccess ? "● LIVE" : health.isError ? "○ OFFLINE" : "○ …"}
         </div>
       </div>
     </div>
@@ -111,107 +71,164 @@ function Toast() {
   const a = ACHIEVEMENTS[toast.achievement];
   return (
     <div className="toast" role="status" key={toast.id}>
-      <Trophy size={20} aria-hidden="true" />
-      <div>
-        <strong>Achievement unlocked: {a.title}</strong>
-        <div className="small">
-          {a.text} · +{a.xp} XP
-        </div>
-      </div>
+      <Trophy size={18} aria-hidden="true" />
+      <span>
+        {a.title.toUpperCase()} · +{a.xp} XP
+      </span>
     </div>
   );
 }
 
 function Shell() {
-  const { view, go, theme, toggleTheme, setOnboarded } = useApp();
-  const View = VIEWS[view].view;
+  const { view, go } = useApp();
+  const { features } = useInstance();
+  const tabs = TABS.filter((t) => !t.needs || features.includes(t.needs));
+  const inMore = MORE_PAGES.some((p) => p.key === view);
+  const current = tabs.find((t) => t.key === view);
+  const View = current?.view ?? More;
   return (
-    <div className="shell">
-      <aside className="sidebar">
+    <>
+      <header className="topbar">
         <button
           className="brand"
           onClick={() => {
             go("home");
           }}
+          aria-label="Hindsight home"
         >
           <span className="brand-mark" aria-hidden="true">
-            <Sprout size={22} />
+            <span>H</span>
           </span>
-          <span>
-            <h1>Hindsight</h1>
-            <span className="brand-sub">your project&apos;s memory</span>
-          </span>
+          <h1 className="pixel" style={{ margin: 0, fontSize: "inherit", fontWeight: 400 }}>
+            HINDSIGHT
+          </h1>
         </button>
-        <nav aria-label="Main">
-          {GROUPS.map((group) => (
-            <div key={group.title || "start"} className="nav-group">
-              {group.title ? <div className="nav-title">{group.title}</div> : null}
-              {group.items.map((key) => {
-                const def = VIEWS[key];
-                const Icon = def.icon;
-                return (
-                  <button
-                    key={key}
-                    className={key === view ? "nav-item active" : "nav-item"}
-                    aria-current={key === view ? "page" : undefined}
-                    onClick={() => {
-                      go(key);
-                    }}
-                  >
-                    <Icon size={18} aria-hidden="true" />
-                    {def.label}
-                  </button>
-                );
-              })}
-            </div>
-          ))}
-        </nav>
-      </aside>
-      <div className="main">
-        <header className="topbar">
-          <div>
-            <div className="page-title">{VIEWS[view].label}</div>
-            <div className="muted small">{VIEWS[view].blurb}</div>
-          </div>
-          <div className="topbar-actions">
-            <XpChip />
+        <nav className="nav" aria-label="Main">
+          {tabs.map((t) => (
             <button
-              className="ghost"
+              key={t.key}
+              className={t.key === view ? "nav-tab active" : "nav-tab"}
+              aria-current={t.key === view ? "page" : undefined}
               onClick={() => {
-                setOnboarded(false);
+                go(t.key);
               }}
             >
-              Replay tour
+              {t.label}
             </button>
-            <button
-              className="ghost icon-only"
-              onClick={toggleTheme}
-              aria-label={theme === "dark" ? "Switch to light theme" : "Switch to dark theme"}
-              title={theme === "dark" ? "Light theme" : "Dark theme"}
-            >
-              {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
-            </button>
-          </div>
-        </header>
-        <main className="content">
-          <View />
-        </main>
-      </div>
+          ))}
+          <button
+            className={inMore ? "nav-tab active" : "nav-tab"}
+            aria-current={inMore ? "page" : undefined}
+            onClick={() => {
+              go("risk");
+            }}
+          >
+            More
+          </button>
+        </nav>
+        <Status />
+      </header>
+      <main className="content">
+        <View />
+      </main>
       <Toast />
-    </div>
+    </>
+  );
+}
+
+const loading = <div className="runner-loading">LOADING…</div>;
+
+function Tour({ connecting }: { connecting?: WorkspaceStatus }) {
+  return (
+    <Suspense fallback={loading}>
+      <Journey connecting={connecting} />
+    </Suspense>
+  );
+}
+
+/** The demo: tour on the first visit, then the dashboard. */
+function DemoRoot() {
+  const { onboarded } = useApp();
+  return onboarded ? <Shell /> : <Tour />;
+}
+
+/** A workspace: connect a repository; the tour plays while it is read; then the dashboard. */
+function WorkspaceRoot({
+  switching,
+  setSwitching,
+}: {
+  switching: boolean;
+  setSwitching: (on: boolean) => void;
+}) {
+  const { onboarded } = useApp();
+  const client = useQueryClient();
+  const status = useQuery({
+    queryKey: ["workspace"],
+    queryFn: api.workspaceStatus,
+    refetchInterval: (q) => (q.state.data?.job === "running" ? 1500 : false),
+  });
+  const repo = status.data?.repo ?? null;
+  const seen = useRef(repo);
+  useEffect(() => {
+    if (seen.current !== repo) {
+      seen.current = repo;
+      void client.invalidateQueries({ predicate: (q) => q.queryKey[0] !== "workspace" });
+    }
+  }, [repo, client]);
+
+  if (status.isPending) return loading;
+  const data = status.data;
+  if (data?.job === "running")
+    return onboarded ? <Connecting status={data} /> : <Tour connecting={data} />;
+  if (!repo || switching) {
+    return (
+      <Connect
+        status={data}
+        onBack={
+          repo
+            ? () => {
+                setSwitching(false);
+              }
+            : undefined
+        }
+      />
+    );
+  }
+  if (!onboarded) return <Tour />;
+  return <Shell />;
+}
+
+function WorkspaceApp({ config }: { config: AppConfig }) {
+  const [switching, setSwitching] = useState(false);
+  const instance = useMemo(
+    () =>
+      toInstance(config, () => {
+        setSwitching(true);
+      }),
+    [config],
+  );
+  return (
+    <InstanceProvider value={instance}>
+      <WorkspaceRoot switching={switching} setSwitching={setSwitching} />
+    </InstanceProvider>
   );
 }
 
 function Root() {
-  const { onboarded } = useApp();
-  if (!onboarded) {
-    return (
-      <Suspense fallback={<div className="journey-loading">Loading the tour…</div>}>
-        <Journey />
-      </Suspense>
-    );
-  }
-  return <Shell />;
+  const config = useQuery({
+    queryKey: ["config"],
+    queryFn: api.config,
+    retry: false,
+    staleTime: Infinity,
+  });
+  if (config.isPending) return loading;
+  const data = config.data ?? DEMO_CONFIG; // an older server, or an error: behave as the demo
+  if (data.mode === "workspace") return <WorkspaceApp config={data} />;
+  return (
+    <InstanceProvider value={toInstance(data)}>
+      <DemoRoot />
+    </InstanceProvider>
+  );
 }
 
 export function App() {

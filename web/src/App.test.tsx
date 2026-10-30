@@ -7,6 +7,51 @@ import { fmtDate, pct } from "./ui";
 
 const KEY = "hindsight.progress.v1";
 
+// FIXTURE payloads for the stubbed API
+const DEMO = {
+  mode: "demo",
+  demo_port: 8000,
+  repo: null,
+  features: ["ask", "impact", "map", "incidents", "tests", "proof", "risk", "docs", "data"],
+};
+const WORKSPACE = { ...DEMO, mode: "workspace", features: ["ask", "impact", "map", "proof"] };
+const EMPTY = { repo: null, job: "idle", stage: "", progress: 0, measured: false };
+const RUNNING = {
+  repo: null,
+  job: "running",
+  job_repo: "https://github.com/acme/shop",
+  stage: "Reading git history",
+  progress: 0.15,
+  measured: false,
+};
+const LLM = {
+  order: ["gemini"],
+  allow_external: true,
+  active: null,
+  providers: [
+    {
+      name: "gemini",
+      label: "Gemini",
+      external: true,
+      key_env: "GEMINI_API_KEY",
+      key_set: false,
+      model: "",
+      model_env: "GEMINI_MODEL",
+      ready: false,
+    },
+    {
+      name: "ollama",
+      label: "Ollama (local)",
+      external: false,
+      key_env: null,
+      key_set: false,
+      model: "",
+      model_env: "OLLAMA_CHAT_MODEL",
+      ready: false,
+    },
+  ],
+};
+
 function renderApp() {
   const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   return render(
@@ -20,10 +65,24 @@ function nav() {
   return screen.getByRole("navigation", { name: "Main" });
 }
 
-function pendingFetch() {
+/** Answer the listed paths with JSON; everything else stays pending. */
+function stubApi(routes: Record<string, unknown>) {
   vi.stubGlobal(
     "fetch",
-    vi.fn(() => new Promise(() => undefined)),
+    vi.fn((input: RequestInfo | URL) => {
+      const url = typeof input === "string" ? input : input instanceof URL ? input.href : input.url;
+      const hit = Object.entries(routes).find(([path]) => url.endsWith(path));
+      return hit
+        ? Promise.resolve(new Response(JSON.stringify(hit[1]), { status: 200 }))
+        : new Promise(() => undefined);
+    }),
+  );
+}
+
+function onboarded() {
+  window.localStorage.setItem(
+    KEY,
+    JSON.stringify({ onboarded: true, unlocked: [], theme: "dark" }),
   );
 }
 
@@ -38,35 +97,45 @@ afterEach(() => {
 
 describe("first visit", () => {
   it("starts with the tour, and the tour can be skipped to the dashboard", async () => {
-    pendingFetch();
+    stubApi({ "/api/config": DEMO });
     renderApp();
     const skip = await screen.findByRole("button", { name: /Skip to dashboard/ });
-    expect(screen.getByRole("heading", { name: /Welcome to Hindsight/ })).toBeDefined();
+    expect(screen.getByRole("heading", { name: /Fly through the history/ })).toBeDefined();
     fireEvent.click(skip);
-    expect(screen.getByRole("heading", { level: 1, name: "Hindsight" })).toBeDefined();
-    for (const name of [
-      "Home",
-      "Ask why",
-      "Impact",
-      "Map",
-      "Incidents",
-      "Tests",
-      "Accuracy",
-      "Manual",
-    ]) {
+    expect(screen.getByRole("heading", { level: 1, name: "HINDSIGHT" })).toBeDefined();
+    for (const name of ["Home", "Ask", "Impact", "Map", "Incidents", "Tests", "Proof", "More"]) {
       expect(within(nav()).getByRole("button", { name })).toBeDefined();
     }
     expect(JSON.parse(window.localStorage.getItem(KEY) ?? "{}")).toMatchObject({ onboarded: true });
   });
 });
 
-describe("dashboard", () => {
-  beforeEach(() => {
-    window.localStorage.setItem(
-      KEY,
-      JSON.stringify({ onboarded: true, unlocked: [], theme: "dark" }),
-    );
+describe("tour without 3D", () => {
+  it("steps through the gates as cards and ends on the dashboard", async () => {
+    stubApi({ "/api/config": DEMO });
+    renderApp();
+    fireEvent.click(await screen.findByRole("button", { name: /Launch/ }));
+    expect(screen.getByRole("heading", { name: /Why is the code like this\?/ })).toBeDefined();
+    fireEvent.click(screen.getByRole("button", { name: /Continue/ }));
+    expect(screen.getByRole("heading", { name: /never makes things up/ })).toBeDefined();
+    // a gate not reached yet cannot be opened
+    expect(
+      screen.getByRole<HTMLButtonElement>("button", { name: /Gate 4: Incidents/ }).disabled,
+    ).toBe(true);
+    fireEvent.click(screen.getByRole("button", { name: /Gate 1: Ask why/ }));
+    expect(screen.getByRole("heading", { name: /Why is the code like this\?/ })).toBeDefined();
+    for (let i = 0; i < 5; i++) fireEvent.click(screen.getByRole("button", { name: /Continue/ }));
+    expect(screen.getByRole("heading", { name: /Measured, not claimed/ })).toBeDefined();
+    fireEvent.click(screen.getByRole("button", { name: /Enter Hindsight/ }));
+    expect(JSON.parse(window.localStorage.getItem(KEY) ?? "{}")).toMatchObject({
+      onboarded: true,
+      unlocked: ["tour"],
+    });
   });
+});
+
+describe("dashboard", () => {
+  beforeEach(onboarded);
 
   it("shows an API failure instead of hiding it", async () => {
     vi.stubGlobal(
@@ -76,16 +145,68 @@ describe("dashboard", () => {
       ),
     );
     renderApp();
-    fireEvent.click(within(nav()).getByRole("button", { name: "Accuracy" }));
+    fireEvent.click(
+      within(await screen.findByRole("navigation", { name: "Main" })).getByRole("button", {
+        name: "Proof",
+      }),
+    );
     expect(await screen.findByText(/500 Server Error/)).toBeDefined();
   });
 
-  it("a quest opens its page with the example filled in", () => {
-    pendingFetch();
+  it("a home step opens its page with the example filled in", async () => {
+    stubApi({ "/api/config": DEMO });
     renderApp();
-    fireEvent.click(screen.getByRole("button", { name: /Can it be fooled\?/ }));
+    fireEvent.click(await screen.findByRole("button", { name: /Ask why/ }));
     const input = screen.getByLabelText<HTMLInputElement>("Question");
-    expect(input.value).toBe("Why was paymentservice rewritten in Rust?");
+    expect(input.value).toBe("Why was currencyservice rewritten in TypeScript?");
+  });
+
+  it("settings show where keys go, never a field to type one", async () => {
+    stubApi({ "/api/config": DEMO, "/api/settings/llm": LLM });
+    renderApp();
+    fireEvent.click(
+      within(await screen.findByRole("navigation", { name: "Main" })).getByRole("button", {
+        name: "More",
+      }),
+    );
+    fireEvent.click(screen.getByRole("tab", { name: "Settings" }));
+    expect(await screen.findByText(/Key lives in .env as GEMINI_API_KEY/)).toBeDefined();
+    expect(screen.getByText("No key")).toBeDefined();
+    expect(screen.queryByLabelText(/key/i)).toBeNull();
+  });
+});
+
+describe("workspace", () => {
+  it("starts on the connect screen and refuses a non-GitHub URL", async () => {
+    stubApi({ "/api/config": WORKSPACE, "/api/workspace/status": EMPTY });
+    renderApp();
+    const input = await screen.findByLabelText<HTMLInputElement>("Enter your repo");
+    const connect = screen.getByRole<HTMLButtonElement>("button", { name: "Connect" });
+    expect(connect.disabled).toBe(true);
+    fireEvent.change(input, { target: { value: "https://github.com/acme/shop" } });
+    expect(connect.disabled).toBe(false);
+  });
+
+  it("shows progress while a repository is read", async () => {
+    onboarded();
+    stubApi({ "/api/config": WORKSPACE, "/api/workspace/status": RUNNING });
+    renderApp();
+    expect(await screen.findByRole("progressbar")).toBeDefined();
+    expect(screen.getByText("acme/shop")).toBeDefined();
+    expect(screen.getByText(/Reading git history/)).toBeDefined();
+  });
+
+  it("hides the demo-shop pages once a repository is connected", async () => {
+    onboarded();
+    stubApi({
+      "/api/config": WORKSPACE,
+      "/api/workspace/status": { ...EMPTY, repo: "https://github.com/acme/shop" },
+    });
+    renderApp();
+    const main = await screen.findByRole("navigation", { name: "Main" });
+    expect(within(main).queryByRole("button", { name: "Incidents" })).toBeNull();
+    expect(within(main).queryByRole("button", { name: "Tests" })).toBeNull();
+    expect(within(main).getByRole("button", { name: "Proof" })).toBeDefined();
   });
 });
 

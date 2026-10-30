@@ -1,9 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState, type SyntheticEvent } from "react";
 import { Term } from "../glossary";
+import { useInstance } from "../instance";
 import { useApp } from "../state";
 import { api, type Answer, type AnswerCheckRequest, type EvidenceItem } from "../api/client";
-import { ErrorBox, Kind, Section, fmtDate } from "../ui";
+import { ErrorBox, Kind, PageHead, Section, fmtDate } from "../ui";
 
 const EXAMPLES = [
   "Why does checkoutservice convert currency to USD?",
@@ -58,10 +59,7 @@ function Rate({ answer }: { answer: Answer }) {
           ["unsupported", "They don't ✗"],
         ];
   return (
-    <Section
-      title="Does it hold up?"
-      hint="Open one cited source (it links to the real commit, pull request or issue), then rate the answer."
-    >
+    <Section title="Does it hold up?" hint="Open a source, then rate.">
       {rate.isSuccess ? (
         <p className="small">Thanks, recorded. The tally above now includes your rating.</p>
       ) : (
@@ -150,8 +148,8 @@ function Result({ answer }: { answer: Answer }) {
         title="Answer"
         hint={
           answer.mode === "llm"
-            ? "Written by the language model from the sources below; every sentence passed the citation check."
-            : "Quoted directly from the sources below."
+            ? "Worded by the model; every line passed the citation check."
+            : "Quoted from the sources."
         }
       >
         <ul className="claims">
@@ -173,18 +171,21 @@ function Result({ answer }: { answer: Answer }) {
           <p className="muted small">{answer.notes.map(plainNote).join(" · ")}</p>
         ) : null}
       </Section>
-      <Section title="Sources" hint={`Checked with: ${answer.checker}`}>
+      <details className="card" open={answer.evidence.length <= 3}>
+        <summary>Sources ({answer.evidence.length})</summary>
+        <p className="muted small">Checked with: {answer.checker}</p>
         <ul className="plain">
           {answer.evidence.map((e) => (
             <Evidence key={e.id} item={e} />
           ))}
         </ul>
-      </Section>
+      </details>
     </>
   );
 }
 
 export function Ask() {
+  const { mode } = useInstance();
   const { takePreset, unlock } = useApp();
   // a quest hands over a question when it opens this page
   const [preset] = useState(() => takePreset("ask"));
@@ -220,49 +221,55 @@ export function Ask() {
 
   return (
     <>
-      <Section
+      <PageHead
+        label="Ask why"
         title="Why is the code like this?"
-        hint="Answers come only from commits, pull requests, issues, discussions and docs, with every source linked. One-minute check: ask your own question, open a cited source, then rate the answer."
-      >
-        <Tally />
-        <form onSubmit={submit} className="stack">
+        lede="Only from this project's history. Every line linked."
+      />
+      <Tally />
+      <form onSubmit={submit} className="stack" style={{ margin: "26px 0 18px" }}>
+        <input
+          className="big-input"
+          value={question}
+          onChange={(e) => {
+            setQuestion(e.target.value);
+          }}
+          placeholder="Type a why question…"
+          aria-label="Question"
+        />
+        <div className="row">
           <input
-            value={question}
+            value={file}
             onChange={(e) => {
-              setQuestion(e.target.value);
+              setFile(e.target.value);
             }}
-            placeholder="Ask a why question…"
-            aria-label="Question"
+            placeholder="Optional file, e.g. src/checkoutservice/main.go"
+            aria-label="File"
           />
-          <div className="row">
-            <input
-              value={file}
-              onChange={(e) => {
-                setFile(e.target.value);
-              }}
-              placeholder="Optional file, e.g. src/checkoutservice/main.go"
-              aria-label="File"
-            />
-            <input
-              value={lines}
-              onChange={(e) => {
-                setLines(e.target.value);
-              }}
-              placeholder="Lines, e.g. 120-140"
-              aria-label="Lines"
-              className="narrow"
-            />
-            <button type="submit" disabled={question.trim().length < 3 || mutation.isPending}>
-              {mutation.isPending ? "Searching…" : "Ask"}
-            </button>
-          </div>
-        </form>
-        <p className="muted small">
-          Try:{" "}
+          <input
+            value={lines}
+            onChange={(e) => {
+              setLines(e.target.value);
+            }}
+            placeholder="Lines, e.g. 120-140"
+            aria-label="Lines"
+            className="narrow"
+          />
+          <button
+            type="submit"
+            className="primary"
+            disabled={question.trim().length < 3 || mutation.isPending}
+          >
+            {mutation.isPending ? "Searching…" : "Ask"}
+          </button>
+        </div>
+      </form>
+      {mode === "demo" ? (
+        <div className="examples">
+          <span className="label">Try</span>
           {EXAMPLES.map((ex) => (
             <button
               key={ex}
-              className="link"
               onClick={() => {
                 setQuestion(ex);
               }}
@@ -270,17 +277,17 @@ export function Ask() {
               {ex}
             </button>
           ))}
-          {" · Trick question (should say not found): "}
           <button
-            className="link"
+            className="trick"
             onClick={() => {
               setQuestion(TRICK);
             }}
           >
-            {TRICK}
+            Trick: {TRICK}
           </button>
-        </p>
-      </Section>
+        </div>
+      ) : null}
+      <div style={{ height: 28 }} />
       {mutation.isError ? <ErrorBox error={mutation.error} /> : null}
       {mutation.data ? (
         <>

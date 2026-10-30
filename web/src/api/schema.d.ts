@@ -21,6 +21,92 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/config": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** App Config */
+        get: operations["app_config_api_config_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/workspace/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Workspace Status */
+        get: operations["workspace_status_api_workspace_status_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/workspace/connect": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Workspace Connect */
+        post: operations["workspace_connect_api_workspace_connect_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/settings/llm": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Llm View */
+        get: operations["llm_view_api_settings_llm_get"];
+        /** Llm Save */
+        put: operations["llm_save_api_settings_llm_put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/settings/llm/{provider}/models": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Llm Models */
+        get: operations["llm_models_api_settings_llm__provider__models_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/repo/stats": {
         parameters: {
             query?: never;
@@ -458,6 +544,23 @@ export interface components {
             /** Recent */
             recent: components["schemas"]["AnswerCheck"][];
         };
+        /**
+         * AppConfig
+         * @description What this instance is: the demo (Online Boutique) or a workspace for your own repository.
+         */
+        AppConfig: {
+            /**
+             * Mode
+             * @enum {string}
+             */
+            mode: "demo" | "workspace";
+            /** Demo Port */
+            demo_port: number;
+            /** Repo */
+            repo: string | null;
+            /** Features */
+            features: ("ask" | "impact" | "map" | "incidents" | "tests" | "proof" | "risk" | "docs" | "data")[];
+        };
         /** AskRequest */
         AskRequest: {
             /** Question */
@@ -526,6 +629,14 @@ export interface components {
             url: string;
             /** Pr */
             pr: string | null;
+        };
+        /** ConnectRequest */
+        ConnectRequest: {
+            /**
+             * Url
+             * @description https://github.com/<owner>/<name>
+             */
+            url: string;
         };
         /** CulpritRank */
         CulpritRank: {
@@ -838,6 +949,51 @@ export interface components {
             /** Samples */
             samples: string[];
         };
+        /**
+         * LlmProvider
+         * @description A model provider. Keys live in .env only: this reports whether one is set, never its value.
+         */
+        LlmProvider: {
+            /**
+             * Name
+             * @enum {string}
+             */
+            name: "gemini" | "groq" | "ollama";
+            /** Label */
+            label: string;
+            /** External */
+            external: boolean;
+            /** Key Env */
+            key_env: string | null;
+            /** Key Set */
+            key_set: boolean;
+            /** Model */
+            model: string;
+            /** Model Env */
+            model_env: string;
+            /** Ready */
+            ready: boolean;
+        };
+        /** LlmSettings */
+        LlmSettings: {
+            /** Order */
+            order: ("gemini" | "groq" | "ollama")[];
+            /** Providers */
+            providers: components["schemas"]["LlmProvider"][];
+            /** Allow External */
+            allow_external: boolean;
+            /** Active */
+            active: ("gemini" | "groq" | "ollama") | null;
+        };
+        /** LlmSettingsUpdate */
+        LlmSettingsUpdate: {
+            /** Order */
+            order: ("gemini" | "groq" | "ollama")[];
+            /** Models */
+            models?: {
+                [key: string]: string;
+            };
+        };
         /** MethodScore */
         MethodScore: {
             /** Name */
@@ -848,6 +1004,18 @@ export interface components {
             ci_low: number;
             /** Ci High */
             ci_high: number;
+        };
+        /** ModelList */
+        ModelList: {
+            /**
+             * Provider
+             * @enum {string}
+             */
+            provider: "gemini" | "groq" | "ollama";
+            /** Models */
+            models: string[];
+            /** Error */
+            error: string | null;
         };
         /** QaGrounding */
         QaGrounding: {
@@ -1145,6 +1313,40 @@ export interface components {
             /** Context */
             ctx?: Record<string, never>;
         };
+        /**
+         * WorkspaceStatus
+         * @description The repository on screen, and the connect job (ingest, then the accuracy replay).
+         */
+        WorkspaceStatus: {
+            /** Repo */
+            repo: string | null;
+            /**
+             * Job
+             * @enum {string}
+             */
+            job: "idle" | "running" | "failed";
+            /** Job Repo */
+            job_repo: string | null;
+            /**
+             * Stage
+             * @default
+             */
+            stage: string;
+            /**
+             * Progress
+             * @default 0
+             */
+            progress: number;
+            /** Error */
+            error: string | null;
+            /**
+             * Measured
+             * @default false
+             */
+            measured: boolean;
+            /** Measure Note */
+            measure_note: string | null;
+        };
     };
     responses: never;
     parameters: never;
@@ -1172,6 +1374,163 @@ export interface operations {
                     "application/json": {
                         [key: string]: string;
                     };
+                };
+            };
+        };
+    };
+    app_config_api_config_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AppConfig"];
+                };
+            };
+        };
+    };
+    workspace_status_api_workspace_status_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WorkspaceStatus"];
+                };
+            };
+        };
+    };
+    workspace_connect_api_workspace_connect_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ConnectRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WorkspaceStatus"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    llm_view_api_settings_llm_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LlmSettings"];
+                };
+            };
+        };
+    };
+    llm_save_api_settings_llm_put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LlmSettingsUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LlmSettings"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    llm_models_api_settings_llm__provider__models_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                provider: "gemini" | "groq" | "ollama";
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ModelList"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };

@@ -28,6 +28,178 @@
     }
    }
   },
+  "/api/config": {
+   "get": {
+    "summary": "App Config",
+    "operationId": "app_config_api_config_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/AppConfig"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/workspace/status": {
+   "get": {
+    "summary": "Workspace Status",
+    "operationId": "workspace_status_api_workspace_status_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/WorkspaceStatus"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/workspace/connect": {
+   "post": {
+    "summary": "Workspace Connect",
+    "operationId": "workspace_connect_api_workspace_connect_post",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/ConnectRequest"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "202": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/WorkspaceStatus"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/settings/llm": {
+   "get": {
+    "summary": "Llm View",
+    "operationId": "llm_view_api_settings_llm_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/LlmSettings"
+        }
+       }
+      }
+     }
+    }
+   },
+   "put": {
+    "summary": "Llm Save",
+    "operationId": "llm_save_api_settings_llm_put",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/LlmSettingsUpdate"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/LlmSettings"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/settings/llm/{provider}/models": {
+   "get": {
+    "summary": "Llm Models",
+    "operationId": "llm_models_api_settings_llm__provider__models_get",
+    "parameters": [
+     {
+      "name": "provider",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "enum": [
+        "gemini",
+        "groq",
+        "ollama"
+       ],
+       "type": "string",
+       "title": "Provider"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ModelList"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
   "/api/repo/stats": {
    "get": {
     "summary": "Repo Stats",
@@ -1001,6 +1173,60 @@
     ],
     "title": "AnswerCheckSummary"
    },
+   "AppConfig": {
+    "properties": {
+     "mode": {
+      "type": "string",
+      "enum": [
+       "demo",
+       "workspace"
+      ],
+      "title": "Mode"
+     },
+     "demo_port": {
+      "type": "integer",
+      "title": "Demo Port"
+     },
+     "repo": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Repo"
+     },
+     "features": {
+      "items": {
+       "type": "string",
+       "enum": [
+        "ask",
+        "impact",
+        "map",
+        "incidents",
+        "tests",
+        "proof",
+        "risk",
+        "docs",
+        "data"
+       ]
+      },
+      "type": "array",
+      "title": "Features"
+     }
+    },
+    "type": "object",
+    "required": [
+     "mode",
+     "demo_port",
+     "repo",
+     "features"
+    ],
+    "title": "AppConfig",
+    "description": "What this instance is: the demo (Online Boutique) or a workspace for your own repository."
+   },
    "AskRequest": {
     "properties": {
      "question": {
@@ -1190,6 +1416,22 @@
      "pr"
     ],
     "title": "CommitSummary"
+   },
+   "ConnectRequest": {
+    "properties": {
+     "url": {
+      "type": "string",
+      "maxLength": 200,
+      "minLength": 19,
+      "title": "Url",
+      "description": "https://github.com/<owner>/<name>"
+     }
+    },
+    "type": "object",
+    "required": [
+     "url"
+    ],
+    "title": "ConnectRequest"
    },
    "CulpritRank": {
     "properties": {
@@ -2052,6 +2294,154 @@
     ],
     "title": "IncidentTemplate"
    },
+   "LlmProvider": {
+    "properties": {
+     "name": {
+      "type": "string",
+      "enum": [
+       "gemini",
+       "groq",
+       "ollama"
+      ],
+      "title": "Name"
+     },
+     "label": {
+      "type": "string",
+      "title": "Label"
+     },
+     "external": {
+      "type": "boolean",
+      "title": "External"
+     },
+     "key_env": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Key Env"
+     },
+     "key_set": {
+      "type": "boolean",
+      "title": "Key Set"
+     },
+     "model": {
+      "type": "string",
+      "title": "Model"
+     },
+     "model_env": {
+      "type": "string",
+      "title": "Model Env"
+     },
+     "ready": {
+      "type": "boolean",
+      "title": "Ready"
+     }
+    },
+    "type": "object",
+    "required": [
+     "name",
+     "label",
+     "external",
+     "key_env",
+     "key_set",
+     "model",
+     "model_env",
+     "ready"
+    ],
+    "title": "LlmProvider",
+    "description": "A model provider. Keys live in .env only: this reports whether one is set, never its value."
+   },
+   "LlmSettings": {
+    "properties": {
+     "order": {
+      "items": {
+       "type": "string",
+       "enum": [
+        "gemini",
+        "groq",
+        "ollama"
+       ]
+      },
+      "type": "array",
+      "title": "Order"
+     },
+     "providers": {
+      "items": {
+       "$ref": "#/components/schemas/LlmProvider"
+      },
+      "type": "array",
+      "title": "Providers"
+     },
+     "allow_external": {
+      "type": "boolean",
+      "title": "Allow External"
+     },
+     "active": {
+      "anyOf": [
+       {
+        "type": "string",
+        "enum": [
+         "gemini",
+         "groq",
+         "ollama"
+        ]
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Active"
+     }
+    },
+    "type": "object",
+    "required": [
+     "order",
+     "providers",
+     "allow_external",
+     "active"
+    ],
+    "title": "LlmSettings"
+   },
+   "LlmSettingsUpdate": {
+    "properties": {
+     "order": {
+      "items": {
+       "type": "string",
+       "enum": [
+        "gemini",
+        "groq",
+        "ollama"
+       ]
+      },
+      "type": "array",
+      "maxItems": 3,
+      "title": "Order"
+     },
+     "models": {
+      "additionalProperties": {
+       "type": "string"
+      },
+      "propertyNames": {
+       "enum": [
+        "gemini",
+        "groq",
+        "ollama"
+       ]
+      },
+      "type": "object",
+      "title": "Models"
+     }
+    },
+    "type": "object",
+    "required": [
+     "order"
+    ],
+    "title": "LlmSettingsUpdate"
+   },
    "MethodScore": {
     "properties": {
      "name": {
@@ -2079,6 +2469,44 @@
      "ci_high"
     ],
     "title": "MethodScore"
+   },
+   "ModelList": {
+    "properties": {
+     "provider": {
+      "type": "string",
+      "enum": [
+       "gemini",
+       "groq",
+       "ollama"
+      ],
+      "title": "Provider"
+     },
+     "models": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Models"
+     },
+     "error": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Error"
+     }
+    },
+    "type": "object",
+    "required": [
+     "provider",
+     "models",
+     "error"
+    ],
+    "title": "ModelList"
    },
    "QaGrounding": {
     "properties": {
@@ -2904,6 +3332,91 @@
      "type"
     ],
     "title": "ValidationError"
+   },
+   "WorkspaceStatus": {
+    "properties": {
+     "repo": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Repo"
+     },
+     "job": {
+      "type": "string",
+      "enum": [
+       "idle",
+       "running",
+       "failed"
+      ],
+      "title": "Job"
+     },
+     "job_repo": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Job Repo"
+     },
+     "stage": {
+      "type": "string",
+      "title": "Stage",
+      "default": ""
+     },
+     "progress": {
+      "type": "number",
+      "title": "Progress",
+      "default": 0.0
+     },
+     "error": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Error"
+     },
+     "measured": {
+      "type": "boolean",
+      "title": "Measured",
+      "default": false
+     },
+     "measure_note": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Measure Note"
+     }
+    },
+    "type": "object",
+    "required": [
+     "repo",
+     "job",
+     "job_repo",
+     "stage",
+     "progress",
+     "error",
+     "measured",
+     "measure_note"
+    ],
+    "title": "WorkspaceStatus",
+    "description": "The repository on screen, and the connect job (ingest, then the accuracy replay)."
    }
   }
  }

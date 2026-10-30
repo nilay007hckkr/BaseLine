@@ -2,24 +2,35 @@ import { useQuery } from "@tanstack/react-query";
 import { Crosshair, ExternalLink, Pause, Play } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { ForceGraph3DInstance, LinkObject, NodeObject } from "3d-force-graph";
+import type { BufferGeometry } from "three";
 import { api, type GraphResponse } from "../api/client";
 import { GLOSSARY, Term } from "../glossary";
 import { useApp } from "../state";
-import { ErrorBox, Loading, Provenance, Section } from "../ui";
+import { ErrorBox, Loading, PageHead, Provenance } from "../ui";
 
-/** Plain names and colours for what the dots are. */
-const KINDS: Record<string, { plain: string; color: string }> = {
-  Service: { plain: "Service", color: "#4ade80" },
-  Component: { plain: "Folder", color: "#86efac" },
-  File: { plain: "Code file", color: "#38bdf8" },
-  Commit: { plain: "Change (commit)", color: "#a3e635" },
-  PR: { plain: "Pull request", color: "#c084fc" },
-  Issue: { plain: "Issue", color: "#fb923c" },
-  Author: { plain: "Person", color: "#facc15" },
-  Doc: { plain: "Document", color: "#f472b6" },
-  DocChunk: { plain: "Doc section", color: "#f9a8d4" },
-  Test: { plain: "Test", color: "#22d3ee" },
+type Shape = "icosa" | "box" | "tetra" | "octa" | "ring" | "dodeca" | "square";
+
+/** What each item is: a plain name, a wire shape, and a colour by meaning (Manual › Colours):
+ * white = the project's files, blue = history, gold = people, green = tests (checks). */
+const KINDS: Record<string, { plain: string; color: string; shape: Shape }> = {
+  Service: { plain: "Service", color: "#ffffff", shape: "icosa" },
+  Component: { plain: "Folder", color: "#bdbdbd", shape: "box" },
+  File: { plain: "Code file", color: "#d9d9d9", shape: "box" },
+  Commit: { plain: "Change (commit)", color: "#5b8cff", shape: "tetra" },
+  PR: { plain: "Pull request", color: "#5b8cff", shape: "octa" },
+  Issue: { plain: "Issue", color: "#5b8cff", shape: "ring" },
+  Author: { plain: "Person", color: "#e0b23a", shape: "dodeca" },
+  Doc: { plain: "Document", color: "#bdbdbd", shape: "square" },
+  DocChunk: { plain: "Doc section", color: "#bdbdbd", shape: "square" },
+  Test: { plain: "Test", color: "#39e75f", shape: "tetra" },
 };
+
+/** Size of an item's shape: the item you searched for, then services, then by link count. */
+function size(n: { center: boolean; kind: string; degree: number }): number {
+  if (n.center) return 7;
+  if (n.kind === "Service") return 4.5;
+  return 1.6 + Math.min(3, n.degree * 0.25);
+}
 
 /** What each kind of link means, in words. */
 const LINKS: Record<string, string> = {
@@ -100,11 +111,13 @@ function Graph3D({
 
     void (async () => {
       try {
-        const [{ default: ForceGraph3D }, { default: SpriteText }, THREE] = await Promise.all([
-          import("3d-force-graph"),
-          import("three-spritetext"),
-          import("three"),
-        ]);
+        const [{ default: ForceGraph3D }, { default: SpriteText }, THREE, { UnrealBloomPass }] =
+          await Promise.all([
+            import("3d-force-graph"),
+            import("three-spritetext"),
+            import("three"),
+            import("three/examples/jsm/postprocessing/UnrealBloomPass.js"),
+          ]);
         if (run.cancelled) return;
         const css = getComputedStyle(document.documentElement);
         const color = (name: string, fallback: string) =>
@@ -117,26 +130,46 @@ function Graph3D({
         graphRef.current = g;
         g.width(el.clientWidth)
           .height(el.clientHeight)
-          .backgroundColor(color("--bg-2", "#0c1b14"))
+          .backgroundColor(color("--bg", "#000000"))
           .showNavInfo(false)
           .nodeLabel((n) => `${KINDS[n.kind]?.plain ?? n.kind}: ${n.label}`)
-          .nodeColor((n) => KINDS[n.kind]?.color ?? "#94a3b8")
-          .nodeVal((n) =>
-            n.center ? 12 : n.kind === "Service" ? 5 : 1.5 + Math.min(4, n.degree * 0.3),
-          )
-          .nodeOpacity(0.95)
-          .nodeThreeObjectExtend(true)
+          .nodeVal((n) => size(n))
+          .nodeThreeObjectExtend(false)
           .nodeThreeObject((n) => {
-            if (!n.center && n.kind !== "Service") return new THREE.Object3D();
-            const label = new SpriteText(short(n.label), n.center ? 5 : 3.5, text);
-            label.fontFace = "Nunito Variable, Nunito, sans-serif";
-            label.fontWeight = "800";
-            label.position.y = n.center ? 11 : 7;
-            return label;
+            const kind = KINDS[n.kind] ?? { color: "#8f8f8f", shape: "box" as Shape };
+            const r = size(n);
+            const body: Record<Shape, () => BufferGeometry> = {
+              icosa: () => new THREE.IcosahedronGeometry(r),
+              box: () => new THREE.BoxGeometry(r * 1.3, r * 1.3, r * 1.3),
+              tetra: () => new THREE.TetrahedronGeometry(r),
+              octa: () => new THREE.OctahedronGeometry(r),
+              dodeca: () => new THREE.DodecahedronGeometry(r),
+              ring: () => new THREE.TorusGeometry(r, r * 0.08, 3, 18),
+              square: () => new THREE.PlaneGeometry(r * 1.5, r * 1.9),
+            };
+            const group = new THREE.Group();
+            group.add(
+              new THREE.LineSegments(
+                new THREE.EdgesGeometry(body[kind.shape]()),
+                new THREE.LineBasicMaterial({ color: kind.color }),
+              ),
+            );
+            if (n.center || n.kind === "Service") {
+              const label = new SpriteText(
+                short(n.label).toUpperCase(),
+                n.center ? 4.5 : 3.2,
+                text,
+              );
+              label.fontFace = "VT323, monospace";
+              label.fontWeight = "400";
+              label.position.y = r + (n.center ? 5 : 3.5);
+              group.add(label);
+            }
+            return group;
           })
-          .linkColor((l) => color(`--prov-${l.provenance}`, "#94a3b8"))
-          .linkOpacity(0.5)
-          .linkWidth((l) => (l.provenance === "heuristic" ? 0.25 : 0.8))
+          .linkColor((l) => color(`--prov-${l.provenance}`, "#8f8f8f"))
+          .linkOpacity(0.45)
+          .linkWidth(0)
           .linkLabel(
             (l) => `${LINKS[l.kind] ?? l.kind} · ${GLOSSARY[l.provenance]?.term ?? l.provenance}`,
           )
@@ -153,6 +186,10 @@ function Graph3D({
           .cooldownTime(5000)
           .graphData({ nodes, links });
         g.cameraPosition({ x: 0, y: 0, z: 160 });
+        // the glow of the onboarding run: only bright lines bloom, the background stays black
+        g.postProcessingComposer().addPass(
+          new UnrealBloomPass(new THREE.Vector2(el.clientWidth, el.clientHeight), 0.8, 0.35, 0.12),
+        );
         // frame the graph soon after it appears, and again once the layout has settled
         run.fit = window.setTimeout(() => {
           g.zoomToFit(800, 30);
@@ -240,7 +277,7 @@ function Details({
           </button>
         ) : null}
       </div>
-      <p className="small muted">How it connects (and how we know):</p>
+      <p className="small muted">Links · how we know</p>
       <ul className="map-links">
         {edges.map((e, i) => (
           <li key={`${e.source}-${e.kind}-${e.target}-${String(i)}`}>
@@ -286,10 +323,12 @@ export function Graph() {
 
   return (
     <>
-      <Section
-        title="See how everything connects"
-        hint="Drag to rotate, scroll to zoom, click a dot to see what it is and how we know."
-      >
+      <PageHead
+        label="Map"
+        title="How everything connects."
+        lede="Drag to turn. Click a shape to see how we know."
+      />
+      <div style={{ marginBottom: 18 }}>
         <div className="row">
           <input
             value={query}
@@ -338,7 +377,7 @@ export function Graph() {
             </button>
           ))}
         </div>
-      </Section>
+      </div>
       {graph.isPending ? <Loading /> : null}
       {graph.isError ? <ErrorBox error={graph.error} /> : null}
       {graph.data ? (

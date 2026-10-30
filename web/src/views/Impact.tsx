@@ -1,8 +1,8 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { useApp } from "../state";
-import { api, type ImpactItem } from "../api/client";
-import { ErrorBox, Provenance, ScoreBar, Section, fmtDate } from "../ui";
+import { api, type ImpactItem, type ImpactReport } from "../api/client";
+import { ErrorBox, PageHead, Provenance, ScoreBar, SubTabs, fmtDate } from "../ui";
 
 function Items({ items, empty }: { items: ImpactItem[]; empty: string }) {
   if (!items.length) return <p className="muted">{empty}</p>;
@@ -40,6 +40,49 @@ function Items({ items, empty }: { items: ImpactItem[]; empty: string }) {
   );
 }
 
+type Tab = "components" | "files" | "tests" | "docs" | "people" | "runbooks";
+
+function Report({ report }: { report: ImpactReport }) {
+  const [tab, setTab] = useState<Tab>("components");
+  const lists: Record<Tab, { label: string; items: ImpactItem[]; empty: string }> = {
+    components: { label: "Services", items: report.components, empty: "None found." },
+    files: {
+      label: "Files",
+      items: report.files,
+      empty: "No other files have changed together with these.",
+    },
+    tests: { label: "Tests", items: report.tests, empty: "No related tests found in history." },
+    docs: { label: "Docs", items: report.docs, empty: "No docs mention the changed parts." },
+    people: { label: "People", items: report.people, empty: "No earlier authors." },
+    runbooks: {
+      label: "Runbooks",
+      items: report.runbooks,
+      empty: "No runbook covers these services yet.",
+    },
+  };
+  const keys = Object.keys(lists) as Tab[];
+  return (
+    <>
+      <div className="label">Changing: {report.changed_files.join(", ") || "nothing"}</div>
+      {report.notes.length ? <p className="muted small">{report.notes.join(" · ")}</p> : null}
+      <SubTabs
+        tabs={keys.map((k) => ({
+          key: k,
+          label: `${lists[k].label} ${String(lists[k].items.length)}`,
+        }))}
+        value={tab}
+        onChange={setTab}
+      />
+      <Items items={lists[tab].items} empty={lists[tab].empty} />
+      <p className="muted small" style={{ marginTop: 24 }}>
+        Score = {report.weights.cochange} × changed together + {report.weights.static} × service
+        calls + {report.weights.same_component} × same service + {report.weights.recency} × recency.
+        Every reason comes from recorded history, not from a language model.
+      </p>
+    </>
+  );
+}
+
 export function Impact() {
   const commits = useQuery({ queryKey: ["commits"], queryFn: api.commits });
   const [commit, setCommit] = useState("");
@@ -62,10 +105,12 @@ export function Impact() {
 
   return (
     <>
-      <Section
+      <PageHead
+        label="Impact"
         title="What will this change affect?"
-        hint="Pick a past commit (only history before it is used) or list the files you plan to change."
-      >
+        lede="Files you will change, or a past change."
+      />
+      <div style={{ margin: "18px 0 30px" }}>
         <div className="row">
           <select
             value={commit}
@@ -115,44 +160,9 @@ export function Impact() {
             Check files
           </button>
         </div>
-      </Section>
+      </div>
       {mutation.isError ? <ErrorBox error={mutation.error} /> : null}
-      {report ? (
-        <>
-          <Section title={`Changed: ${report.changed_files.join(", ") || "nothing"}`}>
-            {report.notes.length ? <p className="muted small">{report.notes.join(" · ")}</p> : null}
-            <p className="muted small">
-              Score = {report.weights.cochange} × changed-together + {report.weights.static} ×
-              service calls + {report.weights.same_component} × same service +{" "}
-              {report.weights.recency} × recency. Reasons come from the recorded history, not from a
-              language model.
-            </p>
-          </Section>
-          <div className="grid">
-            <Section title="Services and components">
-              <Items items={report.components} empty="None found." />
-            </Section>
-            <Section title="Files">
-              <Items
-                items={report.files}
-                empty="No other files have changed together with these."
-              />
-            </Section>
-            <Section title="Tests to re-check">
-              <Items items={report.tests} empty="No related tests found in history." />
-            </Section>
-            <Section title="Docs that may need updating">
-              <Items items={report.docs} empty="No docs mention the changed parts." />
-            </Section>
-            <Section title="People who know this code">
-              <Items items={report.people} empty="No earlier authors." />
-            </Section>
-            <Section title="Runbooks for affected services">
-              <Items items={report.runbooks} empty="No runbook covers these services yet." />
-            </Section>
-          </div>
-        </>
-      ) : null}
+      {report ? <Report report={report} /> : null}
     </>
   );
 }

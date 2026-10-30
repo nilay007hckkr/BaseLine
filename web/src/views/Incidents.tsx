@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Term } from "../glossary";
 import { useApp } from "../state";
 import { api, type Incident } from "../api/client";
-import { ErrorBox, Loading, ScoreBar, Section, fmtDate } from "../ui";
+import { ErrorBox, Loading, PageHead, ScoreBar, Section, SubTabs, fmtDate } from "../ui";
 
 type Lane = Incident["timeline"][string];
 
@@ -76,14 +76,13 @@ function Story({ incident }: { incident: Incident }) {
   const lasted = (incident.closed_at ?? incident.updated_at) - incident.opened_at;
   const namedBy = (culprit?.evidence.named_by ?? []) as { service: string; errors: number }[];
   return (
-    <section className="card">
-      <h2>
-        Incident #{incident.id}: opened {fmtDate(incident.opened_at)} {clock(incident.opened_at)}{" "}
-        UTC
-      </h2>
+    <section style={{ marginBottom: 28 }}>
+      <div className="label">
+        Incident #{incident.id} · {fmtDate(incident.opened_at)} {clock(incident.opened_at)} UTC
+      </div>
       <p className="muted small">
-        {incident.closed_at ? `Lasted ${minutes(lasted)}.` : "Still open."} Faults in the demo shop
-        were injected on purpose (<Term id="synthetic">synthetic</Term>).
+        {incident.closed_at ? `Lasted ${minutes(lasted)}` : "Still open"} ·{" "}
+        <Term id="synthetic">synthetic</Term> fault
       </p>
       <div className="story">
         <div className="story-step broke">
@@ -94,8 +93,8 @@ function Story({ incident }: { incident: Incident }) {
           <div className="small muted">
             <Term id="culprit">culprit</Term>
             {namedBy.length
-              ? `: named in ${String(namedBy.reduce((n, x) => n + x.errors, 0))} error lines from ${namedBy.map((x) => x.service).join(", ")}`
-              : ": its own logs changed first"}
+              ? ` · named in ${String(namedBy.reduce((n, x) => n + x.errors, 0))} errors`
+              : " · its own logs changed first"}
           </div>
         </div>
         <ArrowRight className="story-arrow" aria-hidden="true" />
@@ -107,7 +106,7 @@ function Story({ incident }: { incident: Incident }) {
             {victims.length ? victims.map((v) => v.service).join(", ") : "no other service"}
           </div>
           <div className="small muted">
-            <Term id="victim">victims</Term>: they showed errors because of the culprit
+            <Term id="victim">victims</Term> · errors caused by the culprit
           </div>
         </div>
         <ArrowRight className="story-arrow" aria-hidden="true" />
@@ -123,9 +122,9 @@ function Story({ incident }: { incident: Incident }) {
                 </a>
               </div>
               <div className="small muted">
-                deployed {minutes(Number(top.evidence.gap_s))} before
-                {top.evidence.touches_culprit ? ", changed the broken service" : ""}
-                {top.synthetic ? " · synthetic deploy" : ""} · a lead, not proof
+                {minutes(Number(top.evidence.gap_s))} before
+                {top.evidence.touches_culprit ? " · touched it" : ""}
+                {top.synthetic ? " · synthetic" : ""} · a lead
               </div>
             </>
           ) : (
@@ -137,8 +136,18 @@ function Story({ incident }: { incident: Incident }) {
   );
 }
 
+type DetailTab = "timeline" | "why" | "changes" | "patterns" | "runbook";
+const DETAIL_TABS: { key: DetailTab; label: string }[] = [
+  { key: "timeline", label: "Timeline" },
+  { key: "why", label: "Why" },
+  { key: "changes", label: "Changes" },
+  { key: "patterns", label: "Patterns" },
+  { key: "runbook", label: "Runbook" },
+];
+
 function Detail({ id }: { id: number }) {
   const { unlock } = useApp();
+  const [tab, setTab] = useState<DetailTab>("timeline");
   const q = useQuery({ queryKey: ["incident", id], queryFn: () => api.incident(id) });
   const loaded = q.isSuccess;
   useEffect(() => {
@@ -156,29 +165,29 @@ function Detail({ id }: { id: number }) {
   return (
     <>
       <Story incident={inc} />
-      <Section
-        title="Timeline"
-        hint="How much each service logged, in 10-second steps; errors in red. The yellow line is when the incident opened."
-      >
-        <div className="lanes">
-          {lanes.map(([name, points]) => (
-            <Lane
-              key={name}
-              name={name}
-              points={points}
-              start={start}
-              end={end}
-              marker={inc.opened_at}
-              role={roles[name]}
-            />
-          ))}
-        </div>
-      </Section>
-      <div className="grid">
+      <SubTabs tabs={DETAIL_TABS} value={tab} onChange={setTab} />
+      {tab === "timeline" ? (
         <Section
-          title="Why this service?"
-          hint="Errors that name another service move suspicion to it: the service that logs the most errors is often only a victim."
+          title="Timeline"
+          hint="Log lines per service every 10 s. Red: errors. Green line: opened."
         >
+          <div className="lanes">
+            {lanes.map(([name, points]) => (
+              <Lane
+                key={name}
+                name={name}
+                points={points}
+                start={start}
+                end={end}
+                marker={inc.opened_at}
+                role={roles[name]}
+              />
+            ))}
+          </div>
+        </Section>
+      ) : null}
+      {tab === "why" ? (
+        <Section title="Why this service?" hint="Errors that name another service point at it.">
           <ul className="plain">
             {inc.ranking.map((r) => (
               <li key={r.service} className="impact-item">
@@ -209,9 +218,11 @@ function Detail({ id }: { id: number }) {
             ))}
           </ul>
         </Section>
+      ) : null}
+      {tab === "changes" ? (
         <Section
           title="Recent changes, most likely first"
-          hint="Deploys in the 24 hours before the incident, ranked by timing and by whether they touched the broken service. A lead, not proof."
+          hint="Deploys in the 24 h before, ranked. A lead, not proof."
         >
           {inc.candidates.length === 0 ? (
             <p className="muted">No deploys recorded before this incident.</p>
@@ -247,6 +258,8 @@ function Detail({ id }: { id: number }) {
             </ul>
           )}
         </Section>
+      ) : null}
+      {tab === "runbook" ? (
         <Section title="Runbook">
           {inc.runbooks.length === 0 ? (
             <p className="muted">No runbook covers the culprit yet. Upload one in Docs.</p>
@@ -263,6 +276,8 @@ function Detail({ id }: { id: number }) {
             </ul>
           )}
         </Section>
+      ) : null}
+      {tab === "patterns" ? (
         <Section title="Log patterns">
           <table>
             <tbody>
@@ -277,7 +292,7 @@ function Detail({ id }: { id: number }) {
             </tbody>
           </table>
         </Section>
-      </div>
+      ) : null}
     </>
   );
 }
@@ -294,32 +309,37 @@ export function Incidents() {
   const current = selected ?? list.data[0]?.id ?? null;
   return (
     <>
-      <Section
-        title="Incidents in the demo shop"
-        hint="Hindsight reads the shop's logs and opens an incident on a new kind of error or a sudden jump in errors. Pick one to see what broke and why."
-      >
-        {list.data.length === 0 ? (
-          <p className="muted">
-            No incidents yet. Run <code>make collect</code> while the shop runs, or{" "}
-            <code>make demo-replay</code>.
-          </p>
-        ) : (
-          <div className="chips">
+      <PageHead
+        label="Incidents"
+        title="What broke, and which change did it?"
+        lede="Faults injected on purpose into the demo shop."
+      />
+      {list.data.length === 0 ? (
+        <p className="muted">
+          No incidents yet. Run <code>make collect</code> while the shop runs, or{" "}
+          <code>make demo-replay</code>.
+        </p>
+      ) : (
+        <div className="inc-layout">
+          <nav className="inc-list" aria-label="Incidents">
             {list.data.map((i) => (
               <button
                 key={i.id}
-                className={i.id === current ? "chip active" : "chip"}
+                className={i.id === current ? "inc-item active" : "inc-item"}
                 onClick={() => {
                   setSelected(i.id);
                 }}
               >
-                #{i.id} · {clock(i.opened_at).slice(0, 5)} · broke: {i.culprit ?? "?"}
+                <span>
+                  #{i.id} {clock(i.opened_at).slice(0, 5)}
+                </span>
+                <span>{(i.culprit ?? "?").replace("service", "")}</span>
               </button>
             ))}
-          </div>
-        )}
-      </Section>
-      {current !== null ? <Detail id={current} /> : null}
+          </nav>
+          <div>{current !== null ? <Detail id={current} /> : null}</div>
+        </div>
+      )}
     </>
   );
 }

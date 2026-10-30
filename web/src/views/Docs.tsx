@@ -49,7 +49,7 @@ export function Docs() {
     <>
       <Section
         title="Add a document"
-        hint="PDF or Markdown. Sections are linked to the services and files they name. Uploaded text stays on this machine unless DOCS_ALLOW_EXTERNAL is set."
+        hint="PDF or Markdown, linked to the services it names. Stays on this machine."
       >
         <form onSubmit={submit} className="row">
           <input
@@ -80,7 +80,7 @@ export function Docs() {
       </Section>
       {upload.isError ? <ErrorBox error={upload.error} /> : null}
       {upload.data ? <Report report={upload.data} /> : null}
-      <Section title="Documents" hint="Docs go stale: every document shows its version and age.">
+      <Section title="Documents" hint="Each shows its version and age.">
         {docs.isPending ? <Loading /> : null}
         {docs.isError ? <ErrorBox error={docs.error} /> : null}
         {docs.data ? (

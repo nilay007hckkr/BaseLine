@@ -1,8 +1,9 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
+import "@fontsource-variable/doto";
 import "@fontsource-variable/inter";
-import "@fontsource-variable/nunito";
+import "@fontsource/vt323";
 import { App } from "./App";
 import "./styles.css";
 
