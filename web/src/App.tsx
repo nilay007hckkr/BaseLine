@@ -195,7 +195,27 @@ function WorkspaceRoot({
     );
   }
   if (!onboarded) return <Tour />;
-  return <Shell />;
+  return (
+    <>
+      {data?.job === "failed" ? (
+        // a failed re-connect keeps the previous repository on screen: say so, never silently
+        <div className="error" role="alert" style={{ margin: "12px 40px 0" }}>
+          Could not connect {(data.job_repo ?? "the repository").replace("https://github.com/", "")}
+          : {data.error ?? "unknown error"}. Still showing {repo.replace("https://github.com/", "")}
+          .{" "}
+          <button
+            className="link"
+            onClick={() => {
+              setSwitching(true);
+            }}
+          >
+            Try again
+          </button>
+        </div>
+      ) : null}
+      <Shell />
+    </>
+  );
 }
 
 function WorkspaceApp({ config }: { config: AppConfig }) {

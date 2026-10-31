@@ -329,6 +329,25 @@ describe("workspace", () => {
     expect(screen.getByText(/Reading git history/)).toBeDefined();
   });
 
+  it("a failed re-connect is shown, not hidden behind the previous repository", async () => {
+    onboarded();
+    stubApi({
+      "/api/config": WORKSPACE,
+      "/api/workspace/status": {
+        ...EMPTY,
+        repo: "https://github.com/acme/shop",
+        job: "failed",
+        job_repo: "https://github.com/acme/beer",
+        error: "git clone failed",
+      },
+    });
+    renderApp();
+    const alert = await screen.findByRole("alert");
+    expect(alert.textContent).toMatch(/Could not connect acme\/beer.*git clone failed/);
+    expect(alert.textContent).toMatch(/Still showing acme\/shop/);
+    expect(within(alert).getByRole("button", { name: "Try again" })).toBeDefined();
+  });
+
   it("hides the demo-shop pages once a repository is connected", async () => {
     onboarded();
     stubApi({
