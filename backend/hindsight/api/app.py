@@ -52,6 +52,7 @@ from hindsight.core.schemas import (
     Feature,
     GraphResponse,
     GraphStatus,
+    ImpactItem,
     ImpactReport,
     ImpactRequest,
     Incident,
@@ -369,6 +370,14 @@ def upload_doc(
 @app.get("/api/docs", response_model=list[DocInfo])
 def docs(conn: Conn) -> list[DocInfo]:
     return list_docs(conn)
+
+
+@app.get("/api/docs/stale", response_model=list[ImpactItem])
+def stale(conn: Conn) -> list[ImpactItem]:
+    """Docs that may be out of date: what they describe kept changing after their last edit."""
+    from hindsight.brain.stale import stale_docs
+
+    return stale_docs(conn)
 
 
 @app.get("/api/docs/blob/{name}")

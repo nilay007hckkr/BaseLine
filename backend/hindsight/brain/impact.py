@@ -328,6 +328,17 @@ def _docs(conn: sqlite3.Connection, history: History, changed: list[str]) -> lis
         )
         item.reasons.append(Reason(text=text, provenance="heuristic", url=m.url))
         item.score = min(1.0, 0.5 + 0.1 * (len(item.reasons) - 1))
+    if out:
+        from hindsight.brain.stale import doc_name, stale_by_name
+
+        stale = stale_by_name(conn)
+        for title, item in out.items():
+            found = stale.get(doc_name(title))
+            if found:  # the doc may already be out of date: say so first, with its evidence
+                first = found.reasons[0]
+                item.reasons.insert(
+                    0, Reason(text=f"may be out of date: {first.text}", provenance=first.provenance)
+                )
     return sorted(out.values(), key=lambda i: -i.score)[:8]
 
 

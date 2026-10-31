@@ -729,6 +729,29 @@
     }
    }
   },
+  "/api/docs/stale": {
+   "get": {
+    "summary": "Stale",
+    "description": "Docs that may be out of date: what they describe kept changing after their last edit.",
+    "operationId": "stale_api_docs_stale_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "items": {
+          "$ref": "#/components/schemas/ImpactItem"
+         },
+         "type": "array",
+         "title": "Response Stale Api Docs Stale Get"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
   "/api/docs/blob/{name}": {
    "get": {
     "summary": "Doc Blob",

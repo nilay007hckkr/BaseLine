@@ -80,6 +80,7 @@ export function makeApi(base = "") {
     impact: (body: ImpactRequest) => post<ImpactReport>("/impact", body),
     impactPr: (n: number) => request<ImpactReport>(`/impact/pr/${String(n)}`),
     impactPrComment: (n: number) => text(`/impact/pr/${String(n)}/comment`),
+    staleDocs: () => request<ImpactItem[]>("/docs/stale"),
     commits: () => request<CommitSummary[]>("/commits?limit=40"),
     /** An empty key lets the server pick where to start (the most linked service, component or file).
      * The services view draws every service and the calls between them. */
