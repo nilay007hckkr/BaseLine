@@ -174,3 +174,20 @@ def test_heuristic_link_never_overwrites_a_stronger_one(tmp_path):
     add_edge(conn, a, b, "PART_OF", "api", {"via": "merge_commit_sha"})
     add_edge(conn, a, b, "PART_OF", "heuristic", {"via": "title_suffix"})
     assert conn.execute("SELECT provenance FROM edges").fetchone()[0] == "api"
+
+
+def test_an_unreadable_doc_is_skipped_not_fatal(tmp_path):
+    from hindsight.brain.ingest import ingest_docs
+    from hindsight.core.db import connect
+
+    repo = tmp_path / "repo"
+    (repo / "docs").mkdir(parents=True)
+    (repo / "README.md").write_text("# Shop\n\n## Checkout\n\nThe checkout charges cards.\n")
+    (repo / "docs" / "gone.md").symlink_to(repo / "docs" / "missing-target.md")  # broken link
+    conn = connect(tmp_path / "h.db")
+    n = ingest_docs(
+        conn, repo, {"README.md", "docs/gone.md"}, set(), "https://github.com/acme/shop"
+    )
+    assert n > 0  # the readable README still became doc sections
+    keys = {r[0] for r in conn.execute("SELECT key FROM nodes WHERE kind = 'Doc'")}
+    assert keys == {"doc:README.md"}

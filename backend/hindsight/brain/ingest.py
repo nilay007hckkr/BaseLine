@@ -258,7 +258,10 @@ def ingest_docs(
     n_chunks = 0
     for path in sorted(p for p in head if docs_mod.is_doc(p)):
         runbook = bool(re.search(r"runbook|playbook", path, re.IGNORECASE))
-        text = (repo / path).read_text(errors="replace")
+        try:
+            text = (repo / path).read_text(errors="replace")
+        except OSError:
+            continue  # a broken link or unreadable file: skip it, never fail the whole import
         last = conn.execute(
             "SELECT c.sha, c.ts FROM changes ch JOIN commits c ON c.id = ch.commit_id"
             " WHERE ch.lineage = ? ORDER BY c.ts DESC LIMIT 1",

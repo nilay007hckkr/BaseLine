@@ -56,3 +56,14 @@ def test_rate_limit_is_reported_with_reset_time(tmp_path):
         "acme", "shop", tmp_path, client=httpx.Client(transport=httpx.MockTransport(handler))
     ).fetch()
     assert status.stopped == "GitHub rate limit reached" and status.rate_reset_at == 2000000000
+
+
+def test_a_dropped_connection_stops_the_fetch_without_failing_the_import(tmp_path):
+    def handler(request: httpx.Request) -> httpx.Response:
+        raise httpx.ConnectError("network is unreachable", request=request)
+
+    status = GitHubCache(
+        "acme", "shop", tmp_path, client=httpx.Client(transport=httpx.MockTransport(handler))
+    ).fetch()
+    assert status.stopped == "GitHub not reachable (ConnectError)"
+    assert not status.done

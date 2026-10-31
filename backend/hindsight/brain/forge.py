@@ -91,7 +91,13 @@ class GitHubCache:
                         break
                     sep = "&" if "?" in _PATHS[kind] else "?"
                     url = f"{API}/repos/{self.owner}/{self.repo}/{_PATHS[kind]}{sep}per_page={PER_PAGE}&page={page}"
-                    resp = client.get(url, headers=headers)
+                    try:
+                        resp = client.get(url, headers=headers)
+                    except httpx.HTTPError as exc:
+                        # offline or a dropped connection: keep what was fetched and go on with
+                        # the git history; the next connect resumes from the cache
+                        status.stopped = f"GitHub not reachable ({type(exc).__name__})"
+                        break
                     status.requests_this_run += 1
                     remaining = int(resp.headers.get("x-ratelimit-remaining", "1"))
                     reset = resp.headers.get("x-ratelimit-reset")
