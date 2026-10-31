@@ -63,7 +63,7 @@ All of these need the same linked history of change, so we build **one graph** a
 | PS 06 bonus: visual graph, knowledge at risk | F8 graph view; F9 bus-factor badge (P1) |
 | **PS 04:** parse and cluster logs | F5 Drain templates per service |
 | PS 04: spikes and new error types on a timeline | F5 detectors + incident timeline |
-| PS 04: LLM summary + root-cause service, with evidence | F5 culprit-vs-victim ranking; summary cites template IDs and log lines |
+| PS 04: LLM summary + root-cause service, with evidence | F5 culprit-vs-victim ranking; summary cites template IDs and log lines; incident brief: a bounded, read-only investigation whose claims pass the citation check and must name the ranked culprit (DESIGN §6.5) |
 | PS 04 bonus: live broken service, alerts | Live faults on Online Boutique; Discord alert |
 | **PS 08:** ticket input (mock OK) | F4 YAML tickets (Jira optional) |
 | PS 08: generate, run, record | F4 Playwright generation, validated by running |

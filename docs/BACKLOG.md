@@ -15,3 +15,6 @@ One line per idea, tagged with the block that surfaced it.
 - (block B, campaign 1) `currency-crash` does not break the shop: with one replica the rolling update keeps the old pod serving. Make the scenario delete the old pod or set maxUnavailable to 1.
 - (block B, campaign 1) Errors such as "name resolver error: produced zero addresses" name no service; use the call graph (who calls whom) to blame the caller's misconfigured dependency.
 - (block B) Re-run the campaign after these fixes and report it as a second run next to the first.
+- (block H) Importers for Slack and Jira exports with explicit-reference linking (PR numbers, SHAs, issue keys); the target has no Slack or Jira, so only labelled fixtures until a real export exists, kept out of `make eval`.
+- (block H) The fault script picked the same "guilty" commit (11a66b2, release/v0.10.5, which bumps every service) in 9 of 11 runs, so "touches the culprit" holds for any culprit; exclude release and sweep commits when choosing the guilty change, then re-run the correlation numbers.
+- (block H) Measure incident briefs: claims kept vs proposed, fallback rate and wrong-culprit removals over the detected campaign incidents (needs an EVALUATION.md change).

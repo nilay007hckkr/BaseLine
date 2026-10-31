@@ -42,9 +42,11 @@ Phase 2 adds features on top of the same process. Where it differs from §1–§
 | Semantic search | Local embeddings (Ollama `nomic-embed-text`, with its required `search_document:`/`search_query:` prefixes) over all spans, stored in SQLite (`span_vectors`, float32, re-embedded when a span's text changes); cosine over all vectors (numpy). Fused with BM25 and the graph path by RRF. `make embed` builds the index | Nothing leaves the machine; a few thousand spans need no vector database |
 | Meaning check | When a model is configured, after the citation and lexical checks one more call asks the model whether each cited text supports its claim; unsupported or unclear → the claim is removed (`ANSWER_SUPPORT_CHECK`) | Replaces the NLI model of §3 for now; it can only remove claims, never add them |
 | Local model | Ollama `gemma3:4b` (3.4 GB) as the default local chat model | Fits beside other GPU users on a 6 GB card |
+| Incident brief | `POST /incidents/{id}/investigate` (optional follow-up question). Code gathers the core evidence; the model may then make up to 4 read-only tool calls (`why`, `impact` of a candidate commit, `pattern_samples`, `past_incidents`) through a JSON protocol that works the same on every provider (no native tool calling). Every argument is checked against the incident; refused calls count against the budget. Claims pass the citation check, and one that names a root cause must name the ranked culprit. Falls back to quoted evidence. Runs on click only | DESIGN §6.5; replayable through the LLM cache because tool results are deterministic for a given database |
+| Provider timeouts | Every provider connects within 5 s (`CONNECT_TIMEOUT`) and keeps its full read timeout for generation | A stopped Ollama otherwise made each request wait the whole 120 s before falling back |
 
 Phase 2 API additions: `POST/GET /docs`, `GET /docs/blob/{name}`, `GET /services/{name}/runbooks`,
-`GET /incidents`, `GET /incidents/{id}`, `GET/POST /deploys`. `GET /scorecard` now returns both the
+`GET /incidents`, `GET /incidents/{id}`, `POST /incidents/{id}/investigate`, `GET/POST /deploys`. `GET /scorecard` now returns both the
 impact replay and the fault campaign, each card marked with its suite and whether it is synthetic.
 
 ### 0.2 Graph layer: Neo4j (2026-10-31, ADR 0001)

@@ -188,6 +188,19 @@ score(s)   = base(s) + callee transfers + graph(s)
 - The LLM receives only the ranking, templates, samples, candidate commit and runbook titles. It must cite template IDs, and the validator checks them.
 - The Discord webhook posts: the title, the culprit, the top candidate commit, and a link to the incident view.
 
+**As built (block H, 2026-10-31): the incident brief** (`correlate/investigate.py`, the Brief tab).
+1. Code gathers the core evidence and numbers it E1…En: one code-written sentence per ranked service, the incident's log patterns with a sample line, the top 3 candidate changes with their score parts, and the runbook sections.
+2. The model may then call up to 4 read-only tools, one per reply, as JSON (`{"call": {"tool", "args"}}` or `{"finish": {"claims"}}`):
+   `why(question)` (the why-answer retrieval, without a model), `impact(commit)` (candidate commits only),
+   `pattern_samples(template_id)` (this incident's patterns only), `past_incidents(service)` (services in
+   this incident; only incidents opened earlier). Anything else is refused and still counts against the budget.
+3. Claims must cite evidence the model was shown and pass the lexical support check (as in §3). A claim that uses root-cause wording ("root cause", "culprit", "caused") must name the culprit code ranked and must not pin the cause on another service; otherwise it is removed. The optional model support check can only remove claims.
+4. No model, no answer, budget spent or no surviving claim → sentences quoted from the evidence (`extractive`). No ranked culprit → "not found". A follow-up question the evidence does not answer → "not found".
+5. Flagged text never reaches a model; uploaded documents stay local unless `DOCS_ALLOW_EXTERNAL`. Every step (code and model) is returned and shown, with the evidence ids it added.
+
+The code-written `summary` field of an incident is unchanged and remains the alert text source.
+Not yet measured: there is no evaluation of brief quality (see EVALUATION; pending a decision).
+
 ## 7. Incident → change correlation
 
 - **Deploys** are recorded by `make fault` or by the deploy script (commit SHA + time).
