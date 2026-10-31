@@ -44,6 +44,28 @@ from hindsight.brain.static import (
         ({"app/models/user.rb", "app/controllers/users_controller.rb", "Gemfile"}, set()),
         ({"app/dashboard/page.tsx", "package.json"}, set()),
         ({"README.md", "lib/slugify.js"}, set()),
+        # top-level service folders, each with its own Dockerfile (Spring "piggymetrics" style)
+        (
+            {
+                "account-service/Dockerfile",
+                "account-service/pom.xml",
+                "account-service/src/main/java/App.java",
+                "auth-service/Dockerfile",
+                "gateway/Dockerfile",
+                "docs/README.md",
+                "pom.xml",
+            },
+            {"account-service", "auth-service", "gateway"},
+        ),
+        # one deployable top-level folder is just an app, not a set of services
+        ({"web/Dockerfile", "web/src/index.ts", "docs/a.md"}, set()),
+        # workspace folders: only packages with their own Dockerfile are services
+        (
+            {"packages/api/Dockerfile", "packages/api/src/a.ts", "packages/ui/package.json"},
+            {"api"},
+        ),
+        # container names in any case
+        ({"Services/Orders/Program.cs", "Services/Orders/Orders.csproj"}, {"Orders"}),
     ],
 )
 def test_services_are_found_in_common_layouts(head, services):
@@ -57,6 +79,14 @@ def test_files_outside_a_service_keep_their_top_level_component():
     assert component_of("app/models/user.rb", services) == ("Component", "app")
     assert component_of("api/user/service/v1/user.proto", services) == ("Component", "api")
     assert component_of("Makefile", services) == ("Component", "(root)")
+
+
+def test_files_in_a_top_level_service_folder_belong_to_it():
+    services = discover_services(
+        {"account-service/Dockerfile", "auth-service/Dockerfile", "account-service/src/App.java"}
+    )
+    assert component_of("account-service/src/App.java", services) == ("Service", "account-service")
+    assert component_of("docs/README.md", services) == ("Component", "docs")
 
 
 def test_calls_are_found_between_app_services(tmp_path: Path):

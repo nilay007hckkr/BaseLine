@@ -234,10 +234,13 @@ def ingest_git(
     for row in conn.execute("SELECT id, title FROM nodes WHERE kind = 'File'").fetchall():
         kind, name = component_of(row["title"], services)
         sid = upsert_node(conn, kind, f"{kind.lower()}:{name}", title=name)
+        top = row["title"].split("/")[0]
         pattern = (
-            "/".join(row["title"].split("/")[:2]) + "/"  # e.g. src/cartservice/ or app/user/
+            f"{name}/"  # a top-level service folder, or any other top-level folder
+            if top == name
+            else "/".join(row["title"].split("/")[:2]) + "/"  # e.g. src/cartservice/, app/user/
             if kind == "Service"
-            else (f"{name}/" if name != "(root)" else "(top level)")
+            else "(top level)"
         )
         add_edge(
             conn,

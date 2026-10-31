@@ -74,7 +74,11 @@ Incidents and Tests are hidden in a workspace (they need the demo shop).
 **Any repository layout.** Services are recognised as children of `src/`, `services/`,
 `microservices/` or `svc/`, and as children of `app/`, `apps/` or `cmd/` that hold their own build
 or entry file (Dockerfile, `go.mod`, `main.go`, `package.json`, `pom.xml`, `*.csproj` and the like),
-so a Rails `app/models/` stays one folder. Every ingest rebuilds the file → service links and the
+so a Rails `app/models/` stays one folder. Children of `packages/` or `modules/` count only with
+their own Dockerfile, and so do top-level folders when two or more have one (Spring repositories
+such as piggymetrics: account-service/, auth-service/ …). Container names match in any case.
+Online Boutique, eShop and the OpenTelemetry Demo keep exactly the same services and file
+assignments under these rules (checked against their clones). Every ingest rebuilds the file → service links and the
 service calls, and drops services or folders left without links. On Online Boutique, eShop and the
 OpenTelemetry Demo the rules give exactly the same services as before (0 files reassigned); on
 go-kratos beer-shop they find 8 services and 6 calls where the old rule found none. The Map starts

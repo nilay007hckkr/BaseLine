@@ -21,3 +21,6 @@ One line per idea, tagged with the block that surfaced it.
 - (block I) Run `make codegraph` for repositories connected in workspace mode too (each has its own clone and database).
 - (block I) Add inheritance links and the few imports that resolve inside the repository to the code layer.
 - (block I) "Which functions call the changed function" as an impact reason, only after a history-replay run shows it helps.
+- (map) Detect REST calls between services: Feign `@FeignClient(name=…)`, `http://<service>:<port>` URLs and `*_URL` / `*_HOST` variables, matched to service folders; piggymetrics has 10 services and no calls today.
+- (map) Read docker-compose / Kubernetes / Helm: `build.context` → service folder, `depends_on` → calls (heuristic provenance).
+- (map) Message queues: a topic produced by one service and consumed by another as a link (OpenTelemetry Demo's Kafka consumers have no calls today).
