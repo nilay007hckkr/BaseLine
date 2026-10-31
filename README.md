@@ -6,8 +6,8 @@ affect?"* and get answers backed by the project's real history, with every sourc
 
 Built for INNOVISTA **PS 06: Project Brain**. The demo data is Google's public
 [Online Boutique](https://github.com/GoogleCloudPlatform/microservices-demo) repository. LogSense and
-SentinelQA (PS 04 / PS 08) were built in phase 2 and are now frozen: hidden on the demo, still in the
-code (`SHOW_FROZEN=true` shows them).
+SentinelQA (PS 04 / PS 08) were built in phase 2 on the same graph; they get no new work and are shown
+on the demo as additional features, after the PS 06 pages (`SHOW_FROZEN=false` hides them).
 
 ## What it does
 

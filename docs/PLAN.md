@@ -32,14 +32,14 @@ Built on top of phase 1, in this order (TRD §0.1 lists how each one differs fro
 | H | Incident brief (DESIGN §6.5): code gathers evidence, a bounded read-only tool loop, claims checked for citations and for naming the ranked culprit; Brief tab with step trace and follow-up questions. Time box 5 h; fallback: fixed pipeline, one model call | Brief on a real incident with cited claims; refused tools, wrong-culprit claims and no-model cases tested | built; live model run pending (Ollama was not running) |
 | I | Code structure layer on the Map (TRD §0.4): graphify run offline, only source-extracted symbols and calls kept as `static` links; Map switch. Time box 3 h; fallback: drop the layer | `make codegraph` on Online Boutique; Map shows functions with file:line evidence; impact output unchanged | done |
 
-### Phase 3: PS 06 only (decided 2026-10-31; PS 04 and PS 08 frozen, hidden on the demo)
+### Phase 3: PS 06 first (decided 2026-10-31; PS 04 and PS 08 get no new work and are shown as additional features, decided 2026-11-01)
 
 Judging: clarity of thought, implementation, working or not, what is unique. Under 8 hours.
 
 | Block | Work | Accept | Status |
 |---|---|---|---|
 | P1 | Data refresh: older PR texts, the issues the history closes, discussions | `make stats`: more PRs/issues with text, GitHub-confirmed commit → PR links | PRs 962 → 2,800 with text, issues 38 → 67, 2,106 confirmed links; comments wait for a token or the next hour |
-| P2 | Demo and docs for PS 06 only: Home, tour, badges, DEMO.md, PS06.md | No frozen page on the demo; every scripted step run on real data | done |
+| P2 | Demo and docs led by PS 06: Home, tour, badges, DEMO.md, PS06.md; Incidents and Tests after a divider as additional features | PS 06 pages first; every scripted step run on real data | done |
 | P3 | Measure Ask: generated answer key + hand-written trick questions, keyword and plain-model baselines | `eval/results/ask-*.json` with code SHA, per-question rows, Proof tab | done: answerable 25 (two variants), trick 9 of 12 "not found" after the rarest-word rule; model run blocked (local Ollama has no runtime) |
 | P4 | PR check (PS bonus): `hindsight check --pr N`, Impact › Check PR, paste-ready comment | Real open PR → summary with reasons | done (PR #3592) |
 | P5 | Function and class names in questions → their lines → git blame | Real function → its lines and history | done (GetQuote) |
