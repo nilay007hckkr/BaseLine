@@ -24,3 +24,4 @@ One line per idea, tagged with the block that surfaced it.
 - (map) Detect REST calls between services: Feign `@FeignClient(name=…)`, `http://<service>:<port>` URLs and `*_URL` / `*_HOST` variables, matched to service folders; piggymetrics has 10 services and no calls today.
 - (map) Read docker-compose / Kubernetes / Helm: `build.context` → service folder, `depends_on` → calls (heuristic provenance).
 - (map) Message queues: a topic produced by one service and consumed by another as a link (OpenTelemetry Demo's Kafka consumers have no calls today).
+- (ask) "Dig deeper" agent for Ask: a few read-only lookups chosen by the model, every claim still citation-checked; proposal and decisions in docs/ASK_AGENT.md.
