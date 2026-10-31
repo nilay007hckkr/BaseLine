@@ -19,7 +19,7 @@ make setup        # after block B0 creates backend/, web/, collector/
 | Node ≥ 20 + pnpm | Web |
 | Go ≥ 1.22 | Collector |
 | Docker, kind, kubectl, skaffold | Target cluster |
-| Ollama (optional) | Local LLM fallback. With 6 GB of VRAM, run one 7B model at 4-bit at a time |
+| Ollama (optional) | Local LLM fallback. With 6 GB of VRAM, run one 7B model at 4-bit at a time. Arch Linux steps: [OLLAMA_SETUP.md](OLLAMA_SETUP.md) |
 | Playwright Chromium | Installed after the backend declares the dependency |
 
 ## Keys (`.env`)
@@ -41,3 +41,4 @@ make setup        # after block B0 creates backend/, web/, collector/
 | `docker: permission denied` | Add yourself to the docker group and log in again, or enable Docker Desktop WSL integration |
 | kind fails on WSL | Enable systemd in `/etc/wsl.conf` (`[boot] systemd=true`), then run `wsl --shutdown` |
 | Ollama uses the CPU | Check that `nvidia-smi` works inside WSL/Linux; reinstall the CUDA-enabled Ollama |
+| Ollama: `llama-server binary not found` | The install is incomplete (a partial download). On Arch, use the packaged `ollama-cuda` and remove hand-installed copies: [OLLAMA_SETUP.md](OLLAMA_SETUP.md) |
