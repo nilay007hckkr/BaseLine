@@ -449,6 +449,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/incidents/{incident_id}/investigate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Investigate Incident */
+        post: operations["investigate_incident_api_incidents__incident_id__investigate_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/deploys": {
         parameters: {
             query?: never;
@@ -917,6 +934,38 @@ export interface components {
             /** Summary */
             summary: string;
         };
+        /** IncidentBrief */
+        IncidentBrief: {
+            /** Incident Id */
+            incident_id: number;
+            /** Question */
+            question: string | null;
+            /**
+             * Culprit
+             * @description As ranked by code, never by the model
+             */
+            culprit: string | null;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "answered" | "not_found";
+            /**
+             * Mode
+             * @enum {string}
+             */
+            mode: "llm" | "extractive" | "none";
+            /** Claims */
+            claims: components["schemas"]["Claim"][];
+            /** Evidence */
+            evidence: components["schemas"]["EvidenceItem"][];
+            /** Steps */
+            steps: components["schemas"]["InvestigationStep"][];
+            /** Checker */
+            checker: string;
+            /** Notes */
+            notes: string[];
+        };
         /** IncidentSummary */
         IncidentSummary: {
             /** Id */
@@ -948,6 +997,41 @@ export interface components {
             count: number;
             /** Samples */
             samples: string[];
+        };
+        /** InvestigateRequest */
+        InvestigateRequest: {
+            /**
+             * Question
+             * @description A follow-up question about the incident; empty for the incident brief
+             */
+            question?: string | null;
+        };
+        /** InvestigationStep */
+        InvestigationStep: {
+            /**
+             * By
+             * @description code: evidence gathered every time; model: a tool the model chose to call
+             * @enum {string}
+             */
+            by: "code" | "model";
+            /** Tool */
+            tool: string;
+            /** Args */
+            args: {
+                [key: string]: string;
+            };
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "ok" | "empty" | "refused";
+            /** Evidence Ids */
+            evidence_ids: string[];
+            /**
+             * Note
+             * @default
+             */
+            note: string;
         };
         /**
          * LlmProvider
@@ -2116,6 +2200,41 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Incident"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    investigate_incident_api_incidents__incident_id__investigate_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                incident_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["InvestigateRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IncidentBrief"];
                 };
             };
             /** @description Validation Error */

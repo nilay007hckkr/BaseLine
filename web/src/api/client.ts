@@ -18,6 +18,8 @@ export type DocInfo = S["DocInfo"];
 export type RunbookSection = S["RunbookSection"];
 export type Incident = S["Incident"];
 export type IncidentSummary = S["IncidentSummary"];
+export type IncidentBrief = S["IncidentBrief"];
+export type InvestigationStep = S["InvestigationStep"];
 export type DeployRecord = S["DeployRecord"];
 export type GraphStatus = S["GraphStatus"];
 export type QaTest = S["QaTest"];
@@ -89,6 +91,8 @@ export function makeApi(base = "") {
     },
     incidents: () => request<IncidentSummary[]>("/incidents"),
     incident: (id: number) => request<Incident>(`/incidents/${String(id)}`),
+    investigate: (id: number, question?: string) =>
+      post<IncidentBrief>(`/incidents/${String(id)}/investigate`, question ? { question } : {}),
     deploys: () => request<DeployRecord[]>("/deploys"),
     runbooks: (service: string) =>
       request<RunbookSection[]>(`/services/${encodeURIComponent(service)}/runbooks`),

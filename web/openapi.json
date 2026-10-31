@@ -924,6 +924,55 @@
     }
    }
   },
+  "/api/incidents/{incident_id}/investigate": {
+   "post": {
+    "summary": "Investigate Incident",
+    "operationId": "investigate_incident_api_incidents__incident_id__investigate_post",
+    "parameters": [
+     {
+      "name": "incident_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Incident Id"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/InvestigateRequest"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/IncidentBrief"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
   "/api/deploys": {
    "get": {
     "summary": "Deploys",
@@ -2193,6 +2242,100 @@
     ],
     "title": "Incident"
    },
+   "IncidentBrief": {
+    "properties": {
+     "incident_id": {
+      "type": "integer",
+      "title": "Incident Id"
+     },
+     "question": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Question"
+     },
+     "culprit": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Culprit",
+      "description": "As ranked by code, never by the model"
+     },
+     "status": {
+      "type": "string",
+      "enum": [
+       "answered",
+       "not_found"
+      ],
+      "title": "Status"
+     },
+     "mode": {
+      "type": "string",
+      "enum": [
+       "llm",
+       "extractive",
+       "none"
+      ],
+      "title": "Mode"
+     },
+     "claims": {
+      "items": {
+       "$ref": "#/components/schemas/Claim"
+      },
+      "type": "array",
+      "title": "Claims"
+     },
+     "evidence": {
+      "items": {
+       "$ref": "#/components/schemas/EvidenceItem"
+      },
+      "type": "array",
+      "title": "Evidence"
+     },
+     "steps": {
+      "items": {
+       "$ref": "#/components/schemas/InvestigationStep"
+      },
+      "type": "array",
+      "title": "Steps"
+     },
+     "checker": {
+      "type": "string",
+      "title": "Checker"
+     },
+     "notes": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Notes"
+     }
+    },
+    "type": "object",
+    "required": [
+     "incident_id",
+     "question",
+     "culprit",
+     "status",
+     "mode",
+     "claims",
+     "evidence",
+     "steps",
+     "checker",
+     "notes"
+    ],
+    "title": "IncidentBrief"
+   },
    "IncidentSummary": {
     "properties": {
      "id": {
@@ -2293,6 +2436,81 @@
      "samples"
     ],
     "title": "IncidentTemplate"
+   },
+   "InvestigateRequest": {
+    "properties": {
+     "question": {
+      "anyOf": [
+       {
+        "type": "string",
+        "maxLength": 500,
+        "minLength": 3
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Question",
+      "description": "A follow-up question about the incident; empty for the incident brief"
+     }
+    },
+    "type": "object",
+    "title": "InvestigateRequest"
+   },
+   "InvestigationStep": {
+    "properties": {
+     "by": {
+      "type": "string",
+      "enum": [
+       "code",
+       "model"
+      ],
+      "title": "By",
+      "description": "code: evidence gathered every time; model: a tool the model chose to call"
+     },
+     "tool": {
+      "type": "string",
+      "title": "Tool"
+     },
+     "args": {
+      "additionalProperties": {
+       "type": "string"
+      },
+      "type": "object",
+      "title": "Args"
+     },
+     "status": {
+      "type": "string",
+      "enum": [
+       "ok",
+       "empty",
+       "refused"
+      ],
+      "title": "Status"
+     },
+     "evidence_ids": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Evidence Ids"
+     },
+     "note": {
+      "type": "string",
+      "title": "Note",
+      "default": ""
+     }
+    },
+    "type": "object",
+    "required": [
+     "by",
+     "tool",
+     "args",
+     "status",
+     "evidence_ids",
+     "note"
+    ],
+    "title": "InvestigationStep"
    },
    "LlmProvider": {
     "properties": {

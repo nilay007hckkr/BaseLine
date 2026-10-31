@@ -5,6 +5,7 @@ import { Term } from "../glossary";
 import { useApp } from "../state";
 import { api, type Incident } from "../api/client";
 import { ErrorBox, Loading, PageHead, ScoreBar, Section, SubTabs, fmtDate } from "../ui";
+import { IncidentBriefPanel } from "./IncidentBrief";
 
 type Lane = Incident["timeline"][string];
 
@@ -136,8 +137,9 @@ function Story({ incident }: { incident: Incident }) {
   );
 }
 
-type DetailTab = "timeline" | "why" | "changes" | "patterns" | "runbook";
+type DetailTab = "brief" | "timeline" | "why" | "changes" | "patterns" | "runbook";
 const DETAIL_TABS: { key: DetailTab; label: string }[] = [
+  { key: "brief", label: "Brief" },
   { key: "timeline", label: "Timeline" },
   { key: "why", label: "Why" },
   { key: "changes", label: "Changes" },
@@ -147,7 +149,7 @@ const DETAIL_TABS: { key: DetailTab; label: string }[] = [
 
 function Detail({ id }: { id: number }) {
   const { unlock } = useApp();
-  const [tab, setTab] = useState<DetailTab>("timeline");
+  const [tab, setTab] = useState<DetailTab>("brief");
   const q = useQuery({ queryKey: ["incident", id], queryFn: () => api.incident(id) });
   const loaded = q.isSuccess;
   useEffect(() => {
@@ -166,6 +168,7 @@ function Detail({ id }: { id: number }) {
     <>
       <Story incident={inc} />
       <SubTabs tabs={DETAIL_TABS} value={tab} onChange={setTab} />
+      {tab === "brief" ? <IncidentBriefPanel key={id} id={id} /> : null}
       {tab === "timeline" ? (
         <Section
           title="Timeline"

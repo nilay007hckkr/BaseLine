@@ -82,15 +82,19 @@ function Rate({ answer }: { answer: Answer }) {
   );
 }
 
-function Evidence({ item }: { item: EvidenceItem }) {
+export function Evidence({ item }: { item: EvidenceItem }) {
   return (
     <li className="evidence" id={`ev-${item.id}`}>
       <div className="evidence-head">
         <span className="cite">{item.id}</span>
         <Kind value={item.kind} />
-        <a href={item.url} target="_blank" rel="noreferrer">
-          {item.title}
-        </a>
+        {item.url ? (
+          <a href={item.url} target="_blank" rel="noreferrer">
+            {item.title}
+          </a>
+        ) : (
+          <span>{item.title}</span>
+        )}
         <span className="muted small">{fmtDate(item.ts)}</span>
       </div>
       {item.flagged ? (
