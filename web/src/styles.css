@@ -1,7 +1,7 @@
 /*
  * Hindsight: black, minimal, pixel type.
  * Pure black canvas, white text, one neon-green accent. Pixel mono (VT323) in uppercase for
- * labels and navigation, dot-matrix (Doto) for big numbers, ultra-thin Inter for headline words.
+ * labels and navigation, dot-matrix (Doto) for big numbers, Times New Roman for headline words.
  * Chart colours validated on #0d0d0d: Hindsight #16a34a, simple methods #6e6e6e.
  */
 :root {
@@ -43,6 +43,7 @@
   --pixel: "VT323", ui-monospace, monospace;
   --dots: "Doto Variable", "VT323", monospace;
   --sans: "Inter Variable", Inter, system-ui, sans-serif;
+  --serif: "Times New Roman", Times, serif; /* headings */
   color-scheme: dark;
   font-family: var(--sans);
   font-size: 17px;
@@ -106,9 +107,9 @@ button {
   color: var(--muted);
 }
 .thin {
-  font-family: var(--sans);
-  font-weight: 200;
-  letter-spacing: -0.02em;
+  font-family: var(--serif);
+  font-weight: 400;
+  letter-spacing: -0.01em;
 }
 .muted {
   color: var(--muted);
@@ -378,10 +379,10 @@ textarea::placeholder {
 .subtab {
   border: none;
   padding: 0;
-  font-family: var(--sans);
-  font-weight: 200;
+  font-family: var(--serif);
+  font-weight: 400;
   font-size: 2.6rem;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
   text-transform: none;
   color: var(--dim);
   white-space: nowrap;
@@ -612,11 +613,11 @@ details[open] > summary {
   text-transform: uppercase;
 }
 .hero-title {
-  font-family: var(--sans);
-  font-weight: 200;
+  font-family: var(--serif);
+  font-weight: 400;
   font-size: 4rem;
   line-height: 1.02;
-  letter-spacing: -0.035em;
+  letter-spacing: -0.01em;
   margin: 10px 0 18px;
   max-width: 16ch;
 }
@@ -717,10 +718,10 @@ details[open] > summary {
 
 /* ---------- profile ---------- */
 .profile-id {
-  font-family: var(--sans);
-  font-weight: 300;
+  font-family: var(--serif);
+  font-weight: 400;
   font-size: 3rem;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
 }
 .rows {
   border-top: 1px solid var(--line);
