@@ -655,8 +655,16 @@ def ask(
     # When the question points at specific lines, the history of those lines (git blame →
     # commit → PR → issue) is the record of why they were written, whatever words it uses.
     blamed = _blame_nodes(g)
+    # nearest first; at the same distance the PR and the issue (the record of why) come before
+    # the comments and reviews on them
+    record = {"Commit": 0, "PR": 1, "Issue": 1}
+    kinds = {
+        n: conn.execute("SELECT kind FROM nodes WHERE id = ?", (n,)).fetchone()[0]
+        for n in {s[3] for s in scored if s[3] in blamed}
+    }
     from_blame = sorted(
-        (s for s in scored if s[3] in blamed), key=lambda s: (g.reached[s[3]].hop, -s[1])
+        (s for s in scored if s[3] in blamed),
+        key=lambda s: (g.reached[s[3]].hop, record.get(kinds[s[3]], 2), -s[1]),
     )
     if from_blame:
         rest = [s for s in pack if s[3] not in blamed]
