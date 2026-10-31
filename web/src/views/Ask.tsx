@@ -102,7 +102,11 @@ export function Evidence({ item }: { item: EvidenceItem }) {
           Contains instruction-like text. Shown as evidence only, never followed.
         </p>
       ) : null}
-      <p className="snippet">{item.snippet}</p>
+      {item.kind === "Code" ? (
+        <pre className="code">{item.snippet}</pre>
+      ) : (
+        <p className="snippet">{item.snippet}</p>
+      )}
       {item.path.length > 1 ? (
         <p className="muted small">How it was found: {item.path.join(" → ")}</p>
       ) : null}
@@ -116,6 +120,25 @@ function plainNote(note: string): string {
     return "quoted word for word from the sources (no AI rewording)";
   }
   return note;
+}
+
+type AnswerClaim = Answer["claims"][number];
+
+function ClaimList({ claims }: { claims: AnswerClaim[] }) {
+  return (
+    <ul className="claims">
+      {claims.map((c) => (
+        <li key={c.text}>
+          {c.text}{" "}
+          {c.cites.map((id) => (
+            <a key={id} className="cite" href={`#ev-${id}`}>
+              {id}
+            </a>
+          ))}
+        </li>
+      ))}
+    </ul>
+  );
 }
 
 function Result({ answer }: { answer: Answer }) {
@@ -146,6 +169,10 @@ function Result({ answer }: { answer: Answer }) {
       </Section>
     );
   }
+  // sentences that cite the code excerpt walk through the code; the rest explain the history
+  const codeIds = new Set(answer.evidence.filter((e) => e.kind === "Code").map((e) => e.id));
+  const walk = answer.claims.filter((c) => c.cites.some((id) => codeIds.has(id)));
+  const why = answer.claims.filter((c) => !walk.includes(c));
   return (
     <>
       <Section
@@ -156,18 +183,20 @@ function Result({ answer }: { answer: Answer }) {
             : "Quoted from the sources."
         }
       >
-        <ul className="claims">
-          {answer.claims.map((c) => (
-            <li key={c.text}>
-              {c.text}{" "}
-              {c.cites.map((id) => (
-                <a key={id} className="cite" href={`#ev-${id}`}>
-                  {id}
-                </a>
-              ))}
-            </li>
-          ))}
-        </ul>
+        {walk.length ? (
+          <>
+            {why.length ? (
+              <>
+                <h3>Why it is like this</h3>
+                <ClaimList claims={why} />
+              </>
+            ) : null}
+            <h3>What the code does</h3>
+            <ClaimList claims={walk} />
+          </>
+        ) : (
+          <ClaimList claims={answer.claims} />
+        )}
         {answer.anchors.length ? (
           <p className="muted small">Started from: {answer.anchors.join(", ")}</p>
         ) : null}

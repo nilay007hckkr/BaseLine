@@ -175,6 +175,59 @@ describe("dashboard", () => {
     expect(screen.queryByLabelText(/key/i)).toBeNull();
   });
 
+  it("an answer about code explains the history, then walks through the code", async () => {
+    // FIXTURE answer
+    const item = { ts: null, flagged: false, path: [], score: 0, url: "" };
+    const answer = {
+      status: "answered",
+      mode: "llm",
+      question: "Why is this here?",
+      claims: [
+        { text: "The team switched to USD to avoid rounding errors.", cites: ["S1"] },
+        { text: "chargeCard() converts the amount, then calls the provider.", cites: ["C1"] },
+      ],
+      evidence: [
+        {
+          ...item,
+          id: "S1",
+          node_key: "commit:abc",
+          kind: "Commit",
+          span_kind: "message",
+          title: "commit abc1234: Charge in USD",
+          snippet: "Charge in USD",
+        },
+        {
+          ...item,
+          id: "C1",
+          node_key: "file:src/pay/charge.js",
+          kind: "Code",
+          span_kind: "code",
+          title: "src/pay/charge.js lines 1-1",
+          snippet: "   1  function chargeCard() {}",
+        },
+      ],
+      nearest: [],
+      anchors: [],
+      checker: "citation ids + lexical support",
+      notes: [],
+    };
+    stubApi({ "/api/config": DEMO, "/api/ask": answer });
+    renderApp();
+    fireEvent.click(
+      within(await screen.findByRole("navigation", { name: "Main" })).getByRole("button", {
+        name: "Ask",
+      }),
+    );
+    const input = screen.getByLabelText("Question");
+    fireEvent.change(input, { target: { value: "Why is this here?" } });
+    const form = input.closest("form");
+    if (!form) throw new Error("the question box is not in a form");
+    fireEvent.submit(form);
+    expect(await screen.findByRole("heading", { name: "What the code does" })).toBeDefined();
+    expect(screen.getByRole("heading", { name: "Why it is like this" })).toBeDefined();
+    expect(document.querySelector("pre.code")?.textContent).toContain("function chargeCard()");
+  });
+
   it("the map asks for the code structure layer only when it is switched on", async () => {
     const service = { id: "service:checkoutservice", kind: "Service", label: "checkoutservice" };
     const symbol = {
