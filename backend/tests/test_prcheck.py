@@ -114,3 +114,16 @@ def test_branch_mode_reads_the_files_changed_since_the_base(fx):
     assert files and all(not f.startswith("/") for f in files)
     with pytest.raises(LookupError):
         branch_files(fx.repo, "no-such-branch")
+
+
+def test_a_rate_limit_falls_back_to_the_cached_pr(fx, tmp_path):
+    files = [{"filename": "src/checkoutservice/main.go", "status": "modified"}]
+    _cache(fx, tmp_path, _github(77, files)).pull_request(77)  # cached while open
+
+    def limited(request: httpx.Request) -> httpx.Response:
+        return httpx.Response(403, headers={"x-ratelimit-remaining": "0"})
+
+    pr = _cache(fx, tmp_path, limited).pull_request(77)
+    assert pr["title"] == "Settle refunds in USD"
+    with pytest.raises(RuntimeError):
+        _cache(fx, tmp_path, limited).pull_request(78)  # nothing cached

@@ -196,9 +196,12 @@ class GitHubCache:
                 files += batch
                 if len(batch) < PER_PAGE:
                     break
-        except httpx.HTTPError as exc:
+        except (httpx.HTTPError, RuntimeError) as exc:
+            # offline or rate-limited: an earlier copy of this PR is better than nothing
             if path.exists():
                 return json.loads(path.read_text())
+            if isinstance(exc, RuntimeError):
+                raise
             raise RuntimeError(f"GitHub not reachable ({type(exc).__name__})") from exc
         finally:
             if self.client is None:

@@ -266,3 +266,13 @@ def test_hashes_and_search_terms():
     assert content_terms("Why was it changed in commit 53a3d6e?") == []
     # porter stems 'rounding' to 'round', which the crude six-letter prefix 'roundi' misses
     assert fts_term("rounding") == '("rounding"* OR "roundi"*)' and fts_term("cart") == '"cart"*'
+
+
+def test_text_from_bot_accounts_is_not_evidence(tmp_path):
+    from hindsight.brain.ask import _skip_span
+    from hindsight.core.db import connect, upsert_node
+
+    conn = connect(tmp_path / "db.sqlite")
+    bot = upsert_node(conn, "PR", "gh:1", title="bump tar", attrs={"user": "dependabot[bot]"})
+    human = upsert_node(conn, "PR", "gh:2", title="Migrate to TypeScript", attrs={"user": "ana"})
+    assert _skip_span(conn, bot) and not _skip_span(conn, human)

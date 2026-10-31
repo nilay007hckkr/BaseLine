@@ -336,12 +336,14 @@ def _first_file(conn: sqlite3.Connection, anchors: list[int]) -> str | None:
 
 
 def _skip_span(conn: sqlite3.Connection, node_id: int) -> bool:
-    """Bot-written text and superseded document versions are not used as evidence."""
+    """Bot-written text (bot commits, and PRs or issues opened by a GitHub bot account such as
+    dependabot[bot]) and superseded document versions are not used as evidence."""
     row = conn.execute("SELECT attrs FROM nodes WHERE id = ?", (node_id,)).fetchone()
     if not row:
         return True
     attrs = json.loads(row[0])
-    return bool(attrs.get("is_bot") or attrs.get("superseded"))
+    by_bot = str(attrs.get("user") or "").endswith("[bot]")
+    return bool(attrs.get("is_bot") or attrs.get("superseded") or by_bot)
 
 
 def excerpt(
