@@ -29,6 +29,9 @@ _JSON_OBJECT = re.compile(r"\{.*\}", re.DOTALL)
 # A provider that is down must fail fast: a dropped connection otherwise waits out the whole
 # timeout before the chain moves on. Generation itself keeps the longer read timeout.
 CONNECT_TIMEOUT = 5.0
+# A model on this machine either accepts the connection at once or is not running.
+LOCAL_CONNECT_TIMEOUT = 1.0
+_LOCAL_HOSTS = ("localhost", "127.0.0.1", "::1")
 
 
 def scrub(text: str) -> str:
@@ -103,10 +106,15 @@ class Ollama:
                 "options": {"temperature": 0, "num_ctx": self.num_ctx},
                 "messages": [{"role": "user", "content": prompt}],
             },
-            timeout=httpx.Timeout(self.timeout, connect=CONNECT_TIMEOUT),
+            timeout=httpx.Timeout(self.timeout, connect=self.connect_timeout),
         )
         resp.raise_for_status()
         return str(resp.json()["message"]["content"])
+
+    @property
+    def connect_timeout(self) -> float:
+        local = httpx.URL(self.host).host in _LOCAL_HOSTS
+        return LOCAL_CONNECT_TIMEOUT if local else CONNECT_TIMEOUT
 
 
 _LABEL = {"gemini": "Gemini", "groq": "Groq", "ollama": "Ollama"}

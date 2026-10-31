@@ -92,7 +92,11 @@ def test_the_local_model_gets_time_and_a_context_window_that_holds_the_prompt(mo
     Ollama("http://localhost:11434", "qwen2.5:7b", timeout=300, num_ctx=8192).complete("hi")
     assert sent["json"]["options"]["num_ctx"] == 8192  # type: ignore[index]
     timeout = sent["timeout"]
-    assert isinstance(timeout, httpx.Timeout) and timeout.read == 300 and timeout.connect == 5.0
+    # a local model either connects at once or is not running: fail fast (1 s), read for long
+    assert isinstance(timeout, httpx.Timeout) and timeout.read == 300 and timeout.connect == 1.0
+    Ollama("http://gpu-box.lan:11434", "qwen2.5:7b", timeout=300).complete("hi")
+    remote = sent["timeout"]
+    assert isinstance(remote, httpx.Timeout) and remote.connect == 5.0
 
 
 def test_settings_carry_the_local_model_limits_into_the_chain():
