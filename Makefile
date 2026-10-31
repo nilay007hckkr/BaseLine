@@ -38,7 +38,7 @@ gen-api: ## Regenerate web API types from the backend's OpenAPI schema
 	@cd $(WEB) && pnpm -s gen:api && pnpm -s exec prettier --write src/api/schema.d.ts >/dev/null
 
 ## ---------- run ----------
-.PHONY: ingest embed codegraph stats dev serve run
+.PHONY: ingest embed codegraph stats dev serve run start
 ingest: ## Ingest history: make ingest [REPO=<github url>] (default TARGET_REPO_URL or Online Boutique)
 	@cd $(BE) && uv run hindsight ingest $${REPO:-}
 embed: ## Index citable text with the local embedding model (needs Ollama + OLLAMA_EMBED_MODEL)
@@ -49,6 +49,8 @@ stats: ## Print ingest statistics
 	@cd $(BE) && uv run hindsight stats
 dev: ## API with reload on :8000 + web dev server on :5173
 	@bash scripts/dev.sh
+start: ## Everything in one command: deps, data, Neo4j, code layer, log stream, dashboards [LIVE=1 DEV=1 NO_NEO4J=1 SKIP_SETUP=1]
+	@bash scripts/start.sh
 run: ## Demo on :8000 + a fresh workspace on :8080 for your own repo (one command, Ctrl-C stops both)
 	@bash scripts/run.sh
 serve: ## Build the web app and serve everything from the API on :8000
