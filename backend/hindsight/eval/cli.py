@@ -121,8 +121,6 @@ def ask_markdown(result: dict[str, Any]) -> str:
     repo = result.get("repo") or {}
     sets = result["sets"]
     ans = sets["answerable"]
-    ours = ans["methods"]["hindsight"]
-    kw = ans["methods"]["keyword_only"]
 
     def cell(m: dict[str, float]) -> str:
         return f"{m['value']:.3f} [{m['ci_low']:.3f}, {m['ci_high']:.3f}]"
@@ -132,16 +130,25 @@ def ask_markdown(result: dict[str, Any]) -> str:
         "",
         f"- Repository: {repo.get('web', '?')} at `{str(repo.get('head_sha', ''))[:7]}`;"
         f" code `{str(result.get('code_sha', ''))[:7]}`; model: {result['model']}",
-        f'- Answerable (generated from explicit "Fixes #N" links, gold = the issue): **n = {ans["n"]}**',
+        f'- Answerable (generated from explicit "Fixes #N" links, gold = the issue): **n = {ans["n"]}**,'
+        " each asked twice: naming the commit hash, and naming only the file and the change",
         f"- Result file: `{Path(result['result_file']).relative_to(ROOT)}` (created {result['created_at']})",
         "",
-        "| Measure | Hindsight | Keyword search only |",
-        "|---|---|---|",
-        f"| Answered | {cell(ours['answered'])} | - |",
-        f"| Linked issue among the sources | {cell(ours['gold_in_sources'])} | {cell(kw['gold_in_sources'])} |",
-        f"| Linked issue cited by a claim | {cell(ours['gold_cited'])} | - |",
-        "",
+        "| Question names | Measure | Hindsight | Keyword search only |",
+        "|---|---|---|---|",
     ]
+    for key, label in (("answerable", "commit hash"), ("answerable_no_hash", "file + change")):
+        block = sets.get(key)
+        if not block:
+            continue
+        ours, kw = block["methods"]["hindsight"], block["methods"]["keyword_only"]
+        lines += [
+            f"| {label} | Answered | {cell(ours['answered'])} | - |",
+            f"| {label} | Linked issue among the sources | {cell(ours['gold_in_sources'])}"
+            f" | {cell(kw['gold_in_sources'])} |",
+            f"| {label} | Linked issue cited by a claim | {cell(ours['gold_cited'])} | - |",
+        ]
+    lines.append("")
     trick = sets.get("trick")
     if trick:
         plain = trick["methods"].get("model_without_sources")

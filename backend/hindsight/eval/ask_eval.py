@@ -186,13 +186,41 @@ def _code_sha() -> str:
         out = subprocess.run(
             ["git", "rev-parse", "HEAD"], cwd=ROOT, capture_output=True, text=True, check=True
         )
-        return out.stdout.strip()
+        dirty = subprocess.run(
+            ["git", "status", "--porcelain", "--untracked-files=no", "backend"],
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+            check=True,
+        ).stdout.strip()
+        # uncommitted code changes: the hash alone would not reproduce this run
+        return out.stdout.strip() + ("-dirty" if dirty else "")
     except (OSError, subprocess.CalledProcessError):
         return ""
 
 
 def _rate(values: list[bool]) -> dict[str, float]:
     return bootstrap_ci([1.0 if v else 0.0 for v in values])
+
+
+_HASH_PHRASE = re.compile(r" in commit [0-9a-f]{7,40}\b")
+
+
+def without_hash(question: str) -> str:
+    """'Why was f changed in commit abc1234 ("s")?' → 'Why was f changed ("s")?'"""
+    return _HASH_PHRASE.sub("", question)
+
+
+def _model_line(model: Chain | None, rows: list[dict[str, Any]]) -> str:
+    """Which model really answered: a configured model that never replied is not credited."""
+    answered = [r for r in rows if r["status"] == "answered"]
+    phrased = sum(1 for r in answered if r["mode"] == "llm")
+    if model is None:
+        return "none configured (quoted answers)"
+    names = ", ".join(f"{p.name}/{p.model}" for p in model.providers)
+    if not phrased:
+        return f"none answered ({names} configured but did not reply; quoted answers)"
+    return f"{names}: phrased {phrased} of {len(answered)} answers (the rest quoted)"
 
 
 def score(
@@ -210,31 +238,41 @@ def score(
     model = chain if chain is not None and chain.configured else None
     rows: list[dict[str, Any]] = []
     for q in answerable:
-        ans = ask_fn(conn, q["question"], repo=repo, file=q.get("file"), chain=model)
-        gold = set(q.get("gold") or [])
-        by_id = {e.id: e.node_key for e in ans.evidence}
-        cited = {by_id.get(c, "") for claim in ans.claims for c in claim.cites}
-        rows.append(
-            {
-                "id": q["id"],
-                "set": "answerable",
-                "question": q["question"],
-                "gold": sorted(gold),
-                "status": ans.status,
-                "mode": ans.mode,
-                "gold_in_sources": bool(gold & set(by_id.values())),
-                "gold_cited": bool(gold & cited),
-                "keyword_gold_in_top": bool(
-                    gold & set(_keyword_nodes(conn, q["question"], PACK_SIZE))
-                ),
-                "claims": len(ans.claims),
-                "answer": " | ".join(c.text for c in ans.claims[:2]),
-                "cited": sorted(
-                    {e.url for e in ans.evidence if any(e.id in c.cites for c in ans.claims[:2])}
-                ),
-                "notes": ans.notes,
-            }
-        )
+        # with the hash, the commit's own links lead to the issue; without it (file and subject
+        # only), search has to find the commit first: the harder, more telling variant
+        for variant, question in (
+            ("with_hash", q["question"]),
+            ("no_hash", without_hash(q["question"])),
+        ):
+            ans = ask_fn(conn, question, repo=repo, file=q.get("file"), chain=model)
+            gold = set(q.get("gold") or [])
+            by_id = {e.id: e.node_key for e in ans.evidence}
+            cited = {by_id.get(c, "") for claim in ans.claims for c in claim.cites}
+            rows.append(
+                {
+                    "id": q["id"],
+                    "set": "answerable" if variant == "with_hash" else "answerable_no_hash",
+                    "question": question,
+                    "gold": sorted(gold),
+                    "status": ans.status,
+                    "mode": ans.mode,
+                    "gold_in_sources": bool(gold & set(by_id.values())),
+                    "gold_cited": bool(gold & cited),
+                    "keyword_gold_in_top": bool(
+                        gold & set(_keyword_nodes(conn, question, PACK_SIZE))
+                    ),
+                    "claims": len(ans.claims),
+                    "answer": " | ".join(c.text for c in ans.claims[:2]),
+                    "cited": sorted(
+                        {
+                            e.url
+                            for e in ans.evidence
+                            if any(e.id in c.cites for c in ans.claims[:2])
+                        }
+                    ),
+                    "notes": ans.notes,
+                }
+            )
     for q in trick:
         ans = ask_fn(conn, q["question"], repo=repo, file=q.get("file"), chain=model)
         rows.append(
@@ -251,10 +289,11 @@ def score(
                 "notes": ans.notes,
             }
         )
-    ans_rows = [r for r in rows if r["set"] == "answerable"]
     trick_rows = [r for r in rows if r["set"] == "trick"]
-    sets: dict[str, Any] = {
-        "answerable": {
+    sets: dict[str, Any] = {}
+    for name in ("answerable", "answerable_no_hash"):
+        ans_rows = [r for r in rows if r["set"] == name]
+        sets[name] = {
             "n": len(ans_rows),
             "methods": {
                 "hindsight": {
@@ -267,7 +306,6 @@ def score(
                 },
             },
         }
-    }
     if trick_rows:
         methods: dict[str, Any] = {
             "hindsight": {"not_found": _rate([r["status"] == "not_found" for r in trick_rows])}
@@ -288,11 +326,7 @@ def score(
         "command": COMMAND,
         "code_sha": _code_sha(),
         "repo": repo_meta,
-        "model": (
-            ", ".join(f"{p.name}/{p.model}" for p in model.providers)
-            if model
-            else "none (quoted answers)"
-        ),
+        "model": _model_line(model, rows),
         "questions_file": str(QUESTIONS.relative_to(ROOT)),
         "trick_file": str(TRICK.relative_to(ROOT)) if trick else None,
         "sets": sets,

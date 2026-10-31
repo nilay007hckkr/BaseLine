@@ -258,20 +258,24 @@ def _ask_cards(path: Path) -> list[ScoreCard]:
                 trick["n"],
             )
         )
-    ans = data["sets"]["answerable"]
-    ours = ans["methods"]["hindsight"]
-    cards.append(
-        card(
-            "Linked issue among the sources",
-            {
-                "hindsight": ours["gold_in_sources"],
-                "keyword_only": ans["methods"]["keyword_only"]["gold_in_sources"],
-            },
-            ans["n"],
+    for key, suffix in (("answerable_no_hash", " (file and subject only)"), ("answerable", "")):
+        ans = data["sets"].get(key)
+        if not ans:
+            continue
+        ours = ans["methods"]["hindsight"]
+        cards.append(
+            card(
+                f"Linked issue among the sources{suffix}",
+                {
+                    "hindsight": ours["gold_in_sources"],
+                    "keyword_only": ans["methods"]["keyword_only"]["gold_in_sources"],
+                },
+                ans["n"],
+            )
         )
-    )
-    cards.append(card("Linked issue cited", {"hindsight": ours["gold_cited"]}, ans["n"]))
-    cards.append(card("Answered", {"hindsight": ours["answered"]}, ans["n"]))
+        cards.append(
+            card(f"Linked issue cited{suffix}", {"hindsight": ours["gold_cited"]}, ans["n"])
+        )
     return cards
 
 

@@ -80,6 +80,7 @@ def test_scorer_counts_and_writes_results(fx, tmp_path: Path):
     cards = {c.metric: c for c in scorecard(tmp_path) if c.suite == "ask"}
     assert cards["Not found on trick questions"].value == 1.0
     assert cards["Linked issue cited"].n == 2
+    assert cards["Linked issue cited (file and subject only)"].n == 2
     assert {m.name for m in cards["Linked issue among the sources"].methods} == {
         "hindsight",
         "keyword_only",
@@ -107,3 +108,10 @@ def test_the_real_answers_on_the_fixture(fx, tmp_path: Path):
     rows = {r["set"]: r for r in result["rows"]}
     assert rows["answerable"]["gold_in_sources"], rows["answerable"]
     assert rows["trick"]["status"] == "not_found"
+
+
+def test_the_hash_variant_drops_only_the_commit_phrase():
+    from hindsight.eval.ask_eval import without_hash
+
+    q = 'Why was src/a/main.go changed in commit 53a3d6e ("Charge in USD")?'
+    assert without_hash(q) == 'Why was src/a/main.go changed ("Charge in USD")?'

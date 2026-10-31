@@ -105,12 +105,15 @@ function figures(cards: ScoreCard[], botShare: number | undefined): Figure[] {
         .join(" · "),
     });
   }
-  const cited = find(cards, "ask", "Linked issue cited");
+  // the harder variant: the question names the file and the change, not the commit
+  const cited =
+    find(cards, "ask", "Linked issue cited (file and subject only)") ??
+    find(cards, "ask", "Linked issue cited");
   if (cited) {
     out.push({
       value: pct(cited.value),
-      label: "Right source cited",
-      vs: `the linked issue · n=${String(cited.n)}`,
+      label: "Right reason cited",
+      vs: `the issue behind the change · n=${String(cited.n)}`,
     });
   }
   if (botShare !== undefined && botShare > 0) {

@@ -37,9 +37,16 @@ const METRIC: Record<string, { title: string; term?: string }> = {
     title: "Trick questions answered “not found”",
     term: "notfound",
   },
-  "Linked issue among the sources": { title: "The issue behind the change, among the sources" },
-  "Linked issue cited": { title: "The issue behind the change, cited by the answer" },
-  Answered: { title: "Answerable questions answered" },
+  "Linked issue among the sources (file and subject only)": {
+    title: "Question names the file and change: the issue behind it is among the sources",
+  },
+  "Linked issue cited (file and subject only)": {
+    title: "Question names the file and change: the issue behind it is cited",
+  },
+  "Linked issue among the sources": {
+    title: "Question names the commit: the issue behind it is among the sources",
+  },
+  "Linked issue cited": { title: "Question names the commit: the issue behind it is cited" },
 };
 
 const SUITES: Record<string, { title: string; plain: string; unit: string; synthetic: string }> = {
