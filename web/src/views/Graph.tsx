@@ -68,6 +68,16 @@ interface MapLink extends LinkObject<MapNode> {
   provenance: string;
 }
 
+/** A link's evidence as plain "key: value" pairs instead of raw JSON. */
+function evidenceText(evidence: Record<string, unknown>): string {
+  return Object.entries(evidence)
+    .map(([k, v]) => {
+      const value = typeof v === "string" || typeof v === "number" ? String(v) : JSON.stringify(v);
+      return `${k.replaceAll("_", " ")}: ${value}`;
+    })
+    .join(" · ");
+}
+
 function short(text: string, max = 28): string {
   return text.length > max ? `${text.slice(0, max - 1)}…` : text;
 }
@@ -534,7 +544,7 @@ export function Graph() {
                     <td>
                       <Provenance value={e.provenance} />
                     </td>
-                    <td className="small mono">{JSON.stringify(e.evidence)}</td>
+                    <td className="small">{evidenceText(e.evidence)}</td>
                   </tr>
                 ))}
               </tbody>

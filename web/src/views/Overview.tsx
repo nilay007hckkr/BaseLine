@@ -56,7 +56,9 @@ export function Overview() {
     [
       "Discussions",
       (kinds.Comment ?? 0) + (kinds.Review ?? 0) || "—",
-      (kinds.Comment ?? 0) + (kinds.Review ?? 0) ? "comments" : "next run (GitHub limit)",
+      (kinds.Comment ?? 0) + (kinds.Review ?? 0)
+        ? "comments"
+        : "not read yet (GitHub's hourly limit)",
     ],
     ["Doc sections", kinds.DocChunk ?? 0, `${String(kinds.Doc ?? 0)} files`],
   ];

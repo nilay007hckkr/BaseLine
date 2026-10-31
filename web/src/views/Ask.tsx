@@ -206,7 +206,11 @@ function Result({ answer }: { answer: Answer }) {
       </Section>
       <details className="card" open={answer.evidence.length <= 3}>
         <summary>Sources ({answer.evidence.length})</summary>
-        <p className="muted small">Checked with: {answer.checker}</p>
+        <p className="muted small">
+          Every sentence was checked: it must cite one of these sources and share its key words with
+          it
+          {answer.checker.includes("model support") ? "; a model then re-checked support" : ""}.
+        </p>
         <ul className="plain">
           {answer.evidence.map((e) => (
             <Evidence key={e.id} item={e} />
