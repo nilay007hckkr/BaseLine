@@ -36,6 +36,36 @@ def test_bad_requests_are_rejected(fx):
     assert c.get("/api/graph", params={"key": "file:nope"}).status_code == 404
 
 
+def test_services_view_draws_every_service_and_the_calls_between_them(fx, tmp_path):
+    from hindsight.core.db import connect
+
+    conn = fx.conn()
+    services = {r[0] for r in conn.execute("SELECT key FROM nodes WHERE kind = 'Service'")}
+    calls = {
+        (a, b)
+        for a, b in conn.execute(
+            "SELECT s.key, d.key FROM edges e JOIN nodes s ON s.id = e.src"
+            " JOIN nodes d ON d.id = e.dst WHERE e.kind = 'CALLS'"
+        )
+    }
+    assert len(services) >= 2 and calls  # FIXTURE: a shop with gRPC calls between services
+    graph = client(fx).get("/api/graph", params={"view": "services"}).json()
+    assert {n["id"] for n in graph["nodes"]} == services
+    assert {n["kind"] for n in graph["nodes"]} == {"Service"}
+    assert {(e["source"], e["target"]) for e in graph["edges"]} == calls
+    assert all(e["kind"] == "CALLS" and e["evidence"] for e in graph["edges"])
+    assert graph["center"] in services
+
+    empty = dataclasses.replace(fx.settings, db_path=tmp_path / "empty.db")
+    connect(empty.db_path).close()
+    app_module.app.dependency_overrides[app_module.get_settings] = lambda: empty
+    try:
+        r = TestClient(app_module.app).get("/api/graph", params={"view": "services"})
+    finally:
+        app_module.app.dependency_overrides.clear()
+    assert r.status_code == 404  # nothing ingested: the same plain message as the default view
+
+
 def test_map_starts_at_the_most_linked_service_of_any_repository(fx, tmp_path):
     from hindsight.brain.graph import default_centre
     from hindsight.core.db import connect

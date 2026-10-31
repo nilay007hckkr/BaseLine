@@ -204,6 +204,8 @@ export interface paths {
          * Graph View
          * @description `code=true` adds functions, classes and their calls (the code structure layer). Without a
          *     `key`, the Map starts at the most linked service, component or file of this repository.
+         *     `view=services` draws every service and the calls between them instead (a repository with
+         *     fewer than two services gets the neighbourhood view).
          */
         get: operations["graph_view_api_graph_get"];
         put?: never;
@@ -1800,6 +1802,7 @@ export interface operations {
                 key?: string | null;
                 depth?: number;
                 code?: boolean;
+                view?: "around" | "services";
             };
             header?: never;
             path?: never;

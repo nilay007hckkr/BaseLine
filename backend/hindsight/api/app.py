@@ -5,7 +5,7 @@ from __future__ import annotations
 import re
 import sqlite3
 from collections.abc import Iterator
-from typing import Annotated
+from typing import Annotated, Literal
 
 import httpx
 from fastapi import (
@@ -24,7 +24,7 @@ from fastapi.staticfiles import StaticFiles
 
 from hindsight.api import llm_settings, service
 from hindsight.api.workspace import Workspace
-from hindsight.brain.graph import default_centre, neighbourhood, search
+from hindsight.brain.graph import default_centre, neighbourhood, search, services_overview
 from hindsight.brain.impact import impact_report
 from hindsight.brain.risk import knowledge_at_risk
 from hindsight.brain.uploads import (
@@ -276,9 +276,16 @@ def graph_view(
     key: str | None = None,
     depth: Annotated[int, Query(ge=1, le=2)] = 1,
     code: bool = False,
+    view: Literal["around", "services"] = "around",
 ) -> GraphResponse:
     """`code=true` adds functions, classes and their calls (the code structure layer). Without a
-    `key`, the Map starts at the most linked service, component or file of this repository."""
+    `key`, the Map starts at the most linked service, component or file of this repository.
+    `view=services` draws every service and the calls between them instead (a repository with
+    fewer than two services gets the neighbourhood view)."""
+    if view == "services" and not key:
+        overview = services_overview(conn, graph)
+        if overview is not None:
+            return overview
     centre = key or default_centre(conn)
     if centre is None:
         raise HTTPException(status_code=404, detail="the graph is empty: ingest a repository first")

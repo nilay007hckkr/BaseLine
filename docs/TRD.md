@@ -222,7 +222,7 @@ HEAD and are not time-filtered.
 | POST | `/ask` `{question, file?, line_start?, line_end?}` | An `Answer` |
 | GET · POST | `/answer-checks` | Visitor ratings of answers, and their tally |
 | POST | `/impact` `{files[] \| commit}` | An `ImpactReport` (not stored; deploys store their own prediction) |
-| GET | `/graph?key=&depth=1\|2&code=` | Neighbourhood for the Map; without `key` it starts at the most linked service, folder or file (404 for an empty graph); `code=true` adds the code structure layer |
+| GET | `/graph?key=&depth=1\|2&code=&view=around\|services` | Neighbourhood for the Map; without `key` it starts at the most linked service, folder or file (404 for an empty graph); `code=true` adds the code structure layer; `view=services` (the Map's first view) draws every service and the calls between them, falling back to the neighbourhood when there are fewer than two services |
 | GET | `/graph/status` | Which store answers, sync state, counts, Neo4j Browser link |
 | GET | `/search?q=` | Nodes by key or title (Map search) |
 | GET | `/risk` | Knowledge at risk |

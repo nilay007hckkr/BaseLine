@@ -103,6 +103,50 @@ def neighbourhood(
     )
 
 
+def services_overview(
+    conn: sqlite3.Connection, graph: GraphReader | None = None
+) -> GraphResponse | None:
+    """The architecture at a glance: every service and the calls between them, read through the
+    graph store like any other view. None when the repository has fewer than two services (then a
+    neighbourhood view says more)."""
+    graph = graph or SqliteGraph(conn)
+    rows = {
+        r["id"]: r
+        for r in conn.execute(
+            "SELECT id, kind, key, title, url, ts FROM nodes WHERE kind = 'Service' ORDER BY key"
+        )
+    }
+    if len(rows) < 2:
+        return None
+    calls: dict[tuple[int, int], GraphEdge] = {}
+    links: dict[int, int] = dict.fromkeys(rows, 0)
+    for edges in graph.edges_around(list(rows), 500).values():
+        for e in edges:
+            if e.kind != "CALLS" or e.src not in rows or e.dst not in rows:
+                continue
+            if (e.src, e.dst) not in calls:
+                links[e.src] += 1
+                links[e.dst] += 1
+            calls[(e.src, e.dst)] = GraphEdge(
+                source=rows[e.src]["key"],
+                target=rows[e.dst]["key"],
+                kind="CALLS",
+                provenance=e.provenance,
+                evidence=e.evidence,
+            )
+    busiest = max(rows, key=lambda n: (links[n], -n))
+    return GraphResponse(
+        center=rows[busiest]["key"],
+        nodes=[
+            GraphNode(id=r["key"], kind=r["kind"], label=label(r), url=r["url"], ts=r["ts"])
+            for r in rows.values()
+        ],
+        edges=list(calls.values()),
+        truncated=False,
+        backend=graph.backend,
+    )
+
+
 def search(conn: sqlite3.Connection, q: str, limit: int = 20) -> list[SearchHit]:
     pattern = f"%{q.strip()}%"
     rows = conn.execute(

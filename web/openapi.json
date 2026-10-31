@@ -407,7 +407,7 @@
   "/api/graph": {
    "get": {
     "summary": "Graph View",
-    "description": "`code=true` adds functions, classes and their calls (the code structure layer). Without a\n`key`, the Map starts at the most linked service, component or file of this repository.",
+    "description": "`code=true` adds functions, classes and their calls (the code structure layer). Without a\n`key`, the Map starts at the most linked service, component or file of this repository.\n`view=services` draws every service and the calls between them instead (a repository with\nfewer than two services gets the neighbourhood view).",
     "operationId": "graph_view_api_graph_get",
     "parameters": [
      {
@@ -446,6 +446,20 @@
        "type": "boolean",
        "default": false,
        "title": "Code"
+      }
+     },
+     {
+      "name": "view",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "enum": [
+        "around",
+        "services"
+       ],
+       "type": "string",
+       "default": "around",
+       "title": "View"
       }
      }
     ],
