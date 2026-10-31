@@ -18,3 +18,6 @@ One line per idea, tagged with the block that surfaced it.
 - (block H) Importers for Slack and Jira exports with explicit-reference linking (PR numbers, SHAs, issue keys); the target has no Slack or Jira, so only labelled fixtures until a real export exists, kept out of `make eval`.
 - (block H) The fault script picked the same "guilty" commit (11a66b2, release/v0.10.5, which bumps every service) in 9 of 11 runs, so "touches the culprit" holds for any culprit; exclude release and sweep commits when choosing the guilty change, then re-run the correlation numbers.
 - (block H) Measure incident briefs: claims kept vs proposed, fallback rate and wrong-culprit removals over the detected campaign incidents (needs an EVALUATION.md change).
+- (block I) Run `make codegraph` for repositories connected in workspace mode too (each has its own clone and database).
+- (block I) Add inheritance links and the few imports that resolve inside the repository to the code layer.
+- (block I) "Which functions call the changed function" as an impact reason, only after a history-replay run shows it helps.

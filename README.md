@@ -59,6 +59,11 @@ the "why" path and impact structure then read it with Cypher, and the Neo4j Brow
 http://localhost:7474 shows the whole graph ([docs/GRAPH.md](docs/GRAPH.md)). Without it, the same
 features read SQLite.
 
+Optional code structure: `uv tool install graphifyy==0.9.99`, then `make codegraph` adds the
+functions and classes in each code file, and the calls between them, to the Map (switch on **Code
+structure**). It parses the code offline with tree-sitter; every link names the file and line it
+came from, and impact scoring does not use it.
+
 `make serve` builds the dashboard and serves everything from http://localhost:8000. The CLI works too:
 `cd backend && uv run hindsight ask "Why does checkoutservice convert currency to USD?"`.
 

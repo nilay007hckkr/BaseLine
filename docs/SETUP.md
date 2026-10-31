@@ -20,6 +20,7 @@ make setup        # after block B0 creates backend/, web/, collector/
 | Go ≥ 1.22 | Collector |
 | Docker, kind, kubectl, skaffold | Target cluster |
 | Ollama (optional) | Local LLM fallback. With 6 GB of VRAM, run one 7B model at 4-bit at a time. Arch Linux steps: [OLLAMA_SETUP.md](OLLAMA_SETUP.md) |
+| graphify (optional) | Code structure layer on the Map: `uv tool install graphifyy==0.9.99`, then `make codegraph` (offline, no model) |
 | Playwright Chromium | Installed after the backend declares the dependency |
 
 ## Keys (`.env`)

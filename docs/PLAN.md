@@ -30,6 +30,7 @@ Built on top of phase 1, in this order (TRD §0.1 lists how each one differs fro
 | G | Dashboard for non-technical and technical visitors: guided wireframe-runner tour (three.js) with six feature gates, badges, plain-language results with charts, incident story, 3D map, manual and glossary | Every page loads with real data; tour skippable; web tests pass | done |
 | F | Same impact protocol on more public repositories (OpenTelemetry Demo, .NET eShop) | `make try-repo` writes their results into `eval/results/latest.md` | done |
 | H | Incident brief (DESIGN §6.5): code gathers evidence, a bounded read-only tool loop, claims checked for citations and for naming the ranked culprit; Brief tab with step trace and follow-up questions. Time box 5 h; fallback: fixed pipeline, one model call | Brief on a real incident with cited claims; refused tools, wrong-culprit claims and no-model cases tested | built; live model run pending (Ollama was not running) |
+| I | Code structure layer on the Map (TRD §0.4): graphify run offline, only source-extracted symbols and calls kept as `static` links; Map switch. Time box 3 h; fallback: drop the layer | `make codegraph` on Online Boutique; Map shows functions with file:line evidence; impact output unchanged | done |
 
 ## Phase 2: the 36-hour blocks
 

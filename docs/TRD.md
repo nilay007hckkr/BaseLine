@@ -83,6 +83,18 @@ The workspace's tour calls the demo's API, so the demo allows the workspace orig
 with `GIT_TERMINAL_PROMPT=0` so a missing or private repository fails at once instead of waiting
 for a username.
 
+### 0.4 Code structure layer (2026-10-31, block I)
+
+| Concern | Choice |
+|---|---|
+| Tool | graphify `0.9.99` (PyPI `graphifyy`), installed as a separate command (`uv tool install graphifyy==0.9.99`) and run like `git`. It is not a Python dependency of the backend |
+| Run | `make codegraph` runs `graphify extract <clone> --code-only --no-cluster --out data/codegraph` with `GRAPHIFY_BACKEND=none`: tree-sitter only, no model calls, nothing leaves the machine. About 3 s on Online Boutique |
+| Kept | Functions, methods and classes (`_callable`) in files the graph knows at HEAD become `Symbol` nodes (`symbol:<path>#<name>@L<line>`, with a link pinned to the parsed commit). `File -DEFINES-> Symbol` comes from each symbol's own file and line; `Symbol -CODE_CALLS-> Symbol` from call sites marked `EXTRACTED`, with up to 3 sites and the count. Both are `static` |
+| Left out | `INFERRED` links, type references, imports (only 6 of 440 resolve inside the repository), comment text, configuration keys, and generated files (`is_generated`: protobuf stubs and the like) |
+| Isolation | New kinds only: `CODE_CALLS`, never `CALLS`, because impact reads every `CALLS` edge as a service-to-service call. Impact scoring and the evaluation never read the layer; a test checks that impact output is identical before and after an import |
+| Map | `GET /graph?code=true` adds the layer. It is off by default and always on when the centre is a function or class. A re-import replaces the whole layer; Neo4j re-syncs when it was synced before |
+| Online Boutique (HEAD `c7cb6d5`) | 307 symbols in 43 files and 148 call links (12 across files); 1,690 symbols in generated files and 77 inferred calls left out |
+
 ## 1. Architecture
 
 ```

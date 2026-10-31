@@ -253,7 +253,9 @@ Every colour means one thing, everywhere (legend in Manual › Colours):
 
 The onboarding run is an original wireframe runner (three.js): six gates, one feature each, with a
 live "try it" against the demo's API. The Map draws items as wireframe shapes (shape = kind,
-colour = meaning) with the same glow. A workspace opens on a connect screen, plays the run while
+colour = meaning) with the same glow. Its **Code structure** switch (off by default) adds the
+functions and classes in each code file and the calls between them, read from the source by
+graphify (TRD §0.4); centring on a function shows its calls. A workspace opens on a connect screen, plays the run while
 the repository is read, then shows a progress card until it is ready.
 
 ## 9. LLM layer
