@@ -71,3 +71,19 @@ def test_doc_names_and_the_api(fx):
         assert r.status_code == 200 and isinstance(r.json(), list)
     finally:
         app_module.app.dependency_overrides.clear()
+
+
+def test_a_broad_commit_that_touches_everything_does_not_make_a_doc_stale(tmp_path):
+    conn = connect(tmp_path / "db.sqlite")
+    with conn:
+        f = upsert_node(conn, "File", "file:src/cart/main.go", title="src/cart/main.go")
+        others = [upsert_node(conn, "File", f"file:src/s{i}/main.go") for i in range(5)]
+        d = upsert_node(
+            conn, "Doc", "doc:docs/cart.md", title="docs/cart.md", url="u", ts=999 * DAY
+        )
+        ch = upsert_node(conn, "DocChunk", "chunk:docs/cart.md#0", title="docs/cart.md § Cart")
+        add_edge(conn, ch, d, "PART_OF", "explicit", {"section": "Cart"})
+        add_edge(conn, ch, f, "MENTIONS", "heuristic", {"surface": "src/cart/main.go"})
+        for i in range(3):  # release-style commits: the cart file plus five other services
+            _commit(conn, f"r{i}", 1000 * DAY + i * DAY, [f, *others])
+    assert stale_docs(conn) == []

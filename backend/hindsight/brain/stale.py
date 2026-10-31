@@ -1,8 +1,9 @@
 """Docs that may be out of date: the code a doc talks about kept changing after the doc's last edit.
 
 A doc's sections MENTION files and services (brain/uploads.py link_chunk). When at least
-MIN_CHANGES commits by people (bot, sweep and merge commits left out) changed those files, or the
-files of those services, after the doc was last changed, the doc is flagged "may be out of date",
+MIN_CHANGES commits by people (bot, sweep and merge commits left out) that are mainly about those
+files, or the files of those services (at least half of what each commit changed), landed after
+the doc was last changed, the doc is flagged "may be out of date",
 with the count, the latest commits and the names as evidence. A heuristic signal from recorded
 history (provenance statistical), never a verdict: the doc may still be right."""
 
@@ -58,10 +59,13 @@ def stale_docs(conn: sqlite3.Connection, min_changes: int = MIN_CHANGES) -> list
         if not files:
             continue
         marks = ",".join("?" * len(files))
+        # only commits mainly about what the doc describes: at least half of the files they
+        # changed (a release or dependency bump that touches every service does not count)
         commits = conn.execute(
-            "SELECT DISTINCT c.id, c.sha, c.ts, n.title FROM edges e"
+            "SELECT c.id, c.sha, c.ts, n.title FROM edges e"
             " JOIN commits c ON c.id = e.src JOIN nodes n ON n.id = c.id"
             f" WHERE e.kind = 'MODIFIES' AND e.dst IN ({marks}) AND c.ok = 1 AND c.ts > ?"
+            " GROUP BY c.id HAVING 2 * COUNT(DISTINCT e.dst) >= MAX(c.n_files, 1)"
             " ORDER BY c.ts DESC",
             [*files, doc["ts"]],
         ).fetchall()
