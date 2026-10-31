@@ -23,7 +23,7 @@ from typing import Any
 
 from hindsight.core.db import get_meta
 from hindsight.core.embed import Embedder, dense_search
-from hindsight.core.text import content_terms, stem
+from hindsight.core.text import content_terms, fts_term
 from hindsight.eval.rca import _ci as bootstrap_ci
 
 RRF_K, DEPTH = 60, 50
@@ -49,7 +49,7 @@ def queries(conn: sqlite3.Connection, key: str, limit: int = 300) -> list[dict[s
 
 def _keyword(conn: sqlite3.Connection, q: dict[str, Any]) -> list[int]:
     terms = content_terms(q["query"])
-    match = " OR ".join(f'"{stem(t)}"*' for t in terms)
+    match = " OR ".join(fts_term(t) for t in terms)
     rows = conn.execute(
         "SELECT s.id FROM spans_fts f JOIN spans s ON s.id = f.rowid WHERE spans_fts MATCH ?"
         " AND s.ts <= ? AND s.node_id <> ? ORDER BY bm25(spans_fts) LIMIT ?",

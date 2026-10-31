@@ -7,6 +7,7 @@ import math
 import re
 
 _TOKEN = re.compile(r"[a-z0-9]+")
+_HEX = frozenset("0123456789abcdef")
 _SENTENCE = re.compile(r"(?<=[.!?])\s+|\n\s*\n|\n\s*[-*]\s+")
 STOP = frozenset(
     [
@@ -141,6 +142,10 @@ QUESTION_WORDS = frozenset(
         "chosen",
         "happen",
         "happened",
+        # words that point at the history itself ("why was X changed in commit abc1234")
+        "commit",
+        "commits",
+        "changed",
         "like",
         "work",
         "works",
@@ -225,13 +230,29 @@ def stem(token: str) -> str:
     return token[:6] if len(token) > 6 else token
 
 
+def is_sha(token: str) -> bool:
+    """A commit hash as people paste it from git blame or a log (7 to 40 hex characters with at
+    least one digit, so ordinary words such as 'defaced' are not mistaken for one)."""
+    return (
+        7 <= len(token) <= 40 and all(c in _HEX for c in token) and any(c.isdigit() for c in token)
+    )
+
+
 def content_terms(question: str) -> list[str]:
     seen: list[str] = []
     for tok in tokens(question):
-        if len(tok) < 3 or tok in STOP or tok in QUESTION_WORDS or tok in seen:
+        if len(tok) < 3 or tok in STOP or tok in QUESTION_WORDS or tok in seen or is_sha(tok):
             continue
         seen.append(tok)
     return seen
+
+
+def fts_term(term: str) -> str:
+    """One question term as an FTS5 (porter) query: the whole word, which the porter tokenizer
+    stems ('rounding' → 'round'), or its crude six-character stem as a prefix ('rewrit*' meets
+    'rewrite' and 'rewritten'). The crude stem alone misses words whose porter stem is shorter."""
+    whole, crude = f'"{term}"*', f'"{stem(term)}"*'
+    return whole if whole == crude else f"({whole} OR {crude})"
 
 
 def claim_terms(claim: str) -> list[str]:

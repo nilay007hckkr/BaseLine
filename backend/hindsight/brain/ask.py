@@ -28,7 +28,9 @@ from hindsight.core.schemas import Answer, Claim, EvidenceItem
 from hindsight.core.text import (
     claim_terms,
     content_terms,
+    fts_term,
     idf,
+    is_sha,
     looks_like_instructions,
     sentences,
     snippet,
@@ -66,6 +68,7 @@ class Reached:
 class Graph:
     reached: dict[int, Reached] = field(default_factory=dict)
     blamed: set[int] = field(default_factory=set)  # commits that last touched the asked-about lines
+    named: set[int] = field(default_factory=set)  # commits the question names by hash
 
     def add(self, node: int, hop: int, parent: int | None) -> bool:
         if node in self.reached:
@@ -86,7 +89,7 @@ def label(row: sqlite3.Row) -> str:
 def _df(conn: sqlite3.Connection, term: str) -> int:
     return int(
         conn.execute(
-            "SELECT COUNT(*) FROM spans_fts WHERE spans_fts MATCH ?", (f'"{stem(term)}"*',)
+            "SELECT COUNT(*) FROM spans_fts WHERE spans_fts MATCH ?", (fts_term(term),)
         ).fetchone()[0]
     )
 
@@ -117,6 +120,16 @@ def _anchors(conn: sqlite3.Connection, question: str, file: str | None) -> list[
     for word in re.findall(r"[\w-]+\.\w+", lowered):
         if len(by_base.get(word, [])) == 1:
             ids.append(by_base[word][0])
+    # a commit hash pasted from git blame or a log; only when it names exactly one commit
+    for word in dict.fromkeys(tokens(question)):
+        if not is_sha(word):
+            continue
+        rows = conn.execute(
+            "SELECT id FROM nodes WHERE kind = 'Commit' AND key LIKE ? LIMIT 2",
+            (f"commit:{word}%",),
+        ).fetchall()
+        if len(rows) == 1:
+            ids.append(rows[0][0])
     return list(dict.fromkeys(ids))
 
 
@@ -170,6 +183,11 @@ def _expand(
                 g.blamed.add(row[0])
     for a in anchors:
         kind = conn.execute("SELECT kind FROM nodes WHERE id = ?", (a,)).fetchone()[0]
+        if kind == "Commit":
+            # a named commit is read like a blamed one: its PR and issues say why it was made
+            commits.append((a, a))
+            g.named.add(a)
+            continue
         file_ids = [a]
         if kind in ("Service", "Component"):
             file_ids = [src for src, _ in graph.incoming([a], "BELONGS_TO")]
@@ -195,8 +213,8 @@ def _expand(
 
 
 def _blame_nodes(g: Graph) -> set[int]:
-    """Blamed commits and what they lead to (PR, issues, discussion), up to two steps on."""
-    found = set(g.blamed)
+    """Blamed or named commits and what they lead to (PR, issues, discussion), two steps on."""
+    found = set(g.blamed) | set(g.named)
     for _ in range(2):
         found |= {n for n, r in g.reached.items() if r.parent in found and r.hop >= 2}
     return found
@@ -504,7 +522,7 @@ def ask(
             f"SELECT id, node_id FROM spans WHERE node_id IN ({marks})", list(order)
         ).fetchall()
         graph_ranked = [r["id"] for r in sorted(rows, key=lambda r: order[r["node_id"]])]
-    fts_query = " OR ".join(f'"{stem(t)}"*' for t in terms)
+    fts_query = " OR ".join(fts_term(t) for t in terms)
     fts_ranked = [
         r[0]
         for r in conn.execute(
@@ -561,11 +579,18 @@ def ask(
     if from_blame:
         rest = [s for s in pack if s[3] not in blamed]
         pack = (from_blame[:6] + rest)[:PACK_SIZE]
-        notes.append(
-            f"answered from the history of {file} lines {lines[0]}-{lines[1]} (git blame)"
-            if lines
-            else "answered from git blame"
-        )
+        if lines:
+            notes.append(
+                f"answered from the history of {file} lines {lines[0]}-{lines[1]} (git blame)"
+            )
+        elif g.named and not g.blamed:
+            shas = ", ".join(
+                conn.execute("SELECT sha FROM commits WHERE id = ?", (c,)).fetchone()[0][:7]
+                for c in sorted(g.named)
+            )
+            notes.append(f"answered from the history of commit {shas}")
+        else:
+            notes.append("answered from git blame")
 
     if not from_blame and (not pack or pack[0][0] < tau):
         nearest_src = sorted(scored, key=lambda s: -s[1])[:3]

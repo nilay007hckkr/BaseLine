@@ -240,3 +240,29 @@ def test_evidence_must_be_about_the_service_the_question_names(fx):
     answer = ask(fx.conn(), "Why does cartservice charge in USD?", repo=fx.repo)
     assert answer.status == "not_found"
     assert any("not about cartservice" in n for n in answer.notes)
+
+
+def test_a_commit_named_by_hash_is_read_like_git_blame(fx):
+    conn = fx.conn()
+    sha = fx.shas["usd"][:7]
+    a = ask(conn, f"Why was src/checkoutservice/main.go changed in commit {sha}?", repo=fx.repo)
+    assert a.status == "answered"
+    keys = [e.node_key for e in a.evidence]
+    assert f"commit:{fx.shas['usd']}" in keys and "gh:12" in keys and "gh:3" in keys
+    assert any(f"history of commit {sha}" in n for n in a.notes)
+    assert not any(sha in n for n in a.notes if n.startswith("no project history"))
+
+
+def test_a_hash_that_names_no_commit_anchors_nothing(fx):
+    conn = fx.conn()
+    a = ask(conn, "Why was commit 0000000 deadbeef made in the cart?")
+    assert not any(label.startswith("commit") for label in a.anchors)
+
+
+def test_hashes_and_search_terms():
+    from hindsight.core.text import content_terms, fts_term, is_sha
+
+    assert is_sha("53a3d6e") and not is_sha("defaced") and not is_sha("abc12")
+    assert content_terms("Why was it changed in commit 53a3d6e?") == []
+    # porter stems 'rounding' to 'round', which the crude six-letter prefix 'roundi' misses
+    assert fts_term("rounding") == '("rounding"* OR "roundi"*)' and fts_term("cart") == '"cart"*'
