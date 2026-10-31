@@ -10,7 +10,8 @@ DEMO_PORT="${DEMO_PORT:-8000}"
 WORKSPACE_PORT="${WORKSPACE_PORT:-8080}"
 
 for port in "$DEMO_PORT" "$WORKSPACE_PORT"; do
-  if (exec 3<>"/dev/tcp/$HOST/$port") 2>/dev/null; then
+  # time-limited: under WSL mirrored networking a just-freed port can hang instead of refusing
+  if timeout 1 bash -c "exec 3<>/dev/tcp/$HOST/$port" 2>/dev/null; then
     echo "port $port is already in use; stop that process or set DEMO_PORT / WORKSPACE_PORT" >&2
     exit 1
   fi
