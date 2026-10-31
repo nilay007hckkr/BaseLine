@@ -91,7 +91,13 @@ The LLM never writes reasons.
 joins the RRF with the graph path and BM25; `not_found` is still decided by the IDF-weighted lexical
 coverage of the best evidence (τ = 0.6), so adding semantic search cannot loosen abstention. The NLI
 step is a model support check: one call judges every surviving claim against its cited text, and
-a claim without a clear "supported" verdict is removed. Retrieval is measured automatically by
+a claim without a clear "supported" verdict is removed. If no model answers that second call
+(offline, or a local model too slow), the check has not run: claims that passed the citation check
+are kept and the answer says the second check could not run. The model reads each source as an
+excerpt (its first line plus the sentences that best match the question, ≤ 900 characters, about
+10 000 characters in all) so a local model on a laptop can answer; claims are still checked
+against the full text. When no provider answers, the notes name each provider and why (not
+reachable, timed out, model not pulled, reply not JSON). Retrieval is measured automatically by
 `make eval-retrieval` (find the issue a PR or commit links to from its title alone, as of its time);
 the answer-level question set of EVALUATION §3 is still to be written by the team.
 

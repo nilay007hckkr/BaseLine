@@ -1,6 +1,8 @@
 import json
 
-from hindsight.brain.ask import ask
+import httpx
+
+from hindsight.brain.ask import ask, excerpt
 from hindsight.core.llm import Chain
 
 
@@ -107,6 +109,69 @@ def test_llm_claims_that_pass_validation_are_kept(fx):
     )
     assert answer.mode == "llm"
     assert answer.claims[0].cites == [target]
+
+
+class ThenOffline:
+    """Answers the first prompt, then behaves like a model that stopped responding."""
+
+    name, model, timeout = "ollama", "qwen2.5:7b", 300
+
+    def __init__(self, first: dict) -> None:
+        self.first: dict | None = first
+
+    def complete(self, prompt: str) -> str:
+        if self.first is None:
+            raise httpx.ReadTimeout("slow", request=httpx.Request("POST", "http://localhost"))
+        reply, self.first = self.first, None
+        return json.dumps(reply)
+
+
+def test_a_long_source_is_cut_to_its_subject_and_best_sentences():
+    filler = "This paragraph talks about release notes and nothing else at all. " * 60
+    text = (
+        f"Charge in USD\n\n{filler}We charge in USD because the provider settles in USD. {filler}"
+    )
+    cut = excerpt(text, ["charge", "usd"], {}, 300)
+    assert len(cut) <= 300
+    assert cut.startswith("Charge in USD")
+    assert "settles in USD" in cut
+    assert excerpt("short text", ["usd"], {}, 300) == "short text"
+
+
+def test_claims_that_passed_the_citation_check_stay_when_the_second_check_cannot_run(fx):
+    probe = ask(fx.conn(), "Why do we charge in USD?", repo=fx.repo)
+    target = next(
+        e.id for e in probe.evidence if "settles in USD" in e.snippet or "rounding" in e.snippet
+    )
+    model = ThenOffline(
+        {"claims": [{"text": "Charging in USD avoids rounding errors.", "cites": [target]}]}
+    )
+    answer = ask(
+        fx.conn(),
+        "Why do we charge in USD?",
+        repo=fx.repo,
+        chain=Chain(fx.conn(), [model], "off"),
+        support_check=True,
+    )
+    assert answer.mode == "llm"
+    assert [c.cites for c in answer.claims] == [[target]]
+    assert any("could not run" in n for n in answer.notes)
+    assert any("timed out after 300 s" in n for n in answer.notes)
+
+
+def test_when_no_model_answers_the_notes_say_why(fx):
+    class Down:
+        name, model, host = "ollama", "qwen2.5:7b", "http://localhost:11434"
+
+        def complete(self, prompt: str) -> str:
+            raise httpx.ConnectError("refused", request=httpx.Request("POST", self.host))
+
+    answer = ask(
+        fx.conn(), "Why do we charge in USD?", repo=fx.repo, chain=Chain(fx.conn(), [Down()], "off")
+    )
+    assert answer.mode == "extractive" and answer.claims
+    assert "no LLM provider answered; showing quoted evidence" in answer.notes
+    assert any("is not reachable at http://localhost:11434" in n for n in answer.notes)
 
 
 def test_flagged_text_never_reaches_the_model(fx):

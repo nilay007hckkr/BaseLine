@@ -444,6 +444,7 @@ def investigate(
             data = chain.complete_json(_prompt(ctx, question, steps, shown, max_steps - turn))
             if not isinstance(data, dict):
                 notes.append("no LLM provider answered")
+                notes.extend(chain.failures)
                 break
             finish = data.get("finish", data if "claims" in data else None)
             if isinstance(finish, dict):
@@ -485,10 +486,16 @@ def investigate(
                 )
             claims = kept
             if claims and support_check:
-                claims, dropped = check_support(chain, claims, texts)
-                checker = SUPPORT_CHECKER + CULPRIT_CHECKER
-                if dropped:
-                    notes.append(f"{dropped} claim(s) removed by the model support check")
+                claims, dropped, ran = check_support(chain, claims, texts)
+                if not ran:
+                    notes.append(
+                        "the model support check could not run, so the claims shown passed the "
+                        "citation and culprit checks only"
+                    )
+                else:
+                    checker = SUPPORT_CHECKER + CULPRIT_CHECKER
+                    if dropped:
+                        notes.append(f"{dropped} claim(s) removed by the model support check")
             if proposed > len(claims):
                 notes.append(
                     f"{proposed - len(claims)} of {proposed} proposed claim(s) failed the checks"

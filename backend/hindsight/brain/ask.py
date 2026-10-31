@@ -38,6 +38,10 @@ TAU = 0.6  # minimum IDF-weighted coverage of the question by the best evidence 
 CLAIM_SUPPORT = 0.5  # minimum coverage of an LLM claim's terms by the text it cites
 PACK_SIZE = 12
 RRF_K = 60
+# What a model reads of the pack: whole PR bodies run to tens of thousands of characters, too much
+# for a local model on a laptop. Each source is cut to its subject and best-matching sentences.
+MODEL_BUDGET = 10_000
+EXCERPT_MAX = 900
 CHECKER = "citation ids + lexical support (IDF-weighted keyword coverage)"
 SUPPORT_CHECKER = CHECKER + " + model support check"
 
@@ -233,6 +237,32 @@ def _skip_span(conn: sqlite3.Connection, node_id: int) -> bool:
     return bool(attrs.get("is_bot") or attrs.get("superseded"))
 
 
+def excerpt(
+    text: str, terms: list[str], weights: dict[str, float], limit: int = EXCERPT_MAX
+) -> str:
+    """What a model sees of one source: its first line (a commit subject or a title), then the
+    sentences that best match the question in their original order, within `limit` characters.
+    Short texts are sent whole. Claims are still checked against the full text."""
+    flat = text.strip()
+    if len(flat) <= limit:
+        return flat
+    head = " ".join(flat.splitlines()[0].split())[:200]
+    parts = sentences(flat)
+    ranked = sorted(
+        range(len(parts)), key=lambda i: (-weighted_coverage(terms, weights, parts[i]), i)
+    )
+    chosen: list[int] = []
+    used = len(head)
+    for i in ranked:
+        piece = parts[i]
+        if piece in head or used + len(piece) + 3 > limit:
+            continue
+        chosen.append(i)
+        used += len(piece) + 3
+    body = " … ".join(parts[i] for i in sorted(chosen))
+    return (f"{head}\n{body}" if body else head)[:limit]
+
+
 def _prompt(question: str, pack: list[tuple[str, str, str]]) -> str:
     blocks = "\n".join(
         f'<evidence id="{ident}" source="{source}">\n{text}\n</evidence>'
@@ -272,19 +302,23 @@ def validate_claims(raw_claims: object, texts: dict[str, str], allowed: set[str]
 
 def check_support(
     chain: Chain, claims: list[Claim], texts: dict[str, str]
-) -> tuple[list[Claim], int]:
-    """Keep only the claims the model judges supported by their cited text. A missing or unclear
-    verdict keeps nothing: the check can remove claims, never add or rescue them."""
+) -> tuple[list[Claim], int, bool]:
+    """Keep only the claims the model judges supported by their cited text: (kept, removed, ran).
+    A reply with a missing or unclear verdict keeps nothing: the check can remove claims, never add
+    or rescue them. When no model answers at all (offline, too slow), the check has not run: the
+    claims, which already passed the citation check, are returned as they are with ran=False."""
     items = [(i + 1, c.text, "\n".join(texts[x] for x in c.cites)) for i, c in enumerate(claims)]
     data = chain.complete_json(_support_prompt(items))
-    verdicts = (data or {}).get("verdicts", []) if isinstance(data, dict) else []
+    if not isinstance(data, dict):
+        return claims, 0, False
+    verdicts = data.get("verdicts", [])
     supported = {
         int(v["n"])
         for v in verdicts
         if isinstance(v, dict) and v.get("supported") is True and str(v.get("n", "")).isdigit()
     }
     kept = [c for i, c in enumerate(claims) if i + 1 in supported]
-    return kept, len(claims) - len(kept)
+    return kept, len(claims) - len(kept), True
 
 
 def _support_prompt(items: list[tuple[int, str, str]]) -> str:
@@ -425,24 +459,36 @@ def ask(
     if chain is not None and chain.configured:
         # flagged text never reaches a model; uploaded docs stay local unless DOCS_ALLOW_EXTERNAL
         keep_local = chain.has_external and not uploads_to_external
-        usable = [
-            (e.id, e.title, texts[e.id])
+        allowed = [
+            e
             for e in evidence
             if not e.flagged and not (keep_local and e.node_key.startswith("chunk:upload:"))
         ]
-        sent = {u[0] for u in usable}
+        per_item = max(300, min(EXCERPT_MAX, MODEL_BUDGET // max(1, len(allowed))))
+        shown = {e.id: excerpt(texts[e.id], terms, weights, per_item) for e in allowed}
+        usable = [(e.id, e.title, shown[e.id]) for e in allowed]
         data = chain.complete_json(_prompt(question, usable)) if usable else None
+        failures = list(chain.failures)
+        # checked against the full text, which contains everything the excerpt showed
         claims = validate_claims(
-            data.get("claims") if isinstance(data, dict) else None, texts, sent
+            data.get("claims") if isinstance(data, dict) else None, texts, set(shown)
         )
         phrased_by = chain.last_provider
         if claims and support_check:
-            claims, dropped = check_support(chain, claims, texts)
-            base["checker"] = SUPPORT_CHECKER
-            if dropped:
+            claims, dropped, ran = check_support(chain, claims, shown)
+            if not ran:
                 notes.append(
-                    f"{dropped} claim(s) removed: the model judged their sources do not support them"
+                    "the second (model) check could not run, so the claims shown passed the "
+                    "citation check only"
                 )
+                notes.extend(chain.failures)
+            else:
+                base["checker"] = SUPPORT_CHECKER
+                if dropped:
+                    notes.append(
+                        f"{dropped} claim(s) removed: the model judged their sources do not "
+                        "support them"
+                    )
         if claims:
             mode = "llm"
             notes.append(f"phrased by {phrased_by}; every claim passed the citation check")
@@ -450,8 +496,14 @@ def ask(
             notes.append(
                 "the model's claims failed the citation check; showing quoted evidence instead"
             )
+        elif not usable:
+            notes.append(
+                "every source was held back from the model (instruction-like text, or uploaded "
+                "documents kept on this machine); showing quoted evidence"
+            )
         else:
             notes.append("no LLM provider answered; showing quoted evidence")
+            notes.extend(failures)
 
     if not claims:
         for ident in list(texts)[:3]:
