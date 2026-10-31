@@ -154,6 +154,7 @@ textarea:focus-visible,
   outline-offset: 2px;
 }
 button.primary,
+button.ghost.active,
 .chip.active {
   background: var(--accent);
   border-color: var(--accent);

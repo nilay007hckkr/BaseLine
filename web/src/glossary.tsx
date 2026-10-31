@@ -18,6 +18,11 @@ export const GLOSSARY: Record<string, { term: string; plain: string }> = {
     plain: "Computed from past changes, e.g. two files that usually change together.",
   },
   runtime: { term: "Seen running", plain: "Observed while the system was running." },
+  codeStructure: {
+    term: "Code structure",
+    plain:
+      "The functions and classes inside each code file, and which ones call which. Read from the source by a parser (graphify), with the file and line for every link. Generated code and guessed links are left out.",
+  },
   heuristic: {
     term: "Simple rule",
     plain: "Inferred by a simple rule, e.g. a '#12' mention. The weakest kind of link.",

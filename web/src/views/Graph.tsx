@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { Crosshair, ExternalLink, Pause, Play } from "lucide-react";
+import { Braces, Crosshair, ExternalLink, Pause, Play } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { ForceGraph3DInstance, LinkObject, NodeObject } from "3d-force-graph";
 import type { BufferGeometry } from "three";
@@ -16,6 +16,7 @@ const KINDS: Record<string, { plain: string; color: string; shape: Shape }> = {
   Service: { plain: "Service", color: "#ffffff", shape: "icosa" },
   Component: { plain: "Folder", color: "#bdbdbd", shape: "box" },
   File: { plain: "Code file", color: "#d9d9d9", shape: "box" },
+  Symbol: { plain: "Function or class", color: "#f2f2f2", shape: "octa" },
   Commit: { plain: "Change (commit)", color: "#5b8cff", shape: "tetra" },
   PR: { plain: "Pull request", color: "#5b8cff", shape: "octa" },
   Issue: { plain: "Issue", color: "#5b8cff", shape: "ring" },
@@ -39,6 +40,8 @@ const LINKS: Record<string, string> = {
   FIXES: "fixes",
   REFERENCES: "mentions",
   CALLS: "calls",
+  DEFINES: "defines",
+  CODE_CALLS: "calls (in code)",
   CO_CHANGES_WITH: "usually changes with",
   BELONGS_TO: "belongs to",
   MENTIONS: "mentions",
@@ -173,7 +176,7 @@ function Graph3D({
           .linkLabel(
             (l) => `${LINKS[l.kind] ?? l.kind} · ${GLOSSARY[l.provenance]?.term ?? l.provenance}`,
           )
-          .linkDirectionalParticles((l) => (l.kind === "CALLS" ? 3 : 0))
+          .linkDirectionalParticles((l) => (l.kind === "CALLS" || l.kind === "CODE_CALLS" ? 3 : 0))
           .linkDirectionalParticleWidth(1.8)
           .onNodeClick((n) => {
             onSelect(n.id);
@@ -300,12 +303,17 @@ export function Graph() {
   const [depth, setDepth] = useState(1);
   const [selected, setSelected] = useState(key);
   const [rotating, setRotating] = useState(true);
+  const [code, setCode] = useState(false);
   const hits = useQuery({
     queryKey: ["search", query],
     queryFn: () => api.search(query),
     enabled: query.trim().length >= 2,
   });
-  const graph = useQuery({ queryKey: ["graph", key, depth], queryFn: () => api.graph(key, depth) });
+  const graph = useQuery({
+    queryKey: ["graph", key, depth, code],
+    queryFn: () => api.graph(key, depth, code),
+  });
+  const symbols = (graph.data?.nodes ?? []).filter((n) => n.kind === "Symbol").length;
   const store = useQuery({ queryKey: ["graph-status"], queryFn: api.graphStatus });
 
   useEffect(() => {
@@ -335,7 +343,7 @@ export function Graph() {
             onChange={(e) => {
               setQuery(e.target.value);
             }}
-            placeholder="Search a service, file, pull request or person…"
+            placeholder="Search a service, file, function, pull request or person…"
             aria-label="Search"
           />
           <select
@@ -349,6 +357,15 @@ export function Graph() {
             <option value={1}>Direct links</option>
             <option value={2}>Two steps out</option>
           </select>
+          <button
+            className={code ? "ghost active" : "ghost"}
+            aria-pressed={code}
+            onClick={() => {
+              setCode(!code);
+            }}
+          >
+            <Braces size={16} aria-hidden="true" /> Code structure
+          </button>
           <button
             className="ghost"
             onClick={() => {
@@ -413,6 +430,14 @@ export function Graph() {
           </div>
           {graph.data.truncated ? (
             <p className="muted small">Busy item: showing its most recent links only.</p>
+          ) : null}
+          {code ? (
+            <p className="muted small">
+              <Term id="codeStructure">Code structure</Term>:{" "}
+              {symbols
+                ? `${String(symbols)} ${symbols === 1 ? "function or class" : "functions or classes"} shown, each with the file and line it was read from.`
+                : "no functions or classes linked to this item. Centre the map on a code file, or build the layer with make codegraph."}
+            </p>
           ) : null}
           {store.data ? (
             <p className="small muted">

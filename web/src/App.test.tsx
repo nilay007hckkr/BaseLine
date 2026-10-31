@@ -174,6 +174,46 @@ describe("dashboard", () => {
     expect(screen.getByText("No key")).toBeDefined();
     expect(screen.queryByLabelText(/key/i)).toBeNull();
   });
+
+  it("the map asks for the code structure layer only when it is switched on", async () => {
+    const service = { id: "service:checkoutservice", kind: "Service", label: "checkoutservice" };
+    const symbol = {
+      id: "symbol:src/checkoutservice/main.go#PlaceOrder()@L12",
+      kind: "Symbol",
+      label: "PlaceOrder()",
+    };
+    const graph = (nodes: object[]) => ({
+      center: service.id,
+      nodes,
+      edges: [],
+      truncated: false,
+      backend: "sqlite",
+    });
+    stubApi({
+      "/api/config": DEMO,
+      "&depth=1": graph([service]),
+      "&depth=1&code=true": graph([service, symbol]),
+    });
+    renderApp();
+    fireEvent.click(
+      within(await screen.findByRole("navigation", { name: "Main" })).getByRole("button", {
+        name: "Map",
+      }),
+    );
+    const toggle = await screen.findByRole("button", { name: /Code structure/ });
+    expect(toggle.getAttribute("aria-pressed")).toBe("false");
+    expect(screen.queryByText(/function or class shown/)).toBeNull();
+    fireEvent.click(toggle);
+    expect(await screen.findByText(/1 function or class shown/)).toBeDefined();
+    const urls = vi
+      .mocked(fetch)
+      .mock.calls.map(([input]) =>
+        typeof input === "string" ? input : input instanceof URL ? input.href : input.url,
+      );
+    expect(
+      urls.filter((u) => u.includes("/api/graph?")).map((u) => u.includes("code=true")),
+    ).toEqual([false, true]);
+  });
 });
 
 describe("workspace", () => {

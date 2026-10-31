@@ -200,7 +200,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Graph View */
+        /**
+         * Graph View
+         * @description `code=true` adds functions, classes and their calls (the code structure layer).
+         */
         get: operations["graph_view_api_graph_get"];
         put?: never;
         post?: never;
@@ -1795,6 +1798,7 @@ export interface operations {
             query: {
                 key: string;
                 depth?: number;
+                code?: boolean;
             };
             header?: never;
             path?: never;

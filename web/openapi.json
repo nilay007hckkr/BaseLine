@@ -407,6 +407,7 @@
   "/api/graph": {
    "get": {
     "summary": "Graph View",
+    "description": "`code=true` adds functions, classes and their calls (the code structure layer).",
     "operationId": "graph_view_api_graph_get",
     "parameters": [
      {
@@ -428,6 +429,16 @@
        "minimum": 1,
        "default": 1,
        "title": "Depth"
+      }
+     },
+     {
+      "name": "code",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "boolean",
+       "default": false,
+       "title": "Code"
       }
      }
     ],
