@@ -53,7 +53,7 @@ const SUITES: Record<string, { title: string; plain: string; unit: string; synth
   ask: {
     title: "Does it answer why, from the right source?",
     plain:
-      "Questions built by code from “Fixes #N” links: the issue is the right source. Trick questions written by hand before any run must get “not found”.",
+      "Questions built by code from “Fixes #N” links: the issue is the right source. Trick questions written by hand (committed before they were first scored) must get “not found”.",
     unit: "questions",
     synthetic: "",
   },
@@ -264,7 +264,8 @@ function Suite({ suite, cards }: { suite: string; cards: ScoreCard[] }) {
       {first.note && suite !== "impact" ? <p className="small">{first.note}</p> : null}
       {suite === "ask" && !cards.some((c) => c.metric === "Not found on trick questions") ? (
         <p className="small">
-          Trick questions not measured yet: they are written by hand, before any run.
+          Trick questions not measured yet: they are written by hand, then committed before they are
+          scored.
         </p>
       ) : null}
       <TableView cards={cards} />

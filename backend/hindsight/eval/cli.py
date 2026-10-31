@@ -153,7 +153,7 @@ def ask_markdown(result: dict[str, Any]) -> str:
     if trick:
         plain = trick["methods"].get("model_without_sources")
         lines += [
-            f'- Trick questions (hand-written before any run; right answer is "not found"): **n = {trick["n"]}**',
+            f'- Trick questions (hand-written, committed before they were first scored; right answer is "not found"): **n = {trick["n"]}**',
             "",
             "| Measure | Hindsight | Same model, no sources |",
             "|---|---|---|",
