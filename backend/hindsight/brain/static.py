@@ -1,12 +1,18 @@
 """Components and static service-to-service calls.
 
-A file belongs to `src/<service>/` when the repository has a `src/` directory of services, and
-otherwise to its top-level directory. A service calls another when its own (non-generated) source
-uses the other's gRPC client, stub or address variable, with the service names taken from the
-repository's `.proto` files."""
+A file belongs to a service when it sits in `<container>/<service>/`:
+- children of `src/`, `services/`, `microservices/` and `svc/` are services (Online Boutique,
+  eShop and the OpenTelemetry Demo use `src/`);
+- children of `app/`, `apps/` and `cmd/` are services only when they hold a build or entry file of
+  their own (a Dockerfile, go.mod, main.go, package.json and the like), so that layers such as a
+  Rails `app/models/` stay one component.
+Every other file belongs to its top-level directory. A service calls another when its own
+(non-generated) source uses the other's gRPC client, stub or address variable, with the service
+names taken from the repository's `.proto` files."""
 
 from __future__ import annotations
 
+import posixpath
 import re
 from pathlib import Path
 
@@ -14,16 +20,49 @@ from hindsight.brain.gitlog import is_generated
 
 _SERVICE_DECL = re.compile(r"^\s*service\s+(\w+)\s*\{", re.MULTILINE)
 _SOURCE_EXT = (".go", ".py", ".js", ".ts", ".java", ".cs", ".rb", ".kt")
+SERVICE_DIRS = ("src", "services", "microservices", "svc")
+MARKED_SERVICE_DIRS = ("app", "apps", "cmd")
+CONTAINERS = SERVICE_DIRS + MARKED_SERVICE_DIRS
+_MARKERS = frozenset(
+    {
+        "dockerfile",
+        "containerfile",
+        "go.mod",
+        "main.go",
+        "package.json",
+        "pom.xml",
+        "build.gradle",
+        "build.gradle.kts",
+        "cargo.toml",
+        "pyproject.toml",
+        "setup.py",
+        "requirements.txt",
+        "gemfile",
+        "program.cs",
+    }
+)
+
+
+def _is_marker(path: str) -> bool:
+    name = posixpath.basename(path).lower()
+    return name in _MARKERS or name.endswith(".csproj")
 
 
 def discover_services(head: set[str]) -> set[str]:
-    return {p.split("/")[1] for p in head if p.startswith("src/") and p.count("/") >= 2}
+    services: set[str] = set()
+    for p in head:
+        parts = p.split("/")
+        if len(parts) < 3:
+            continue
+        if parts[0] in SERVICE_DIRS or (parts[0] in MARKED_SERVICE_DIRS and _is_marker(p)):
+            services.add(parts[1])
+    return services
 
 
 def component_of(path: str, services: set[str]) -> tuple[str, str]:
     """(kind, name) of the component a path belongs to."""
     parts = path.split("/")
-    if len(parts) >= 3 and parts[0] == "src" and parts[1] in services:
+    if len(parts) >= 3 and parts[0] in CONTAINERS and parts[1] in services:
         return "Service", parts[1]
     if len(parts) >= 2:
         return "Component", parts[0]

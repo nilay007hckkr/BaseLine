@@ -226,12 +226,16 @@ def ingest_git(
             )
         _text_links(conn, web, cid, message, skip=suffix)
 
-    # files → components
+    # files → components, rebuilt on every run so a re-ingest follows the current layout rules
+    conn.execute(
+        "DELETE FROM edges WHERE kind = 'BELONGS_TO'"
+        " AND src IN (SELECT id FROM nodes WHERE kind = 'File')"
+    )
     for row in conn.execute("SELECT id, title FROM nodes WHERE kind = 'File'").fetchall():
         kind, name = component_of(row["title"], services)
         sid = upsert_node(conn, kind, f"{kind.lower()}:{name}", title=name)
         pattern = (
-            f"src/{name}/"
+            "/".join(row["title"].split("/")[:2]) + "/"  # e.g. src/cartservice/ or app/user/
             if kind == "Service"
             else (f"{name}/" if name != "(root)" else "(top level)")
         )
@@ -300,11 +304,17 @@ def ingest_docs(
 
 
 def ingest_static(conn: sqlite3.Connection, repo: Path, head: set[str], services: set[str]) -> int:
+    conn.execute("DELETE FROM edges WHERE kind = 'CALLS'")  # rebuilt from HEAD on every run
     calls = service_calls(repo, head, services)
     for caller, callee, evidence in calls:
         a = upsert_node(conn, "Service", f"service:{caller}", title=caller)
         b = upsert_node(conn, "Service", f"service:{callee}", title=callee)
         add_edge(conn, a, b, "CALLS", "static", evidence)
+    # a service or folder left without any link (e.g. after the layout rules changed) is dropped
+    conn.execute(
+        "DELETE FROM nodes WHERE kind IN ('Service', 'Component')"
+        " AND NOT EXISTS (SELECT 1 FROM edges WHERE src = nodes.id OR dst = nodes.id)"
+    )
     return len(calls)
 
 

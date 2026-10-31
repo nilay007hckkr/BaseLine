@@ -1,10 +1,72 @@
 import json
+import os
 import sqlite3
+import subprocess
 
 import pytest
 
+from hindsight.brain import ingest as ingest_module
 from hindsight.brain.gitlog import lineage_map, read_log, split_rename
+from hindsight.core.config import load_settings
 from hindsight.core.db import add_edge, connect, upsert_node
+
+
+def test_reingest_follows_new_layout_rules(tmp_path, monkeypatch):
+    """FIXTURE: a tiny go-kratos-style repository (app/<service>/…) written by the test. The first
+    ingest runs with the old rule (no services outside src/), the second with the current one: no
+    file may keep its old folder link, and the emptied folder node disappears."""
+    settings = load_settings(
+        {"DATA_DIR": str(tmp_path / "data"), "TARGET_REPO_URL": "https://github.com/acme/beer"}
+    )
+    repo = settings.repos_dir / "acme__beer"
+    files = {
+        "api/user/v1/user.proto": "service User {\n  rpc Get (A) returns (B);\n}\n",
+        "app/user/service/cmd/server/main.go": "package main\n",
+        "app/shop/interface/cmd/server/main.go": "package main\n",
+        "app/shop/interface/internal/data/data.go": "package data\n// userv1.NewUserClient(conn)\n",
+    }
+    for path, text in files.items():
+        (repo / path).parent.mkdir(parents=True, exist_ok=True)
+        (repo / path).write_text(text)
+    env = {
+        **os.environ,
+        "GIT_AUTHOR_NAME": "Ana",
+        "GIT_AUTHOR_EMAIL": "ana@example.com",
+        "GIT_COMMITTER_NAME": "Ana",
+        "GIT_COMMITTER_EMAIL": "ana@example.com",
+    }
+    for args in (["init", "-q", "-b", "main"], ["add", "-A"], ["commit", "-q", "-m", "init"]):
+        subprocess.run(["git", "-C", str(repo), *args], check=True, capture_output=True, env=env)
+
+    quiet = lambda *_: None  # noqa: E731
+    monkeypatch.setattr(ingest_module, "discover_services", lambda head: set())
+    ingest_module.ingest(settings, fetch_forge=False, log=quiet)
+    with connect(settings.db_path) as before:  # the old rule really grouped app/ as one folder
+        assert before.execute("SELECT 1 FROM nodes WHERE key = 'component:app'").fetchone()
+    monkeypatch.undo()
+    ingest_module.ingest(settings, fetch_forge=False, log=quiet)
+
+    conn = connect(settings.db_path)
+    owners = {
+        path: (kind, key, json.loads(evidence)["pattern"])
+        for path, kind, key, evidence in conn.execute(
+            "SELECT f.title, c.kind, c.key, e.evidence FROM edges e JOIN nodes f ON f.id = e.src"
+            " JOIN nodes c ON c.id = e.dst WHERE e.kind = 'BELONGS_TO' AND f.kind = 'File'"
+        )
+    }
+    assert owners["app/shop/interface/internal/data/data.go"] == (
+        "Service",
+        "service:shop",
+        "app/shop/",
+    )
+    assert owners["api/user/v1/user.proto"] == ("Component", "component:api", "api/")
+    assert len(owners) == len(files)  # one link per file: the old app/ links are gone
+    assert not conn.execute("SELECT 1 FROM nodes WHERE key = 'component:app'").fetchone()
+    calls = conn.execute(
+        "SELECT a.title, b.title FROM edges e JOIN nodes a ON a.id = e.src JOIN nodes b ON b.id = e.dst"
+        " WHERE e.kind = 'CALLS'"
+    ).fetchall()
+    assert [tuple(r) for r in calls] == [("shop", "user")]
 
 
 @pytest.mark.parametrize(
