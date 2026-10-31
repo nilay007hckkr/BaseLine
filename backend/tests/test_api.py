@@ -1,3 +1,5 @@
+import dataclasses
+
 from fastapi.testclient import TestClient
 
 from hindsight.api import app as app_module
@@ -32,6 +34,33 @@ def test_bad_requests_are_rejected(fx):
     assert c.post("/api/impact", json={}).status_code == 422
     assert c.post("/api/ask", json={"question": "x"}).status_code == 422
     assert c.get("/api/graph", params={"key": "file:nope"}).status_code == 404
+
+
+def test_map_starts_at_the_most_linked_service_of_any_repository(fx, tmp_path):
+    from hindsight.brain.graph import default_centre
+    from hindsight.core.db import connect
+
+    conn = fx.conn()
+    start = default_centre(conn)
+    links = {
+        key: n
+        for key, n in conn.execute(
+            "SELECT n.key, (SELECT COUNT(*) FROM edges WHERE src = n.id OR dst = n.id)"
+            " FROM nodes n WHERE n.kind = 'Service'"
+        )
+    }
+    assert start == max(sorted(links), key=lambda k: links[k])  # most linked; ties by key
+    graph = client(fx).get("/api/graph").json()  # no key, as the Map sends on first load
+    assert graph["center"] == start and graph["nodes"]
+
+    empty = dataclasses.replace(fx.settings, db_path=tmp_path / "empty.db")
+    connect(empty.db_path).close()
+    app_module.app.dependency_overrides[app_module.get_settings] = lambda: empty
+    try:
+        r = TestClient(app_module.app).get("/api/graph")
+    finally:
+        app_module.app.dependency_overrides.clear()
+    assert r.status_code == 404 and "ingest a repository first" in r.json()["detail"]
 
 
 def test_document_upload_endpoints(fx):

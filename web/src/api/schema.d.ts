@@ -202,7 +202,8 @@ export interface paths {
         };
         /**
          * Graph View
-         * @description `code=true` adds functions, classes and their calls (the code structure layer).
+         * @description `code=true` adds functions, classes and their calls (the code structure layer). Without a
+         *     `key`, the Map starts at the most linked service, component or file of this repository.
          */
         get: operations["graph_view_api_graph_get"];
         put?: never;
@@ -1795,8 +1796,8 @@ export interface operations {
     };
     graph_view_api_graph_get: {
         parameters: {
-            query: {
-                key: string;
+            query?: {
+                key?: string | null;
                 depth?: number;
                 code?: boolean;
             };

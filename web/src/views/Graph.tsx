@@ -298,10 +298,11 @@ function Details({
 
 export function Graph() {
   const { theme, unlock } = useApp();
-  const [query, setQuery] = useState("checkoutservice");
-  const [key, setKey] = useState("service:checkoutservice");
+  const [query, setQuery] = useState("");
+  // empty until the visitor picks an item: the server starts at this repository's most linked one
+  const [key, setKey] = useState("");
   const [depth, setDepth] = useState(1);
-  const [selected, setSelected] = useState(key);
+  const [chosen, setChosen] = useState("");
   const [rotating, setRotating] = useState(true);
   const [code, setCode] = useState(false);
   const hits = useQuery({
@@ -315,6 +316,7 @@ export function Graph() {
   });
   const symbols = (graph.data?.nodes ?? []).filter((n) => n.kind === "Symbol").length;
   const store = useQuery({ queryKey: ["graph-status"], queryFn: api.graphStatus });
+  const selected = chosen || graph.data?.center || "";
 
   useEffect(() => {
     unlock("map");
@@ -322,7 +324,7 @@ export function Graph() {
 
   const onSelect = useMemo(
     () => (id: string) => {
-      setSelected(id);
+      setChosen(id);
     },
     [],
   );
@@ -387,7 +389,7 @@ export function Graph() {
               className={h.key === key ? "chip small-chip active" : "chip small-chip"}
               onClick={() => {
                 setKey(h.key);
-                setSelected(h.key);
+                setChosen(h.key);
               }}
             >
               {KINDS[h.kind]?.plain ?? h.kind}: {short(h.label, 44)}
@@ -406,7 +408,7 @@ export function Graph() {
               selected={selected}
               onCentre={(id) => {
                 setKey(id);
-                setSelected(id);
+                setChosen(id);
               }}
             />
           </div>

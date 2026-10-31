@@ -24,7 +24,7 @@ from fastapi.staticfiles import StaticFiles
 
 from hindsight.api import llm_settings, service
 from hindsight.api.workspace import Workspace
-from hindsight.brain.graph import neighbourhood, search
+from hindsight.brain.graph import default_centre, neighbourhood, search
 from hindsight.brain.impact import impact_report
 from hindsight.brain.risk import knowledge_at_risk
 from hindsight.brain.uploads import (
@@ -273,14 +273,18 @@ def commits(
 def graph_view(
     conn: Conn,
     graph: Graph,
-    key: str,
+    key: str | None = None,
     depth: Annotated[int, Query(ge=1, le=2)] = 1,
     code: bool = False,
 ) -> GraphResponse:
-    """`code=true` adds functions, classes and their calls (the code structure layer)."""
-    result = neighbourhood(conn, key, depth, graph=graph, code=code)
+    """`code=true` adds functions, classes and their calls (the code structure layer). Without a
+    `key`, the Map starts at the most linked service, component or file of this repository."""
+    centre = key or default_centre(conn)
+    if centre is None:
+        raise HTTPException(status_code=404, detail="the graph is empty: ingest a repository first")
+    result = neighbourhood(conn, centre, depth, graph=graph, code=code)
     if result is None:
-        raise HTTPException(status_code=404, detail=f"node {key} not found")
+        raise HTTPException(status_code=404, detail=f"node {centre} not found")
     return result
 
 

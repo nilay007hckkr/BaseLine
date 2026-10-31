@@ -13,6 +13,23 @@ from hindsight.core.graphstore import GraphReader, SqliteGraph
 from hindsight.core.schemas import GraphEdge, GraphNode, GraphResponse, SearchHit
 
 PER_NODE = 14  # edges kept per node and kind, most recent first, so busy files stay readable
+START_KINDS = ("Service", "Component", "File")  # where the Map starts, in order of preference
+
+
+def default_centre(conn: sqlite3.Connection) -> str | None:
+    """Where the Map starts when no item is chosen: the most linked service, else the most linked
+    component (other than the repository root), else the most linked file. None for an empty graph."""
+    for kind in START_KINDS:
+        row = conn.execute(
+            "SELECT n.key, (SELECT COUNT(*) FROM edges WHERE src = n.id)"
+            " + (SELECT COUNT(*) FROM edges WHERE dst = n.id) AS links"
+            " FROM nodes n WHERE n.kind = ? AND n.key <> 'component:(root)'"
+            " ORDER BY links DESC, n.key LIMIT 1",
+            (kind,),
+        ).fetchone()
+        if row and row[1]:
+            return str(row[0])
+    return None
 
 
 def neighbourhood(

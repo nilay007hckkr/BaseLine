@@ -71,9 +71,10 @@ export function makeApi(base = "") {
     rateAnswer: (body: AnswerCheckRequest) => post<AnswerCheckSummary>("/answer-checks", body),
     impact: (body: ImpactRequest) => post<ImpactReport>("/impact", body),
     commits: () => request<CommitSummary[]>("/commits?limit=40"),
+    /** An empty key lets the server pick where to start (the most linked service, component or file). */
     graph: (key: string, depth: number, code = false) =>
       request<GraphResponse>(
-        `/graph?key=${encodeURIComponent(key)}&depth=${String(depth)}${code ? "&code=true" : ""}`,
+        `/graph?${key ? `key=${encodeURIComponent(key)}&` : ""}depth=${String(depth)}${code ? "&code=true" : ""}`,
       ),
     graphStatus: () => request<GraphStatus>("/graph/status"),
     qaTests: () => request<QaTest[]>("/qa/tests"),

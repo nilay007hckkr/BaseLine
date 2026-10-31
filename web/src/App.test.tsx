@@ -191,8 +191,9 @@ describe("dashboard", () => {
     });
     stubApi({
       "/api/config": DEMO,
-      "&depth=1": graph([service]),
-      "&depth=1&code=true": graph([service, symbol]),
+      // no key: the server picks where the map starts (any repository, not only the demo shop)
+      "/api/graph?depth=1": graph([service]),
+      "/api/graph?depth=1&code=true": graph([service, symbol]),
     });
     renderApp();
     fireEvent.click(
