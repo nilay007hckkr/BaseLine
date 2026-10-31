@@ -17,6 +17,8 @@ const METHOD: Record<string, string> = {
   baseline_most_recent_deploy: "Latest deploy",
   baseline_naive: "Same tag and text",
   baseline_none: "No healing",
+  keyword_only: "Keyword search only",
+  model_without_sources: "Same model, no sources",
 };
 
 /** Plain titles for every metric, with the glossary entry behind it when there is one. */
@@ -31,9 +33,23 @@ const METRIC: Record<string, { title: string; term?: string }> = {
   "Heal rate": { title: "Broken tests healed onto the right button", term: "heal" },
   "Cosmetic changes kept green": { title: "Tests still green after UI changes", term: "heal" },
   "Defects refused": { title: "Real bugs caught instead of healed", term: "falseheal" },
+  "Not found on trick questions": {
+    title: "Trick questions answered “not found”",
+    term: "notfound",
+  },
+  "Linked issue among the sources": { title: "The issue behind the change, among the sources" },
+  "Linked issue cited": { title: "The issue behind the change, cited by the answer" },
+  Answered: { title: "Answerable questions answered" },
 };
 
 const SUITES: Record<string, { title: string; plain: string; unit: string; synthetic: string }> = {
+  ask: {
+    title: "Does it answer why, from the right source?",
+    plain:
+      "Questions built by code from “Fixes #N” links: the issue is the right source. Trick questions written by hand before any run must get “not found”.",
+    unit: "questions",
+    synthetic: "",
+  },
   impact: {
     title: "What will a change affect?",
     plain: "Past changes replayed: one file shown, find the rest from earlier history only.",
@@ -205,8 +221,9 @@ function OtherRepos({ cards }: { cards: ScoreCard[] }) {
   );
 }
 
-type Tab = "impact" | "rca" | "heal" | "elsewhere";
+type Tab = "ask" | "impact" | "rca" | "heal" | "elsewhere";
 const TABS: { key: Tab; label: string }[] = [
+  { key: "ask", label: "Ask" },
   { key: "impact", label: "Impact" },
   { key: "rca", label: "Incidents" },
   { key: "heal", label: "Healing" },
@@ -238,6 +255,11 @@ function Suite({ suite, cards }: { suite: string; cards: ScoreCard[] }) {
       </div>
       <Legend />
       {first.note && suite !== "impact" ? <p className="small">{first.note}</p> : null}
+      {suite === "ask" && !cards.some((c) => c.metric === "Not found on trick questions") ? (
+        <p className="small">
+          Trick questions not measured yet: they are written by hand, before any run.
+        </p>
+      ) : null}
       <TableView cards={cards} />
       <p className="muted small">
         Reproduce with <code>{first.command}</code> · result file <code>{first.result_file}</code>
@@ -248,7 +270,7 @@ function Suite({ suite, cards }: { suite: string; cards: ScoreCard[] }) {
 
 export function Scorecard() {
   const { unlock } = useApp();
-  const [tab, setTab] = useState<Tab>("impact");
+  const [tab, setTab] = useState<Tab>("ask");
   const q = useQuery({ queryKey: ["scorecard"], queryFn: api.scorecard });
   const { mode, features } = useInstance();
   const status = useQuery({

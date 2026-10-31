@@ -117,6 +117,53 @@ def retrieval_markdown(result: dict[str, Any]) -> str:
     return "\n".join(lines)
 
 
+def ask_markdown(result: dict[str, Any]) -> str:
+    repo = result.get("repo") or {}
+    sets = result["sets"]
+    ans = sets["answerable"]
+    ours = ans["methods"]["hindsight"]
+    kw = ans["methods"]["keyword_only"]
+
+    def cell(m: dict[str, float]) -> str:
+        return f"{m['value']:.3f} [{m['ci_low']:.3f}, {m['ci_high']:.3f}]"
+
+    lines = [
+        "## Why-answers (answer key: generated links + hand-written trick questions)",
+        "",
+        f"- Repository: {repo.get('web', '?')} at `{str(repo.get('head_sha', ''))[:7]}`;"
+        f" code `{str(result.get('code_sha', ''))[:7]}`; model: {result['model']}",
+        f'- Answerable (generated from explicit "Fixes #N" links, gold = the issue): **n = {ans["n"]}**',
+        f"- Result file: `{Path(result['result_file']).relative_to(ROOT)}` (created {result['created_at']})",
+        "",
+        "| Measure | Hindsight | Keyword search only |",
+        "|---|---|---|",
+        f"| Answered | {cell(ours['answered'])} | - |",
+        f"| Linked issue among the sources | {cell(ours['gold_in_sources'])} | {cell(kw['gold_in_sources'])} |",
+        f"| Linked issue cited by a claim | {cell(ours['gold_cited'])} | - |",
+        "",
+    ]
+    trick = sets.get("trick")
+    if trick:
+        plain = trick["methods"].get("model_without_sources")
+        lines += [
+            f'- Trick questions (hand-written before any run; right answer is "not found"): **n = {trick["n"]}**',
+            "",
+            "| Measure | Hindsight | Same model, no sources |",
+            "|---|---|---|",
+            f'| Answered "not found" | {cell(trick["methods"]["hindsight"]["not_found"])}'
+            f" | {cell(plain['not_found']) + f' (n={trick["n_plain_model_replies"]})' if plain else 'not run (no model)'} |",
+            "",
+        ]
+    else:
+        lines += ["- Trick questions: not measured yet (eval/questions-trick.yaml is missing).", ""]
+    lines += [
+        "Brackets are 95% bootstrap confidence intervals (1,000 resamples, seed 13). Protocol:"
+        " docs/EVALUATION.md §3. A person checks 10 answers separately (the ask-handcheck CSV).",
+        "",
+    ]
+    return "\n".join(lines)
+
+
 def heal_markdown(result: dict[str, Any]) -> str:
     cfg = result["config"]
     n = cfg["n_mutations"]
@@ -201,6 +248,11 @@ def write_latest(primary: str | None = None) -> str:
             others.append(data)
     if others:
         parts.append(others_markdown(others))
+    asked = sorted(RESULTS_DIR.glob("ask-*.json"))
+    if asked:
+        data = json.loads(asked[-1].read_text())
+        data["result_file"] = str(asked[-1])
+        parts.append(ask_markdown(data))
     retrieval = sorted(RESULTS_DIR.glob("retrieval-*.json"))
     if retrieval:
         data = json.loads(retrieval[-1].read_text())
@@ -225,8 +277,9 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="hs-eval", description=__doc__)
     parser.add_argument(
         "what",
-        choices=["impact", "rca", "heal", "retrieval", "all", "report"],
-        help="impact: history replay (fast); rca: fault campaign on the local cluster (slow);"
+        choices=["impact", "rca", "heal", "retrieval", "ask-questions", "ask", "all", "report"],
+        help="impact: history replay (fast); ask-questions: write eval/questions.yaml from explicit"
+        " links; ask: score the why-answers; rca: fault campaign on the local cluster (slow);"
         " report: only rewrite eval/results/latest.md from the result files",
     )
     parser.add_argument("--runs", type=int, default=10, help="rca: number of injected faults")
@@ -244,6 +297,39 @@ def main(argv: list[str] | None = None) -> int:
             run(conn, RESULTS_DIR, command=command)
         finally:
             conn.close()
+    if args.what == "ask-questions":
+        from hindsight.eval.ask_eval import QUESTIONS, write_questions
+
+        conn = connect(settings.db_path)
+        try:
+            qs = write_questions(conn)
+        finally:
+            conn.close()
+        print(f"{len(qs)} answerable questions written to {QUESTIONS.relative_to(ROOT)}")
+        return 0
+    if args.what == "ask":
+        from hindsight.api.service import repo_dir
+        from hindsight.core.llm import Chain
+        from hindsight.eval.ask_eval import QUESTIONS, TRICK, load, score
+
+        answerable = load(QUESTIONS)
+        if not answerable:
+            print("no questions yet: run `hs-eval ask-questions` first")
+            return 1
+        conn = connect(settings.db_path)
+        try:
+            result = score(
+                conn,
+                answerable,
+                load(TRICK),
+                repo=repo_dir(conn),
+                chain=Chain.from_settings(conn, settings),
+                out_dir=RESULTS_DIR,
+            )
+        finally:
+            conn.close()
+        if "trick" not in result["sets"]:
+            print(f"trick questions not measured: write {TRICK.relative_to(ROOT)} first")
     if args.what == "rca":
         campaign(settings, runs=args.runs, healthy_s=args.healthy, out_dir=RESULTS_DIR)
     if args.what == "retrieval":

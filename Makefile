@@ -78,13 +78,17 @@ graph-sync: ## Copy the SQLite graph into Neo4j (repeat after ingest; uploads re
 	@cd $(BE) && uv run hindsight graph-sync
 
 ## ---------- evaluation ----------
-.PHONY: eval eval-smoke eval-report eval-retrieval try-repo
+.PHONY: eval eval-smoke eval-report eval-retrieval eval-ask-questions eval-ask try-repo
 eval: ## History-replay evaluation of the impact check → eval/results/
 	@cd $(BE) && uv run hs-eval all
 eval-smoke: ## The evaluation harness on the fixture repository (fast, hermetic)
 	@cd $(BE) && LLM_CACHE_MODE=replay uv run pytest -q -k replay_evaluation
 eval-retrieval: ## Can search find the linked issue from a PR title? keyword vs semantic vs hybrid
 	@cd $(BE) && uv run hs-eval retrieval
+eval-ask-questions: ## Write eval/questions.yaml from explicit "Fixes #N" links (the answer key)
+	@cd $(BE) && uv run hs-eval ask-questions
+eval-ask: ## Score the why-answers: answerable (generated) + trick (eval/questions-trick.yaml)
+	@cd $(BE) && uv run hs-eval ask
 eval-report: ## Rewrite eval/results/latest.md from the result files (runs nothing)
 	@cd $(BE) && uv run hs-eval report
 try-repo: ## Ingest + evaluate another public repo in data/other/<owner>__<name>: make try-repo REPO=<github url>

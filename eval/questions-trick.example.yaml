@@ -1,0 +1,17 @@
+# Trick questions for `make eval-ask` (docs/EVALUATION.md §3).
+#
+# Copy this file to eval/questions-trick.yaml and write at least 10 questions BY HAND, before
+# looking at any answer. The right answer to every one of them is "not found":
+#   - a false premise about something that exists ("Why was paymentservice rewritten in Rust?");
+#   - a change that never happened ("Why was the shop moved to a GraphQL gateway?");
+#   - a question the history cannot answer (opinions, the future, other projects).
+# Keep each question realistic: what a new team member might really ask. Do not tune a question
+# after seeing how Hindsight answers it; if you change one, say so in the commit message.
+# The two below are examples only and are not scored from this file.
+questions:
+  - id: t01
+    question: Why was paymentservice rewritten in Rust?
+    why_trick: false premise (paymentservice is Node.js)
+  - id: t02
+    question: Why was the shop moved to a GraphQL gateway?
+    why_trick: never happened

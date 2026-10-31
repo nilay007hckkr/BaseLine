@@ -222,6 +222,59 @@ def latest_impact_by_repo(results_dir: Path = RESULTS_DIR) -> dict[str, Path]:
     return latest
 
 
+def _ask_cards(path: Path) -> list[ScoreCard]:
+    """The why-answer results (hs-eval ask): one card per measure, baselines where one exists."""
+    data = json.loads(path.read_text())
+    shown = str(path.relative_to(ROOT)) if path.is_relative_to(ROOT) else str(path)
+    note = f"model: {data['model']} · code {str(data.get('code_sha', ''))[:7]}"
+
+    def card(metric: str, methods: dict[str, dict[str, float]], n: int) -> ScoreCard:
+        ours = methods["hindsight"]
+        others = [(k, v) for k, v in methods.items() if k != "hindsight"]
+        return ScoreCard(
+            suite="ask",
+            synthetic=False,
+            note=note,
+            metric=metric,
+            method="hindsight",
+            value=ours["value"],
+            ci_low=ours["ci_low"],
+            ci_high=ours["ci_high"],
+            baseline=others[0][0] if others else "",
+            baseline_value=others[0][1]["value"] if others else 0.0,
+            n=n,
+            command=data["command"],
+            result_file=shown,
+            methods=[MethodScore(name=k, **v) for k, v in methods.items()],
+        )
+
+    cards: list[ScoreCard] = []
+    trick = data["sets"].get("trick")
+    if trick:
+        cards.append(
+            card(
+                "Not found on trick questions",
+                {k: m["not_found"] for k, m in trick["methods"].items()},
+                trick["n"],
+            )
+        )
+    ans = data["sets"]["answerable"]
+    ours = ans["methods"]["hindsight"]
+    cards.append(
+        card(
+            "Linked issue among the sources",
+            {
+                "hindsight": ours["gold_in_sources"],
+                "keyword_only": ans["methods"]["keyword_only"]["gold_in_sources"],
+            },
+            ans["n"],
+        )
+    )
+    cards.append(card("Linked issue cited", {"hindsight": ours["gold_cited"]}, ans["n"]))
+    cards.append(card("Answered", {"hindsight": ours["answered"]}, ans["n"]))
+    return cards
+
+
 def scorecard(results_dir: Path = RESULTS_DIR, primary: str | None = None) -> list[ScoreCard]:
     """Cards for the main repository (`primary` web URL; the newest result when None), then one
     'impact-other' group per other public repository evaluated with the same protocol."""
@@ -241,6 +294,9 @@ def scorecard(results_dir: Path = RESULTS_DIR, primary: str | None = None) -> li
             command=data["command"],
             result_file=path,
         )
+    asked = sorted(results_dir.glob("ask-*.json"))
+    if asked:
+        cards += _ask_cards(asked[-1])
     rca = sorted(results_dir.glob("rca-*.json"))
     if rca:
         data = json.loads(rca[-1].read_text())
