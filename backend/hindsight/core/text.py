@@ -147,6 +147,64 @@ QUESTION_WORDS = frozenset(
         "working",
     ]
 )
+# Words that carry an explanation rather than a fact ("because", "which means", "helps"). A plain
+# sentence for a newcomer uses many of them; they are not looked for in the cited text.
+EXPLAIN_WORDS = frozenset(
+    [
+        "because",
+        "since",
+        "therefore",
+        "thus",
+        "hence",
+        "means",
+        "meaning",
+        "meant",
+        "help",
+        "helps",
+        "helped",
+        "allow",
+        "allows",
+        "allowed",
+        "lets",
+        "let",
+        "used",
+        "uses",
+        "using",
+        "use",
+        "instead",
+        "rather",
+        "without",
+        "about",
+        "first",
+        "after",
+        "before",
+        "earlier",
+        "later",
+        "now",
+        "keep",
+        "keeps",
+        "ensure",
+        "ensures",
+        "makes",
+        "wanted",
+        "needed",
+        "needs",
+        "order",
+        "simply",
+        "basically",
+        "newcomer",
+        "developer",
+        "developers",
+        "team",
+        "project",
+        "codebase",
+        "part",
+        "step",
+        "steps",
+        "here",
+    ]
+)
+
 _INJECTION = re.compile(
     r"ignore (all |any )?(the )?(previous|prior|above|earlier) (instructions|prompts?)"
     r"|disregard (all |the )?(previous|prior|above)"
@@ -174,6 +232,12 @@ def content_terms(question: str) -> list[str]:
             continue
         seen.append(tok)
     return seen
+
+
+def claim_terms(claim: str) -> list[str]:
+    """The terms of a model's claim that its cited text must contain: content words, without the
+    words that only carry the explanation."""
+    return [t for t in content_terms(claim) if t not in EXPLAIN_WORDS]
 
 
 def stems(text: str) -> set[str]:

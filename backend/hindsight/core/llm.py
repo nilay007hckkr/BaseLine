@@ -19,7 +19,7 @@ import httpx
 
 from hindsight.core.config import Settings
 
-TEMPLATE_VERSION = "ask-v1"
+TEMPLATE_VERSION = "ask-v2"
 log = logging.getLogger(__name__)
 _SECRET = re.compile(
     r"gh[pousr]_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,}|sk-[A-Za-z0-9_-]{20,}|AKIA[0-9A-Z]{16}"

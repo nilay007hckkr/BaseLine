@@ -2,8 +2,9 @@ import json
 
 import httpx
 
-from hindsight.brain.ask import ask, excerpt
+from hindsight.brain.ask import ask, code_evidence, excerpt, facts
 from hindsight.core.llm import Chain
+from hindsight.core.text import claim_terms
 
 
 class FakeProvider:
@@ -172,6 +173,50 @@ def test_when_no_model_answers_the_notes_say_why(fx):
     assert answer.mode == "extractive" and answer.claims
     assert "no LLM provider answered; showing quoted evidence" in answer.notes
     assert any("is not reachable at http://localhost:11434" in n for n in answer.notes)
+
+
+def test_a_question_about_a_file_adds_its_code_and_a_walkthrough(fx):
+    model = FakeProvider(
+        {"claims": [{"text": "The code charges the card in USD, then retries.", "cites": ["C1"]}]}
+    )
+    answer = ask(
+        fx.conn(),
+        "Why is the charge converted to USD here?",
+        repo=fx.repo,
+        file="src/paymentservice/charge.js",
+        line_start=1,
+        line_end=2,
+        chain=Chain(fx.conn(), [model], "off"),
+    )
+    code = next(e for e in answer.evidence if e.id == "C1")
+    assert code.kind == "Code" and code.title == "src/paymentservice/charge.js lines 1-2"
+    assert "   1  // charge the card" in code.snippet
+    assert "walk through the code in C1" in model.prompts[0]
+    assert answer.mode == "llm" and answer.claims[0].cites == ["C1"]
+
+
+def test_code_outside_the_repository_is_never_read(fx):
+    assert code_evidence(fx.conn(), fx.repo, "../../../etc/passwd", None, ["root"]) is None
+    assert code_evidence(fx.conn(), fx.repo, "src/missing.go", None, ["x"]) is None
+
+
+def test_sources_carry_plain_facts_and_quotes_lead_with_them(fx):
+    conn = fx.conn()
+    key = conn.execute(
+        "SELECT key FROM nodes WHERE kind = 'Commit' AND title LIKE 'Charge in USD%'"
+    ).fetchone()[0]
+    fact = facts(conn, key)
+    assert fact.startswith(f"Commit {key.split(':')[1][:7]} by ")
+    assert "changed main.go, charge.js: Charge in USD" in fact
+    quoted = ask(conn, "Why do we charge in USD?", repo=fx.repo)  # no model: quoted
+    assert quoted.mode == "extractive"
+    assert any(c.text.startswith(("Commit ", "Pull request #", "Issue #")) for c in quoted.claims)
+
+
+def test_explaining_words_are_not_required_in_the_cited_text():
+    terms = claim_terms("We charge in USD because it helps avoid rounding errors.")
+    assert "because" not in terms and "helps" not in terms
+    assert {"charge", "usd", "rounding"} <= set(terms)
 
 
 def test_flagged_text_never_reaches_the_model(fx):

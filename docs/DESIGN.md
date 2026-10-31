@@ -97,7 +97,19 @@ are kept and the answer says the second check could not run. The model reads eac
 excerpt (its first line plus the sentences that best match the question, ≤ 900 characters, about
 10 000 characters in all) so a local model on a laptop can answer; claims are still checked
 against the full text. When no provider answers, the notes name each provider and why (not
-reachable, timed out, model not pulled, reply not JSON). Retrieval is measured automatically by
+reachable, timed out, model not pulled, reply not JSON).
+
+**For newcomers (prompt `ask-v2`):** the model is asked to explain, in 2-5 short plain sentences,
+what changed, why and what problem it solved, citing every sentence. Code writes plain facts in
+front of each source ("Commit 3f2a1b by Alice on 2023-05-02 changed main.go, charge.js: <subject>",
+"Pull request #12: <title>") so plain sentences have citable wording; words that only carry the
+explanation ("because", "helps", "instead" …) are not looked for in the cited text, and the 50 %
+threshold is unchanged. When the question names a file (the File field, or a path in the
+question), the code itself becomes evidence `C1`: the asked lines (≤ 60), or the 40-line window
+that best matches the question, read from the clone at HEAD (never outside it), with the
+functions the code layer found there. The model adds 2-5 sentences walking through it, cited to
+`C1`; the Ask page shows them under "What the code does". Without a model, each quoted sentence is
+led by its source's facts. Retrieval is measured automatically by
 `make eval-retrieval` (find the issue a PR or commit links to from its title alone, as of its time);
 the answer-level question set of EVALUATION §3 is still to be written by the team.
 
