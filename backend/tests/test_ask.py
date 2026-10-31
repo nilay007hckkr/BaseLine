@@ -249,8 +249,9 @@ def test_a_commit_named_by_hash_is_read_like_git_blame(fx):
     assert a.status == "answered"
     keys = [e.node_key for e in a.evidence]
     assert f"commit:{fx.shas['usd']}" in keys and "gh:12" in keys and "gh:3" in keys
-    # the commit, its PR and the issue it closes come before the discussion on them
-    assert keys[:3] == [f"commit:{fx.shas['usd']}", "gh:12", "gh:3"]
+    # the commit, then its PR and the issue it closes, before the discussion on them
+    assert keys[0] == f"commit:{fx.shas['usd']}" and set(keys[1:3]) == {"gh:12", "gh:3"}
+    assert all(not k.startswith(("comment:", "review:")) for k in keys[:3])
     assert any(f"history of commit {sha}" in n for n in a.notes)
     assert not any(sha in n for n in a.notes if n.startswith("no project history"))
 
