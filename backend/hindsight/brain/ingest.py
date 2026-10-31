@@ -324,35 +324,58 @@ def ingest_static(conn: sqlite3.Connection, repo: Path, head: set[str], services
     return len(calls)
 
 
+def _ingest_issue(conn: sqlite3.Connection, web: str, it: dict[str, Any], is_pr: bool) -> None:
+    number = int(it["number"])
+    nid = upsert_node(
+        conn,
+        "PR" if is_pr else "Issue",
+        f"gh:{number}",
+        title=it.get("title") or "",
+        url=it.get("html_url") or "",
+        ts=_iso_ts(it.get("created_at")),
+        attrs={
+            "state": it.get("state"),
+            "user": (it.get("user") or {}).get("login"),
+            "labels": [lb.get("name") for lb in it.get("labels") or []],
+        },
+    )
+    text = f"{it.get('title') or ''}\n\n{it.get('body') or ''}".strip()
+    add_span(
+        conn,
+        nid,
+        "pr_body" if is_pr else "issue_body",
+        text,
+        url=it.get("html_url") or "",
+        ts=_iso_ts(it.get("created_at")),
+        flagged=looks_like_instructions(text),
+    )
+    _text_links(conn, web, nid, it.get("body") or "", skip={number})
+
+
+def unread_fixed_issues(conn: sqlite3.Connection) -> list[int]:
+    """Issue numbers the history explicitly closes ("Fixes #N") whose text was never read."""
+    rows = conn.execute(
+        "SELECT DISTINCT n.key FROM edges e JOIN nodes n ON n.id = e.dst"
+        " WHERE e.kind = 'FIXES' AND n.key LIKE 'gh:%'"
+        " AND NOT EXISTS (SELECT 1 FROM spans s WHERE s.node_id = n.id)"
+    ).fetchall()
+    return sorted(int(r[0].split(":", 1)[1]) for r in rows)
+
+
 def ingest_forge(conn: sqlite3.Connection, cache: GitHubCache, web: str) -> None:
     for it in cache.items("issues"):
-        number = int(it["number"])
-        is_pr = "pull_request" in it
-        nid = upsert_node(
-            conn,
-            "PR" if is_pr else "Issue",
-            f"gh:{number}",
-            title=it.get("title") or "",
-            url=it.get("html_url") or "",
-            ts=_iso_ts(it.get("created_at")),
-            attrs={
-                "state": it.get("state"),
-                "user": (it.get("user") or {}).get("login"),
-                "labels": [lb.get("name") for lb in it.get("labels") or []],
-            },
-        )
-        text = f"{it.get('title') or ''}\n\n{it.get('body') or ''}".strip()
-        add_span(
-            conn,
-            nid,
-            "pr_body" if is_pr else "issue_body",
-            text,
-            url=it.get("html_url") or "",
-            ts=_iso_ts(it.get("created_at")),
-            flagged=looks_like_instructions(text),
-        )
-        _text_links(conn, web, nid, it.get("body") or "", skip={number})
+        _ingest_issue(conn, web, it, is_pr="pull_request" in it)
+    # single issues fetched because the history links to them (GitHubCache.fetch_issues)
+    for it in cache.items("linked"):
+        _ingest_issue(conn, web, it, is_pr="pull_request" in it)
     for pr in cache.items("pulls"):
+        # the issues list stops after about 1,000 items: older PRs get their text from here
+        has_text = conn.execute(
+            "SELECT 1 FROM spans s JOIN nodes n ON n.id = s.node_id WHERE n.key = ?",
+            (f"gh:{pr['number']}",),
+        ).fetchone()
+        if not has_text:
+            _ingest_issue(conn, web, pr, is_pr=True)
         sha = pr.get("merge_commit_sha")
         if not sha or not pr.get("merged_at"):
             continue
@@ -560,6 +583,16 @@ def ingest(
         )
         with conn:
             ingest_forge(conn, cache, web)
+        unread = unread_fixed_issues(conn)
+        if fetch_forge and unread:
+            budget = max(0, settings.forge_max_requests - status.requests_this_run)
+            fetched, why = cache.fetch_issues(unread, budget)
+            log(
+                f"  issues closed by the history but not read yet: {len(unread)};"
+                f" fetched {fetched}" + (f" (stopped: {why})" if why else "")
+            )
+            with conn:
+                ingest_forge(conn, cache, web)
         with conn:
             n_co = build_cochange(conn)
         log(f"  {n_co} co-change edges")

@@ -1,5 +1,7 @@
 """The read-only GitHub reader, against a fake GitHub (httpx MockTransport). FIXTURE data only."""
 
+import json
+
 import httpx
 
 from hindsight.brain.forge import GitHubCache
@@ -67,3 +69,55 @@ def test_a_dropped_connection_stops_the_fetch_without_failing_the_import(tmp_pat
     ).fetch()
     assert status.stopped == "GitHub not reachable (ConnectError)"
     assert not status.done
+
+
+def _issue_server(calls: list[str]):
+    def handler(request: httpx.Request) -> httpx.Response:
+        calls.append(request.url.path)
+        number = int(request.url.path.rsplit("/", 1)[-1])
+        if number == 404:
+            return httpx.Response(404, json={"message": "Not Found"})
+        body = {"id": number, "number": number, "title": f"Issue {number}", "body": "text"}
+        return httpx.Response(200, json=body)
+
+    return handler
+
+
+def test_linked_issues_are_fetched_once_and_a_missing_one_is_remembered(tmp_path):
+    calls: list[str] = []
+    client = httpx.Client(transport=httpx.MockTransport(_issue_server(calls)))
+    cache = GitHubCache("acme", "shop", tmp_path, client=client)
+    assert cache.fetch_issues([5, 404, 6], budget=10) == (3, None)
+    assert cache.fetch_issues([5, 404, 6], budget=10) == (0, None)  # all cached, 404 included
+    assert [it["number"] for it in cache.items("linked")] == [5, 6]
+    assert len(calls) == 3
+
+
+def test_linked_issue_fetch_stops_at_its_budget(tmp_path):
+    client = httpx.Client(transport=httpx.MockTransport(_issue_server([])))
+    cache = GitHubCache("acme", "shop", tmp_path, client=client)
+    assert cache.fetch_issues([1, 2, 3], budget=1) == (1, "request budget of 1 reached")
+
+
+def test_older_prs_and_linked_issues_get_their_text(tmp_path):
+    from hindsight.brain.ingest import ingest_forge, unread_fixed_issues
+    from hindsight.core.db import connect
+
+    web = "https://github.com/acme/shop"
+    d = tmp_path / "forge" / "acme__shop"
+    d.mkdir(parents=True)
+    # FIXTURE: PR 40 is only in the pulls list (older than the issues list reaches)
+    pr = {"id": 1, "number": 40, "title": "Retry payments", "body": "Closes #7. Retry once."}
+    (d / "pulls-0001.json").write_text(json.dumps([pr]))
+    cache = GitHubCache("acme", "shop", tmp_path / "forge")
+    conn = connect(tmp_path / "db.sqlite")
+    with conn:
+        ingest_forge(conn, cache, web)
+    assert unread_fixed_issues(conn) == [7]  # the PR's text was read and links #7
+    issue = {"id": 2, "number": 7, "title": "Payments fail once", "body": "Timeouts."}
+    (d / "linked-000007.json").write_text(json.dumps([issue]))
+    with conn:
+        ingest_forge(conn, cache, web)
+    assert unread_fixed_issues(conn) == []
+    kinds = {r[0] for r in conn.execute("SELECT span_kind FROM spans")}
+    assert kinds == {"pr_body", "issue_body"}

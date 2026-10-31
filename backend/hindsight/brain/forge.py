@@ -133,6 +133,46 @@ class GitHubCache:
         )
         return status
 
+    def fetch_issues(self, numbers: list[int], budget: int) -> tuple[int, str | None]:
+        """Fetch single issues by number: the ones the history explicitly links to ("Fixes #N")
+        that the list endpoints did not reach (they stop after about 1,000 items). Cached as
+        linked-<n>.json; at most `budget` requests. Returns (fetched, why it stopped or None)."""
+        self.dir.mkdir(parents=True, exist_ok=True)
+        headers = {"Accept": "application/vnd.github+json", "User-Agent": "hindsight-ingest"}
+        if self.token:
+            headers["Authorization"] = f"Bearer {self.token}"
+        client = self.client or httpx.Client(timeout=30, headers=headers)
+        fetched, stopped = 0, None
+        try:
+            for number in numbers:
+                path = self.dir / f"linked-{number:06d}.json"
+                if path.exists():
+                    continue
+                if fetched >= budget:
+                    stopped = f"request budget of {budget} reached"
+                    break
+                url = f"{API}/repos/{self.owner}/{self.repo}/issues/{number}"
+                try:
+                    resp = client.get(url, headers=headers)
+                except httpx.HTTPError as exc:
+                    stopped = f"GitHub not reachable ({type(exc).__name__})"
+                    break
+                fetched += 1
+                if resp.status_code in (403, 429):
+                    stopped = "GitHub rate limit reached"
+                    break
+                if resp.status_code in (404, 410):
+                    path.write_text("[]")  # deleted or moved: do not ask again
+                    continue
+                if resp.status_code != 200:
+                    stopped = f"GitHub returned HTTP {resp.status_code} for issue #{number}"
+                    break
+                path.write_text(json.dumps([resp.json()]))
+        finally:
+            if self.client is None:
+                client.close()
+        return fetched, stopped
+
     def items(self, kind: str) -> Iterator[dict[str, Any]]:
         seen: set[Any] = set()
         for path in sorted(self.dir.glob(f"{kind}-*.json")):
