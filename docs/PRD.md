@@ -86,7 +86,7 @@ Priority: **P0** = required for the demo, **P1** = if on schedule, **P2** = futu
 - Links:
   - commit → PR from the `(#N)` title suffix, confirmed when GitHub's merge commit matches;
   - commit or PR → issue through closing keywords (stated) or other `#N` mentions (simple rule);
-  - file → service by path;
+  - file → service by path: children of `src/`, `services/`, `microservices/` or `svc/`, and children of `app/`, `apps/` or `cmd/` that hold their own build or entry file (for example go-kratos beer-shop's `app/<service>/`); everything else groups by top-level folder;
   - service → service calls from client patterns in the source (read from code);
   - files that change together (learned from history).
 - *Accept:* the Data page shows counts computed from data, including the bot share (65.5% on Online Boutique, `eval/results/latest.md`).
@@ -178,7 +178,7 @@ Neo4j is used as an optional read layer (ADR 0001).
 1. **Home**, after the tour (skippable).
 2. **Ask:** "Why was currencyservice rewritten in TypeScript?" gives a cited answer. "Why was paymentservice rewritten in Rust?" gives **Not found**.
 3. **Impact:** `src/checkoutservice/main.go` shows the affected services, files, tests, docs and people, each with reasons.
-4. **Map:** around `checkoutservice`. With **Code structure** on, functions and their calls appear with file and line.
+4. **Map:** it opens on the repository's most linked service (`frontend` on Online Boutique); search `checkoutservice` to centre there. With **Code structure** on, functions and their calls appear with file and line.
 5. **Incidents:** `make fault SCENARIO=payment-down DEPLOYS=1` while the log stream runs opens an incident. It shows paymentservice as the culprit and frontend as a victim, the candidate change, the runbook and the Brief. The fault and deploys are synthetic, and labelled so.
 6. **Tests:** run the generated tests against the shop. Healing and refusal are shown by the mutation harness (Proof › Healing) and by any repairs waiting for review.
 7. **Proof:** every number with its baseline, n, 95% range and reproduce command.

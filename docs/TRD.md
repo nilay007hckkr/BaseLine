@@ -71,6 +71,16 @@ Incidents and Tests are hidden in a workspace (they need the demo shop).
 | GET · PUT | `/settings/llm` | Provider order and model names (non-secret, `<DATA_DIR>/settings.json`); keys are reported as set or not, never returned |
 | GET | `/settings/llm/{provider}/models` | Models the configured key can use (Gemini `models.list` filtered to `generateContent`, Groq `/openai/v1/models`, Ollama `/api/tags`) |
 
+**Any repository layout.** Services are recognised as children of `src/`, `services/`,
+`microservices/` or `svc/`, and as children of `app/`, `apps/` or `cmd/` that hold their own build
+or entry file (Dockerfile, `go.mod`, `main.go`, `package.json`, `pom.xml`, `*.csproj` and the like),
+so a Rails `app/models/` stays one folder. Every ingest rebuilds the file → service links and the
+service calls, and drops services or folders left without links. On Online Boutique, eShop and the
+OpenTelemetry Demo the rules give exactly the same services as before (0 files reassigned); on
+go-kratos beer-shop they find 8 services and 6 calls where the old rule found none. The Map starts
+at the most linked service (else folder, else file) when no item is chosen, instead of a fixed
+Online Boutique service.
+
 The workspace's tour calls the demo's API, so the demo allows the workspace origin through
 `CORS_ORIGINS`. Only `https://github.com/<owner>/<name>` URLs are accepted, and `git clone` runs
 with `GIT_TERMINAL_PROMPT=0` so a missing or private repository fails at once instead of waiting
@@ -212,7 +222,7 @@ HEAD and are not time-filtered.
 | POST | `/ask` `{question, file?, line_start?, line_end?}` | An `Answer` |
 | GET · POST | `/answer-checks` | Visitor ratings of answers, and their tally |
 | POST | `/impact` `{files[] \| commit}` | An `ImpactReport` (not stored; deploys store their own prediction) |
-| GET | `/graph?key=&depth=1\|2&code=` | Neighbourhood for the Map; `code=true` adds the code structure layer |
+| GET | `/graph?key=&depth=1\|2&code=` | Neighbourhood for the Map; without `key` it starts at the most linked service, folder or file (404 for an empty graph); `code=true` adds the code structure layer |
 | GET | `/graph/status` | Which store answers, sync state, counts, Neo4j Browser link |
 | GET | `/search?q=` | Nodes by key or title (Map search) |
 | GET | `/risk` | Knowledge at risk |
