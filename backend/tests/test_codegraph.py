@@ -221,3 +221,36 @@ def test_failing_tool_is_reported(fx, db, tmp_path, monkeypatch):
     monkeypatch.setattr(codegraph.subprocess, "run", fake_run)
     with pytest.raises(CodeGraphError, match="tree-sitter exploded"):
         build_code_layer(connect(db), tmp_path / "codegraph", fx.repo)
+
+
+def test_a_function_named_in_a_question_points_ask_at_its_lines(fx, db):
+    from hindsight.brain.ask import ask, find_symbol
+
+    conn = connect(db)
+    build_code_layer(conn, Path("unused"), fx.repo, FIXTURE)
+    # CamelCase name, defined once: its lines run to the next definition in the file
+    assert find_symbol(conn, "Why does checkoutService exist?", None)[0] == (MAIN, 5, 11)
+    # an ordinary word is not a name, even when a function is called that
+    assert find_symbol(conn, "Why does the cart retry?", None) == (None, "")
+    found, _ = find_symbol(conn, "Why does retry() wait?", None)
+    assert found == ("src/checkoutservice/late.go", 3, 62)
+    # with the clone: a definition listed past the end of the file is not used
+    found, why = find_symbol(conn, "Why does chargeCard() charge twice?", fx.repo)
+    assert found is None and "past the end" in why
+    a = ask(conn, "Why does checkoutService exist?")
+    assert any(f"checkoutService is defined in {MAIN} lines 5-11" in n for n in a.notes)
+    assert MAIN in a.anchors
+
+
+def test_a_name_defined_in_two_files_is_not_guessed(fx, db):
+    from hindsight.brain.ask import find_symbol
+
+    conn = connect(db)
+    build_code_layer(conn, Path("unused"), fx.repo, FIXTURE)
+    with conn:
+        conn.execute(
+            "INSERT INTO nodes(kind, key, title, attrs) VALUES ('Symbol', 'symbol:x#retry()@L9',"
+            ' \'retry()\', json(\'{"path": "src/cartservice/x.go", "line": 9}\'))'
+        )
+    found, why = find_symbol(conn, "Why does retry() wait?", None)
+    assert found is None and why == "retry is defined in 2 files; give the file to read its lines"

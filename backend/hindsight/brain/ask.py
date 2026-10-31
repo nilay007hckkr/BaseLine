@@ -133,6 +133,64 @@ def _anchors(conn: sqlite3.Connection, question: str, file: str | None) -> list[
     return list(dict.fromkeys(ids))
 
 
+_IDENT = re.compile(r"[A-Za-z_][A-Za-z0-9_]{3,}(?:\(\))?")
+SYMBOL_LINES = 60
+
+
+def _looks_like_code(word: str) -> bool:
+    """CamelCase, snake_case, digits or written with '()': a name, not an ordinary word."""
+    name = word.removesuffix("()")
+    return (
+        word.endswith("()")
+        or "_" in name
+        or any(c.isdigit() for c in name)
+        or (any(c.isupper() for c in name[1:]) and any(c.islower() for c in name))
+    )
+
+
+def find_symbol(
+    conn: sqlite3.Connection, question: str, repo: Path | None
+) -> tuple[tuple[str, int, int] | None, str]:
+    """A function or class the question names (the code layer, `make codegraph`): its file and
+    line range, up to the next definition in that file (at most 60 lines). Only a name defined in
+    exactly one file is used; code does not guess between several. Returns (found, note)."""
+    for word in dict.fromkeys(_IDENT.findall(question)):
+        if not _looks_like_code(word):
+            continue
+        name = word.removesuffix("()")
+        rows = conn.execute(
+            "SELECT title, attrs FROM nodes WHERE kind = 'Symbol' AND (title = ? OR title = ?)",
+            (name, f"{name}()"),
+        ).fetchall()
+        places = {json.loads(r["attrs"] or "{}").get("path") for r in rows} - {None}
+        if not places:
+            continue
+        if len(places) > 1:
+            return (
+                None,
+                f"{name} is defined in {len(places)} files; give the file to read its lines",
+            )
+        attrs = json.loads(rows[0]["attrs"] or "{}")
+        path, start = attrs["path"], int(attrs.get("line") or 1)
+        later = conn.execute(
+            "SELECT MIN(CAST(json_extract(attrs, '$.line') AS INTEGER)) FROM nodes"
+            " WHERE kind = 'Symbol' AND json_extract(attrs, '$.path') = ?"
+            " AND CAST(json_extract(attrs, '$.line') AS INTEGER) > ?",
+            (path, start),
+        ).fetchone()[0]
+        end = min(start + SYMBOL_LINES - 1, (later - 1) if later else start + SYMBOL_LINES - 1)
+        if repo is not None:
+            try:
+                n_lines = len((repo / path).read_text(errors="replace").splitlines())
+            except OSError:
+                return None, f"{name} is in {path}, which is not in the local clone"
+            if start > n_lines:
+                return None, f"{name} is listed at line {start} of {path}, past the end of the file"
+            end = min(end, n_lines)
+        return (path, start, end), f"{name} is defined in {path} lines {start}-{end}"
+    return None, ""
+
+
 def _subjects(conn: sqlite3.Connection, anchors: list[int]) -> dict[str, list[str]]:
     """For each anchored service or file: the words that show a text is about it."""
     out: dict[str, list[str]] = {}
@@ -508,6 +566,15 @@ def ask(
     dfs = {t: _df(conn, t) for t in terms}
     weights = {t: idf(dfs[t], n_docs) for t in terms}
     notes = [f"no project history mentions '{t}'" for t in terms if dfs[t] == 0]
+
+    if file is None and line_start is None:
+        # a function or class named in the question: read the history of its lines (git blame)
+        found, why = find_symbol(conn, question, repo)
+        if found is not None:
+            file, line_start, line_end = found
+            notes.append(f"{why}; answered from the history of those lines")
+        elif why:
+            notes.append(why)
 
     anchors = _anchors(conn, question, file)
     lines = (line_start, line_end or line_start) if line_start else None
