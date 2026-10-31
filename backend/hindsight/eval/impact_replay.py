@@ -18,6 +18,7 @@ from typing import Any
 
 from hindsight.brain.impact import History, Weights, rank_files
 from hindsight.core.db import get_meta
+from hindsight.eval.provenance import code_sha
 
 SEED = 13
 RESAMPLES = 1000
@@ -99,15 +100,30 @@ def run(
     per_method: dict[str, dict[str, list[float]]] = {
         m: {"P@5": [], "R@10": [], "Hit@3": []} for m in METHODS
     }
-    for _sha, ts, files in qs:
+    rows: list[dict[str, Any]] = []
+    for sha, ts, files in qs:
         revealed = rng.choice(files)
         truth = set(files) - {revealed}
         history = History(conn, as_of=ts)
+        row: dict[str, Any] = {"sha": sha[:12], "revealed": revealed, "n_truth": len(truth)}
         for name, method in METHODS.items():
             ranked = method(history, revealed, ts)
             per_method[name]["P@5"].append(len(set(ranked[:5]) & truth) / 5)
             per_method[name]["R@10"].append(len(set(ranked[:10]) & truth) / len(truth))
             per_method[name]["Hit@3"].append(1.0 if set(ranked[:3]) & truth else 0.0)
+            row[name] = {m: round(per_method[name][m][-1], 4) for m in ("P@5", "R@10", "Hit@3")}
+        rows.append(row)
+    # the same held-out changes for both methods: a paired difference is the fair comparison
+    paired: dict[str, dict[str, float]] = {}
+    for metric in ("P@5", "R@10", "Hit@3"):
+        diffs = [
+            a - b
+            for a, b in zip(
+                per_method["hindsight"][metric], per_method["cochange_only"][metric], strict=True
+            )
+        ]
+        mean, lo, hi = _bootstrap(diffs)
+        paired[metric] = {"value": round(mean, 4), "ci_low": round(lo, 4), "ci_high": round(hi, 4)}
     methods: dict[str, dict[str, dict[str, float]]] = {}
     for name, metrics in per_method.items():
         methods[name] = {}
@@ -123,6 +139,7 @@ def run(
         "name": "impact_replay",
         "created_at": datetime.now(UTC).isoformat(timespec="seconds"),
         "command": command,
+        "code_sha": code_sha(),
         "repo": get_meta(conn, "repo", {}),
         "config": {
             "split": {"statistics": 0.70, "validation": 0.15, "test": test_share},
@@ -136,6 +153,8 @@ def run(
         "bot_share": stats.get("bot_share"),
         "n_queries": len(qs),
         "methods": methods,
+        "paired_hindsight_minus_cochange": paired,
+        "rows": rows,
     }
     if out_dir is not None:
         out_dir.mkdir(parents=True, exist_ok=True)

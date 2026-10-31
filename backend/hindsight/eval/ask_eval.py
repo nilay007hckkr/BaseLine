@@ -20,7 +20,6 @@ import csv
 import json
 import re
 import sqlite3
-import subprocess
 import time
 from collections.abc import Callable
 from pathlib import Path
@@ -34,6 +33,7 @@ from hindsight.core.db import get_meta
 from hindsight.core.llm import Chain
 from hindsight.core.schemas import Answer
 from hindsight.core.text import content_terms, fts_term
+from hindsight.eval.provenance import code_sha
 from hindsight.eval.rca import _ci as bootstrap_ci
 
 QUESTIONS = ROOT / "eval" / "questions.yaml"
@@ -181,24 +181,6 @@ def _plain_model(chain: Chain, repo_name: str, question: str) -> bool | None:
     return bool(isinstance(answer, str) and answer.strip())
 
 
-def _code_sha() -> str:
-    try:
-        out = subprocess.run(
-            ["git", "rev-parse", "HEAD"], cwd=ROOT, capture_output=True, text=True, check=True
-        )
-        dirty = subprocess.run(
-            ["git", "status", "--porcelain", "--untracked-files=no", "backend"],
-            cwd=ROOT,
-            capture_output=True,
-            text=True,
-            check=True,
-        ).stdout.strip()
-        # uncommitted code changes: the hash alone would not reproduce this run
-        return out.stdout.strip() + ("-dirty" if dirty else "")
-    except (OSError, subprocess.CalledProcessError):
-        return ""
-
-
 def _rate(values: list[bool]) -> dict[str, float]:
     return bootstrap_ci([1.0 if v else 0.0 for v in values])
 
@@ -324,7 +306,7 @@ def score(
         "name": "ask_answer_key",
         "created_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         "command": COMMAND,
-        "code_sha": _code_sha(),
+        "code_sha": code_sha(),
         "repo": repo_meta,
         "model": _model_line(model, rows),
         "questions_file": str(QUESTIONS.relative_to(ROOT)),

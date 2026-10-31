@@ -43,6 +43,19 @@ def markdown(result: dict[str, Any]) -> str:
             f"{m['value']:.3f} [{m['ci_low']:.3f}, {m['ci_high']:.3f}]" for m in metrics.values()
         ]
         lines.append(f"| {LABELS.get(name, name)} | " + " | ".join(cells) + " |")
+    paired = result.get("paired_hindsight_minus_cochange")
+    if paired:
+        lines += [
+            "",
+            "Paired difference on the same held-out changes, Hindsight minus co-change only: "
+            + ", ".join(
+                f"{m} {v['value']:+.3f} [{v['ci_low']:+.3f}, {v['ci_high']:+.3f}]"
+                for m, v in paired.items()
+            )
+            + (
+                f" (code `{str(result.get('code_sha', ''))[:7]}`)" if result.get("code_sha") else ""
+            ),
+        ]
     lines += [
         "",
         "Brackets are 95% bootstrap confidence intervals (1,000 resamples, seed 13). Weights are the",

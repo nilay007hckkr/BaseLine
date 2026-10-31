@@ -62,3 +62,10 @@ def test_replay_evaluation_is_deterministic(fx):
         "most_frequent",
     }
     assert first["methods"] == second["methods"]
+    # one row per held-out change, and the paired difference computed from exactly those rows
+    assert len(first["rows"]) == first["n_queries"]
+    r10 = [r["hindsight"]["R@10"] - r["cochange_only"]["R@10"] for r in first["rows"]]
+    paired = first["paired_hindsight_minus_cochange"]["R@10"]
+    assert abs(paired["value"] - sum(r10) / len(r10)) < 1e-3
+    assert paired["ci_low"] <= paired["value"] <= paired["ci_high"]
+    assert "code_sha" in first
