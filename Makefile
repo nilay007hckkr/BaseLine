@@ -38,11 +38,13 @@ gen-api: ## Regenerate web API types from the backend's OpenAPI schema
 	@cd $(WEB) && pnpm -s gen:api && pnpm -s exec prettier --write src/api/schema.d.ts >/dev/null
 
 ## ---------- run ----------
-.PHONY: ingest embed stats dev serve run
+.PHONY: ingest embed codegraph stats dev serve run
 ingest: ## Ingest history: make ingest [REPO=<github url>] (default TARGET_REPO_URL or Online Boutique)
 	@cd $(BE) && uv run hindsight ingest $${REPO:-}
 embed: ## Index citable text with the local embedding model (needs Ollama + OLLAMA_EMBED_MODEL)
 	@cd $(BE) && uv run hindsight embed
+codegraph: ## Functions, classes and calls for the Map (graphify, offline; uv tool install graphifyy==0.9.99)
+	@cd $(BE) && uv run hindsight codegraph
 stats: ## Print ingest statistics
 	@cd $(BE) && uv run hindsight stats
 dev: ## API with reload on :8000 + web dev server on :5173

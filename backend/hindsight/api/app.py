@@ -271,9 +271,14 @@ def commits(
 
 @app.get("/api/graph", response_model=GraphResponse)
 def graph_view(
-    conn: Conn, graph: Graph, key: str, depth: Annotated[int, Query(ge=1, le=2)] = 1
+    conn: Conn,
+    graph: Graph,
+    key: str,
+    depth: Annotated[int, Query(ge=1, le=2)] = 1,
+    code: bool = False,
 ) -> GraphResponse:
-    result = neighbourhood(conn, key, depth, graph=graph)
+    """`code=true` adds functions, classes and their calls (the code structure layer)."""
+    result = neighbourhood(conn, key, depth, graph=graph, code=code)
     if result is None:
         raise HTTPException(status_code=404, detail=f"node {key} not found")
     return result

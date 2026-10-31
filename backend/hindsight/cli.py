@@ -96,6 +96,10 @@ def main(argv: list[str] | None = None) -> int:
         "--deploys", action="store_true", help="also record synthetic deploys first"
     )
     sub.add_parser("embed", help="index citable text with the local embedding model (Ollama)")
+    p_code = sub.add_parser(
+        "codegraph", help="add functions, classes and their calls to the Map (graphify, offline)"
+    )
+    p_code.add_argument("--graph", help="import this graphify graph.json instead of running it")
     p_sync = sub.add_parser("graph-sync", help="copy the graph into Neo4j (make graph-up first)")
     p_sync.add_argument(
         "--drop", metavar="NAMESPACE", help="remove a namespace (e.g. a test run) instead"
@@ -155,6 +159,27 @@ def main(argv: list[str] | None = None) -> int:
                 )
                 return 1
             _print(index_spans(conn, embedder))
+        elif args.cmd == "codegraph":
+            from dataclasses import asdict
+            from pathlib import Path
+
+            from hindsight.api.service import repo_dir, resync_graph
+            from hindsight.brain.codegraph import CodeGraphError, build_code_layer
+
+            try:
+                layer = build_code_layer(
+                    conn,
+                    settings.data_dir / "codegraph",
+                    repo_dir(conn),
+                    Path(args.graph) if args.graph else None,
+                )
+                _print(asdict(layer))
+            except CodeGraphError as exc:
+                print(exc)
+                return 1
+            synced = resync_graph(settings)  # only when this repository was synced before
+            if synced:
+                print(f"graph re-synced to Neo4j: {synced['nodes']} nodes, {synced['edges']} edges")
         elif args.cmd == "graph-sync":
             from hindsight.core.graphsync import drop_namespace, sync
 

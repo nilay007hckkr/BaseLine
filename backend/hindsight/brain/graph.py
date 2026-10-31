@@ -8,6 +8,7 @@ import sqlite3
 import networkx as nx
 
 from hindsight.brain.ask import label
+from hindsight.brain.codegraph import CODE_KINDS
 from hindsight.core.graphstore import GraphReader, SqliteGraph
 from hindsight.core.schemas import GraphEdge, GraphNode, GraphResponse, SearchHit
 
@@ -20,11 +21,15 @@ def neighbourhood(
     depth: int = 1,
     limit: int = 80,
     graph: GraphReader | None = None,
+    code: bool = False,
 ) -> GraphResponse | None:
+    """`code` adds the code structure layer (functions, classes, calls); it is always on when
+    the centre is itself a function or class."""
     graph = graph or SqliteGraph(conn)
-    center = conn.execute("SELECT id FROM nodes WHERE key = ?", (key,)).fetchone()
+    center = conn.execute("SELECT id, kind FROM nodes WHERE key = ?", (key,)).fetchone()
     if not center:
         return None
+    hidden = frozenset() if code or center[1] == "Symbol" else CODE_KINDS
     g = nx.MultiDiGraph()
     frontier = [int(center[0])]
     seen = {int(center[0])}
@@ -34,6 +39,8 @@ def neighbourhood(
         around = graph.edges_around(frontier, PER_NODE)  # one round trip per hop
         for n in frontier:
             for e in around[n]:
+                if e.kind in hidden:
+                    continue
                 for other in (e.src, e.dst):
                     if other not in seen:
                         if len(seen) >= limit:
