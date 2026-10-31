@@ -44,6 +44,8 @@ class Settings:
     ollama_host: str
     ollama_chat_model: str
     docs_allow_external: bool = False
+    ollama_timeout: float = 300.0  # seconds a local model may take to answer
+    ollama_num_ctx: int = 8192  # Ollama context window (tokens) for answer prompts
     kind_cluster: str = "hs-target"
     target_url: str = "http://localhost:8081"  # the demo shop
     alert_webhook: str = ""
@@ -100,6 +102,8 @@ def load_settings(env: dict[str, str] | None = None) -> Settings:
         ollama_host=get("OLLAMA_HOST", "http://localhost:11434"),
         ollama_chat_model=get("OLLAMA_CHAT_MODEL"),
         docs_allow_external=get("DOCS_ALLOW_EXTERNAL", "false").lower() == "true",
+        ollama_timeout=float(get("OLLAMA_TIMEOUT", "300")),
+        ollama_num_ctx=int(get("OLLAMA_NUM_CTX", "8192")),
         kind_cluster=get("KIND_CLUSTER_NAME", "hs-target"),
         target_url=get("TARGET_URL", "http://localhost:8081"),
         alert_webhook=get("ALERT_WEBHOOK_URL"),
