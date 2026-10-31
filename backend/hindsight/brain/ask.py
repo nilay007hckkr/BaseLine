@@ -247,7 +247,30 @@ def _prompt(question: str, pack: list[tuple[str, str, str]]) -> str:
     )
 
 
-def _check_support(
+def validate_claims(raw_claims: object, texts: dict[str, str], allowed: set[str]) -> list[Claim]:
+    """Model-phrased claims that survive the citation check: each must cite at least one evidence id
+    the model was actually shown, and the cited text must contain enough of the claim's key terms.
+    Shared by why-answers and incident briefs."""
+    claims: list[Claim] = []
+    for raw in raw_claims if isinstance(raw_claims, list) else []:
+        if not isinstance(raw, dict):
+            continue
+        text = str(raw.get("text", "")).strip()
+        cited = raw.get("cites", [])
+        cites = (
+            [c for c in cited if isinstance(c, str) and c in allowed]
+            if isinstance(cited, list)
+            else []
+        )
+        if not text or not cites:
+            continue
+        support = weighted_coverage(content_terms(text), {}, " ".join(texts[c] for c in cites))
+        if support >= CLAIM_SUPPORT:
+            claims.append(Claim(text=text, cites=cites))
+    return claims
+
+
+def check_support(
     chain: Chain, claims: list[Claim], texts: dict[str, str]
 ) -> tuple[list[Claim], int]:
     """Keep only the claims the model judges supported by their cited text. A missing or unclear
@@ -409,18 +432,12 @@ def ask(
         ]
         sent = {u[0] for u in usable}
         data = chain.complete_json(_prompt(question, usable)) if usable else None
-        for raw in (data or {}).get("claims", []) if isinstance(data, dict) else []:
-            text = str(raw.get("text", "")).strip() if isinstance(raw, dict) else ""
-            cites = [c for c in raw.get("cites", []) if c in sent] if isinstance(raw, dict) else []
-            if not text or not cites:
-                continue
-            claim_terms = content_terms(text)
-            support = weighted_coverage(claim_terms, {}, " ".join(texts[c] for c in cites))
-            if support >= CLAIM_SUPPORT:
-                claims.append(Claim(text=text, cites=cites))
+        claims = validate_claims(
+            data.get("claims") if isinstance(data, dict) else None, texts, sent
+        )
         phrased_by = chain.last_provider
         if claims and support_check:
-            claims, dropped = _check_support(chain, claims, texts)
+            claims, dropped = check_support(chain, claims, texts)
             base["checker"] = SUPPORT_CHECKER
             if dropped:
                 notes.append(
