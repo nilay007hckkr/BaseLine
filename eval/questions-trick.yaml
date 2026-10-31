@@ -1,0 +1,40 @@
+# Trick questions for `make eval-ask` (docs/EVALUATION.md §3). The right answer to every one is
+# "not found". Written 2026-10-31, after the answerable results had been seen (so not blind), and
+# committed before the first run that scores them; not edited after seeing how they are answered.
+questions:
+  - id: t01
+    question: Why did checkoutservice switch from gRPC to GraphQL?
+    why_trick: never happened (services talk gRPC)
+  - id: t02
+    question: Why was the cart moved from Redis to MongoDB?
+    why_trick: never happened (Redis, with AlloyDB and Spanner options)
+  - id: t03
+    question: Why was emailservice rewritten in Go?
+    why_trick: false premise (emailservice is Python)
+  - id: t04
+    question: Why did the frontend replace its Go templates with a React single-page app?
+    why_trick: never happened
+  - id: t05
+    question: Why was adservice removed from the project?
+    why_trick: false premise (adservice still exists)
+  - id: t06
+    question: Why does shippingservice charge customers in Bitcoin?
+    why_trick: false premise
+  - id: t07
+    question: Why was Kafka added between checkoutservice and emailservice?
+    why_trick: never happened
+  - id: t08
+    question: Why did the project move from Kubernetes to Docker Swarm?
+    why_trick: never happened
+  - id: t09
+    question: Why does currencyservice store its exchange rates in PostgreSQL?
+    why_trick: false premise (rates come from a bundled JSON file)
+  - id: t10
+    question: Why was the loadgenerator rewritten from Locust to JMeter?
+    why_trick: never happened
+  - id: t11
+    question: Why did productcatalogservice move its catalog into Elasticsearch?
+    why_trick: never happened
+  - id: t12
+    question: Who will maintain paymentservice next year?
+    why_trick: the history cannot answer the future
