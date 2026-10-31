@@ -10,6 +10,7 @@ make bootstrap    # installs or verifies tools; asks before sudo
 cp .env.example .env && $EDITOR .env
 make doctor
 make setup        # after block B0 creates backend/, web/, collector/
+make start        # everything else in one command (scripts/start.sh --help lists the switches)
 ```
 
 ## Toolchain

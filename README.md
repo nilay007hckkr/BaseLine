@@ -38,6 +38,22 @@ Requirement-by-requirement mapping: [docs/PS06.md](docs/PS06.md).
 
 ## Quick start (WSL Ubuntu or Linux)
 
+One command, after `make bootstrap` has installed the tools once:
+
+```bash
+make start         # or: bash scripts/start.sh [--live] [--dev] [--no-neo4j] [--skip-setup]
+```
+
+It installs the dependencies, ingests Online Boutique on the first run, starts Neo4j when Docker
+is running, builds the Map's code layer when graphify is installed, streams the local shop's logs
+into Incidents when its cluster is running (`--live` creates it), then serves the demo on
+http://localhost:8000 and the workspace on http://localhost:8080. Missing optional parts are
+skipped with a note. Ctrl-C stops the dashboards and the log stream; `make graph-down` and
+`make target-down` stop Neo4j and the cluster. With make, pass the switches as `LIVE=1`, `DEV=1`,
+`NO_NEO4J=1` or `SKIP_SETUP=1`.
+
+The same steps one at a time:
+
 ```bash
 make bootstrap     # installs or verifies tools; asks before any sudo step
 make setup         # backend and web dependencies
