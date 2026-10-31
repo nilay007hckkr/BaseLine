@@ -27,9 +27,12 @@ from hindsight.core.schemas import (
     AnswerCheckSummary,
     CommitSummary,
     GraphStatus,
+    IncidentBrief,
     MethodScore,
     ScoreCard,
 )
+from hindsight.correlate.investigate import investigate
+from hindsight.logsense.incidents import get_incident
 
 RESULTS_DIR = ROOT / "eval" / "results"
 
@@ -74,6 +77,23 @@ def ask_question(
         uploads_to_external=settings.docs_allow_external,
         graph=graph,
         dense=dense,
+        support_check=settings.answer_support_check,
+    )
+
+
+def investigate_incident(
+    conn: sqlite3.Connection, settings: Settings, incident_id: int, question: str | None = None
+) -> IncidentBrief | None:
+    incident = get_incident(conn, incident_id)
+    if incident is None:
+        return None
+    return investigate(
+        conn,
+        incident,
+        question=question,
+        chain=Chain.from_settings(conn, settings),
+        repo=repo_dir(conn),
+        uploads_to_external=settings.docs_allow_external,
         support_check=settings.answer_support_check,
     )
 

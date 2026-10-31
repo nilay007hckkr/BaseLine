@@ -189,6 +189,39 @@ class Incident(Contract):
     summary: str
 
 
+class InvestigateRequest(Contract):
+    question: str | None = Field(
+        default=None,
+        min_length=3,
+        max_length=500,
+        description="A follow-up question about the incident; empty for the incident brief",
+    )
+
+
+class InvestigationStep(Contract):
+    by: Literal["code", "model"] = Field(
+        description="code: evidence gathered every time; model: a tool the model chose to call"
+    )
+    tool: str
+    args: dict[str, str] = Field(default_factory=dict)
+    status: Literal["ok", "empty", "refused"]
+    evidence_ids: list[str] = Field(default_factory=list)
+    note: str = ""
+
+
+class IncidentBrief(Contract):
+    incident_id: int
+    question: str | None = None
+    culprit: str | None = Field(default=None, description="As ranked by code, never by the model")
+    status: Literal["answered", "not_found"]
+    mode: Literal["llm", "extractive", "none"]
+    claims: list[Claim] = Field(default_factory=list)
+    evidence: list[EvidenceItem] = Field(default_factory=list)
+    steps: list[InvestigationStep] = Field(default_factory=list)
+    checker: str
+    notes: list[str] = Field(default_factory=list)
+
+
 class DeployRequest(Contract):
     commit: str
     ts: int | None = None

@@ -54,7 +54,9 @@ from hindsight.core.schemas import (
     ImpactReport,
     ImpactRequest,
     Incident,
+    IncidentBrief,
     IncidentSummary,
+    InvestigateRequest,
     LlmSettings,
     LlmSettingsUpdate,
     ModelList,
@@ -386,6 +388,16 @@ def incident(incident_id: int, conn: Conn) -> Incident:
     if found is None:
         raise HTTPException(status_code=404, detail=f"incident {incident_id} not found")
     return found
+
+
+@app.post("/api/incidents/{incident_id}/investigate", response_model=IncidentBrief)
+def investigate_incident(
+    incident_id: int, req: InvestigateRequest, conn: Conn, settings: Cfg
+) -> IncidentBrief:
+    brief = service.investigate_incident(conn, settings, incident_id, req.question)
+    if brief is None:
+        raise HTTPException(status_code=404, detail=f"incident {incident_id} not found")
+    return brief
 
 
 @app.get("/api/deploys", response_model=list[DeployRecord])
