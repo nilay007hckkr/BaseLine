@@ -674,13 +674,24 @@ def ask(
         else:
             notes.append("answered from git blame")
 
-    if not from_blame and (not pack or pack[0][0] < tau):
+    # The question's rarest word is its most specific claim (often what a false premise assumes:
+    # "moved to MongoDB"). If no source that covers the question says it, the sources are about
+    # something else, however many of the common words they share.
+    decisive = max(enumerate(terms), key=lambda it: (weights[it[1]], it[0]))[1]
+    covering = [s for s in pack if s[0] >= tau]
+    unsaid = bool(covering) and not any(stem(decisive) in stems(s[4]) for s in covering)
+    if not from_blame and (not pack or pack[0][0] < tau or unsaid):
         nearest_src = sorted(scored, key=lambda s: -s[1])[:3]
         nearest = [
             _evidence(conn, s[2], f"N{i + 1}", terms, s[0], g) for i, s in enumerate(nearest_src)
         ]
         best = pack[0][0] if pack else 0.0
-        notes.append(f"best evidence covers {best:.0%} of the question (needs {tau:.0%})")
+        if unsaid and best >= tau:
+            notes.append(
+                f"no source says anything about '{decisive}', the question's most specific word"
+            )
+        else:
+            notes.append(f"best evidence covers {best:.0%} of the question (needs {tau:.0%})")
         return Answer(
             status="not_found",
             mode="none",

@@ -276,3 +276,25 @@ def test_text_from_bot_accounts_is_not_evidence(tmp_path):
     bot = upsert_node(conn, "PR", "gh:1", title="bump tar", attrs={"user": "dependabot[bot]"})
     human = upsert_node(conn, "PR", "gh:2", title="Migrate to TypeScript", attrs={"user": "ana"})
     assert _skip_span(conn, bot) and not _skip_span(conn, human)
+
+
+def test_a_source_must_say_the_question_s_most_specific_word(tmp_path):
+    """FIXTURE: two commits share the common words of a false-premise question; a third, unrelated
+    one is the only text that mentions its rare word. The answer is "not found"."""
+    from hindsight.core.db import add_span, connect, upsert_node
+
+    conn = connect(tmp_path / "db.sqlite")
+    with conn:
+        texts = [
+            "Cart storage moved to a faster layer for the shop",
+            "Cart storage moved behind an interface",
+            "Bump the MongoDB driver used by an old tools script",
+            "Fix typo in the README",
+        ]
+        for i, text in enumerate(texts):
+            nid = upsert_node(conn, "Commit", f"commit:{i:040d}", title=text, ts=1_600_000_000 + i)
+            add_span(conn, nid, "commit_msg", text, ts=1_600_000_000 + i)
+    false_premise = ask(conn, "Why was cart storage moved to MongoDB?")
+    assert false_premise.status == "not_found"
+    assert any("'mongodb', the question's most specific word" in n for n in false_premise.notes)
+    assert ask(conn, "Why was cart storage moved?").status == "answered"
