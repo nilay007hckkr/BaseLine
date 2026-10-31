@@ -24,6 +24,9 @@ _SECRET = re.compile(
     r"|AIza[0-9A-Za-z_-]{30,}|[\w.+-]+@[\w-]+\.[\w.-]+"
 )
 _JSON_OBJECT = re.compile(r"\{.*\}", re.DOTALL)
+# A provider that is down must fail fast: a dropped connection otherwise waits out the whole
+# timeout before the chain moves on. Generation itself keeps the longer read timeout.
+CONNECT_TIMEOUT = 5.0
 
 
 def scrub(text: str) -> str:
@@ -51,7 +54,7 @@ class Gemini:
                 "contents": [{"role": "user", "parts": [{"text": prompt}]}],
                 "generationConfig": {"temperature": 0, "responseMimeType": "application/json"},
             },
-            timeout=60,
+            timeout=httpx.Timeout(60, connect=CONNECT_TIMEOUT),
         )
         resp.raise_for_status()
         return str(resp.json()["candidates"][0]["content"]["parts"][0]["text"])
@@ -73,7 +76,7 @@ class Groq:
                 "response_format": {"type": "json_object"},
                 "messages": [{"role": "user", "content": prompt}],
             },
-            timeout=60,
+            timeout=httpx.Timeout(60, connect=CONNECT_TIMEOUT),
         )
         resp.raise_for_status()
         return str(resp.json()["choices"][0]["message"]["content"])
@@ -95,7 +98,7 @@ class Ollama:
                 "options": {"temperature": 0},
                 "messages": [{"role": "user", "content": prompt}],
             },
-            timeout=120,
+            timeout=httpx.Timeout(120, connect=CONNECT_TIMEOUT),
         )
         resp.raise_for_status()
         return str(resp.json()["message"]["content"])
