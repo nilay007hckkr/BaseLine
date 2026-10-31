@@ -227,7 +227,11 @@ def _expand(
     file: str | None,
     lines: tuple[int, int] | None,
     graph: GraphReader | None = None,
+    matching: list[int] | None = None,
 ) -> Graph:
+    """From the anchors to the commits behind them, then their PRs, issues and discussion.
+    `matching`: spans that match the question's words; an anchored file's commits among them are
+    followed too, not only its latest 40 (an older change is often the one asked about)."""
     graph = graph or SqliteGraph(conn)
     g = Graph()
     for a in anchors:
@@ -251,6 +255,15 @@ def _expand(
             file_ids = [src for src, _ in graph.incoming([a], "BELONGS_TO")]
         for cid, fid in graph.recent_commits(file_ids, 40):
             commits.append((cid, a if kind in ("Service", "Component") else fid))
+        if matching and file_ids:
+            # older commits of this file whose message matches the question's words
+            span_marks, file_marks = ",".join("?" * len(matching)), ",".join("?" * len(file_ids))
+            rows = conn.execute(
+                "SELECT DISTINCT s.node_id FROM spans s JOIN edges e ON e.src = s.node_id"
+                f" WHERE s.id IN ({span_marks}) AND e.kind = 'MODIFIES' AND e.dst IN ({file_marks})",
+                [*matching, *file_ids],
+            ).fetchall()
+            commits += [(r[0], a) for r in rows]
         for src, _ in graph.incoming([a], "MENTIONS"):
             g.add(src, 1, a)
     for cid, parent in commits:
@@ -578,7 +591,15 @@ def ask(
 
     anchors = _anchors(conn, question, file)
     lines = (line_start, line_end or line_start) if line_start else None
-    g = _expand(conn, repo, anchors, file, lines, graph)
+    fts_query = " OR ".join(fts_term(t) for t in terms)
+    fts_ranked = [
+        r[0]
+        for r in conn.execute(
+            "SELECT rowid FROM spans_fts WHERE spans_fts MATCH ? ORDER BY bm25(spans_fts) LIMIT 80",
+            (fts_query,),
+        )
+    ]
+    g = _expand(conn, repo, anchors, file, lines, graph, matching=fts_ranked)
 
     graph_ranked: list[int] = []
     if g.reached:
@@ -589,14 +610,6 @@ def ask(
             f"SELECT id, node_id FROM spans WHERE node_id IN ({marks})", list(order)
         ).fetchall()
         graph_ranked = [r["id"] for r in sorted(rows, key=lambda r: order[r["node_id"]])]
-    fts_query = " OR ".join(fts_term(t) for t in terms)
-    fts_ranked = [
-        r[0]
-        for r in conn.execute(
-            "SELECT rowid FROM spans_fts WHERE spans_fts MATCH ? ORDER BY bm25(spans_fts) LIMIT 80",
-            (fts_query,),
-        )
-    ]
 
     dense_ranked: list[int] = []
     if dense is not None:
