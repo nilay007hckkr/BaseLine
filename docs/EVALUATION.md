@@ -13,6 +13,9 @@ separately from the main repository. Nothing is tuned on them.
 ## 1. Splits and leakage
 - History is split by time: oldest 70% for statistics, next 15% for validation (tuning weights and thresholds), newest 15% for testing.
 - Replay queries only use rows with `ts <= query commit time`.
+- **Known exception:** which files belong to which service, and which services call which, are
+  read from the code at HEAD (the static graph), not as of each query. Co-change, the main signal,
+  is as of the query. Services rarely move, so the effect should be small, but it is not zero.
 
 ## 2. Blast radius (history replay)
 - **Queries:** test-split commits with 2–30 files, excluding bot, sweep, generated and merge commits.
@@ -22,7 +25,12 @@ separately from the main repository. Nothing is tuned on them.
   - same directory (most recent first);
   - most frequently changed files;
   - co-change only (no static, service or recency signals).
-- **Ablation:** with and without bot/sweep filtering. Report the bot share.
+- **Paired difference:** the result file stores one row per held-out change and the bootstrap
+  interval of Hindsight minus co-change only on the same changes. On Online Boutique (n = 74,
+  code `e9bc419`): P@5 +0.024 [-0.003, +0.062], R@10 +0.030 [-0.023, +0.088], Hit@3 +0.013
+  [-0.068, +0.095]. Every interval includes zero: the gain over co-change alone is not
+  established on this repository. Against same-folder (R@10 0.413) the gain is clear.
+- **Ablation:** with and without bot/sweep filtering. Report the bot share. (Not built yet.)
 
 ## 3. Why-answers
 

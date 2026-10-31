@@ -1,0 +1,1974 @@
+{
+  "name": "impact_replay",
+  "created_at": "2026-10-31T23:27:37+00:00",
+  "command": "make eval",
+  "code_sha": "e9bc419c5dd91566b9b35e855deb2308f4f96022",
+  "repo": {
+    "url": "https://github.com/GoogleCloudPlatform/microservices-demo",
+    "web": "https://github.com/GoogleCloudPlatform/microservices-demo",
+    "owner": "GoogleCloudPlatform",
+    "name": "microservices-demo",
+    "path": "/home/nilay/code/hindsight/data/repos/GoogleCloudPlatform__microservices-demo",
+    "head_sha": "c7cb6d5bfd6ea3aed768634ebbcb98cb7a523712",
+    "head_ts": 1793132320
+  },
+  "config": {
+    "split": {
+      "statistics": 0.7,
+      "validation": 0.15,
+      "test": 0.15
+    },
+    "seed": 13,
+    "bootstrap_resamples": 1000,
+    "weights": {
+      "cochange": 0.45,
+      "static": 0.25,
+      "same_component": 0.15,
+      "recency": 0.15
+    },
+    "weights_tuned": false,
+    "query_files": "2 to 30 non-generated files",
+    "filters": "bot, sweep (>30 files), merge commits and generated files excluded"
+  },
+  "bot_share": 0.6548,
+  "n_queries": 74,
+  "methods": {
+    "hindsight": {
+      "P@5": {
+        "value": 0.3892,
+        "ci_low": 0.3054,
+        "ci_high": 0.4703
+      },
+      "R@10": {
+        "value": 0.611,
+        "ci_low": 0.52,
+        "ci_high": 0.6994
+      },
+      "Hit@3": {
+        "value": 0.6757,
+        "ci_low": 0.5541,
+        "ci_high": 0.7703
+      }
+    },
+    "cochange_only": {
+      "P@5": {
+        "value": 0.3649,
+        "ci_low": 0.2838,
+        "ci_high": 0.4514
+      },
+      "R@10": {
+        "value": 0.5812,
+        "ci_low": 0.4805,
+        "ci_high": 0.6639
+      },
+      "Hit@3": {
+        "value": 0.6622,
+        "ci_low": 0.5405,
+        "ci_high": 0.7568
+      }
+    },
+    "same_directory": {
+      "P@5": {
+        "value": 0.2919,
+        "ci_low": 0.2189,
+        "ci_high": 0.373
+      },
+      "R@10": {
+        "value": 0.4132,
+        "ci_low": 0.317,
+        "ci_high": 0.5097
+      },
+      "Hit@3": {
+        "value": 0.5,
+        "ci_low": 0.3919,
+        "ci_high": 0.6081
+      }
+    },
+    "most_frequent": {
+      "P@5": {
+        "value": 0.0649,
+        "ci_low": 0.0432,
+        "ci_high": 0.0919
+      },
+      "R@10": {
+        "value": 0.0969,
+        "ci_low": 0.0559,
+        "ci_high": 0.1494
+      },
+      "Hit@3": {
+        "value": 0.1081,
+        "ci_low": 0.0405,
+        "ci_high": 0.1892
+      }
+    }
+  },
+  "paired_hindsight_minus_cochange": {
+    "P@5": {
+      "value": 0.0243,
+      "ci_low": -0.0027,
+      "ci_high": 0.0622
+    },
+    "R@10": {
+      "value": 0.0298,
+      "ci_low": -0.023,
+      "ci_high": 0.0876
+    },
+    "Hit@3": {
+      "value": 0.0135,
+      "ci_low": -0.0676,
+      "ci_high": 0.0946
+    }
+  },
+  "rows": [
+    {
+      "sha": "bdc0e512f971",
+      "revealed": "helm-chart/templates/currencyservice.yaml",
+      "n_truth": 10,
+      "hindsight": {
+        "P@5": 0.8,
+        "R@10": 0.8,
+        "Hit@3": 1.0
+      },
+      "cochange_only": {
+        "P@5": 0.8,
+        "R@10": 0.8,
+        "Hit@3": 1.0
+      },
+      "same_directory": {
+        "P@5": 0.8,
+        "R@10": 0.8,
+        "Hit@3": 1.0
+      },
+      "most_frequent": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      }
+    },
+    {
+      "sha": "071bf2caaaaf",
+      "revealed": "kustomize/base/emailservice.yaml",
+      "n_truth": 11,
+      "hindsight": {
+        "P@5": 1.0,
+        "R@10": 0.9091,
+        "Hit@3": 1.0
+      },
+      "cochange_only": {
+        "P@5": 1.0,
+        "R@10": 0.9091,
+        "Hit@3": 1.0
+      },
+      "same_directory": {
+        "P@5": 1.0,
+        "R@10": 0.9091,
+        "Hit@3": 1.0
+      },
+      "most_frequent": {
+        "P@5": 0.2,
+        "R@10": 0.0909,
+        "Hit@3": 0.0
+      }
+    },
+    {
+      "sha": "d6ad95fbe965",
+      "revealed": "kubernetes-manifests/kustomization.yaml",
+      "n_truth": 1,
+      "hindsight": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      },
+      "cochange_only": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      },
+      "same_directory": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      },
+      "most_frequent": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      }
+    },
+    {
+      "sha": "b7040418d684",
+      "revealed": "src/productcatalogservice/product_catalog.go",
+      "n_truth": 4,
+      "hindsight": {
+        "P@5": 0.4,
+        "R@10": 0.75,
+        "Hit@3": 1.0
+      },
+      "cochange_only": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      },
+      "same_directory": {
+        "P@5": 0.4,
+        "R@10": 0.75,
+        "Hit@3": 0.0
+      },
+      "most_frequent": {
+        "P@5": 0.0,
+        "R@10": 0.25,
+        "Hit@3": 0.0
+      }
+    },
+    {
+      "sha": "3cf9a8078573",
+      "revealed": "src/emailservice/requirements.in",
+      "n_truth": 1,
+      "hindsight": {
+        "P@5": 0.2,
+        "R@10": 1.0,
+        "Hit@3": 1.0
+      },
+      "cochange_only": {
+        "P@5": 0.2,
+        "R@10": 1.0,
+        "Hit@3": 1.0
+      },
+      "same_directory": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      },
+      "most_frequent": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      }
+    },
+    {
+      "sha": "84036811baa5",
+      "revealed": "src/checkoutservice/go.mod",
+      "n_truth": 2,
+      "hindsight": {
+        "P@5": 0.4,
+        "R@10": 1.0,
+        "Hit@3": 1.0
+      },
+      "cochange_only": {
+        "P@5": 0.4,
+        "R@10": 1.0,
+        "Hit@3": 1.0
+      },
+      "same_directory": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      },
+      "most_frequent": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      }
+    },
+    {
+      "sha": "01ab364b3dc5",
+      "revealed": "src/frontend/go.mod",
+      "n_truth": 3,
+      "hindsight": {
+        "P@5": 0.4,
+        "R@10": 1.0,
+        "Hit@3": 1.0
+      },
+      "cochange_only": {
+        "P@5": 0.4,
+        "R@10": 1.0,
+        "Hit@3": 1.0
+      },
+      "same_directory": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      },
+      "most_frequent": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      }
+    },
+    {
+      "sha": "83ce58ee8467",
+      "revealed": "src/productcatalogservice/product_catalog.go",
+      "n_truth": 1,
+      "hindsight": {
+        "P@5": 0.2,
+        "R@10": 1.0,
+        "Hit@3": 1.0
+      },
+      "cochange_only": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      },
+      "same_directory": {
+        "P@5": 0.2,
+        "R@10": 1.0,
+        "Hit@3": 0.0
+      },
+      "most_frequent": {
+        "P@5": 0.0,
+        "R@10": 1.0,
+        "Hit@3": 0.0
+      }
+    },
+    {
+      "sha": "c84e1934be1c",
+      "revealed": "src/cartservice/src/cartservice.csproj",
+      "n_truth": 1,
+      "hindsight": {
+        "P@5": 0.2,
+        "R@10": 1.0,
+        "Hit@3": 1.0
+      },
+      "cochange_only": {
+        "P@5": 0.2,
+        "R@10": 1.0,
+        "Hit@3": 1.0
+      },
+      "same_directory": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      },
+      "most_frequent": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      }
+    },
+    {
+      "sha": "9b19a45b37e8",
+      "revealed": "src/cartservice/src/Dockerfile.debug",
+      "n_truth": 6,
+      "hindsight": {
+        "P@5": 0.2,
+        "R@10": 0.3333,
+        "Hit@3": 1.0
+      },
+      "cochange_only": {
+        "P@5": 0.2,
+        "R@10": 0.3333,
+        "Hit@3": 1.0
+      },
+      "same_directory": {
+        "P@5": 0.4,
+        "R@10": 0.3333,
+        "Hit@3": 1.0
+      },
+      "most_frequent": {
+        "P@5": 0.2,
+        "R@10": 0.3333,
+        "Hit@3": 0.0
+      }
+    },
+    {
+      "sha": "3a6a0e812647",
+      "revealed": ".github/renovate.json",
+      "n_truth": 1,
+      "hindsight": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      },
+      "cochange_only": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      },
+      "same_directory": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      },
+      "most_frequent": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      }
+    },
+    {
+      "sha": "ca3552eb4001",
+      "revealed": "terraform/memorystore.tf",
+      "n_truth": 1,
+      "hindsight": {
+        "P@5": 0.2,
+        "R@10": 1.0,
+        "Hit@3": 0.0
+      },
+      "cochange_only": {
+        "P@5": 0.2,
+        "R@10": 1.0,
+        "Hit@3": 1.0
+      },
+      "same_directory": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      },
+      "most_frequent": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      }
+    },
+    {
+      "sha": "1e8f7a322a07",
+      "revealed": ".deploystack/messages/success.txt",
+      "n_truth": 1,
+      "hindsight": {
+        "P@5": 0.2,
+        "R@10": 1.0,
+        "Hit@3": 1.0
+      },
+      "cochange_only": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      },
+      "same_directory": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      },
+      "most_frequent": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      }
+    },
+    {
+      "sha": "57b41ae9f3dc",
+      "revealed": "src/paymentservice/package.json",
+      "n_truth": 3,
+      "hindsight": {
+        "P@5": 0.6,
+        "R@10": 1.0,
+        "Hit@3": 1.0
+      },
+      "cochange_only": {
+        "P@5": 0.6,
+        "R@10": 1.0,
+        "Hit@3": 1.0
+      },
+      "same_directory": {
+        "P@5": 0.2,
+        "R@10": 0.3333,
+        "Hit@3": 0.0
+      },
+      "most_frequent": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      }
+    },
+    {
+      "sha": "3faae6eab984",
+      "revealed": "kustomize/base/cartservice.yaml",
+      "n_truth": 12,
+      "hindsight": {
+        "P@5": 1.0,
+        "R@10": 0.8333,
+        "Hit@3": 1.0
+      },
+      "cochange_only": {
+        "P@5": 1.0,
+        "R@10": 0.8333,
+        "Hit@3": 1.0
+      },
+      "same_directory": {
+        "P@5": 1.0,
+        "R@10": 0.8333,
+        "Hit@3": 1.0
+      },
+      "most_frequent": {
+        "P@5": 0.2,
+        "R@10": 0.0833,
+        "Hit@3": 0.0
+      }
+    },
+    {
+      "sha": "21b5bd604b6b",
+      "revealed": "src/recommendationservice/Dockerfile",
+      "n_truth": 2,
+      "hindsight": {
+        "P@5": 0.0,
+        "R@10": 0.5,
+        "Hit@3": 0.0
+      },
+      "cochange_only": {
+        "P@5": 0.2,
+        "R@10": 0.5,
+        "Hit@3": 1.0
+      },
+      "same_directory": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      },
+      "most_frequent": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      }
+    },
+    {
+      "sha": "f72d9003fb26",
+      "revealed": "terraform/main.tf",
+      "n_truth": 2,
+      "hindsight": {
+        "P@5": 0.2,
+        "R@10": 0.5,
+        "Hit@3": 1.0
+      },
+      "cochange_only": {
+        "P@5": 0.0,
+        "R@10": 0.5,
+        "Hit@3": 0.0
+      },
+      "same_directory": {
+        "P@5": 0.2,
+        "R@10": 0.5,
+        "Hit@3": 1.0
+      },
+      "most_frequent": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      }
+    },
+    {
+      "sha": "4dd5787817e8",
+      "revealed": ".deploystack/test",
+      "n_truth": 1,
+      "hindsight": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      },
+      "cochange_only": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      },
+      "same_directory": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      },
+      "most_frequent": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      }
+    },
+    {
+      "sha": "e63f1227648b",
+      "revealed": "src/cartservice/src/cartservice.csproj",
+      "n_truth": 2,
+      "hindsight": {
+        "P@5": 0.4,
+        "R@10": 1.0,
+        "Hit@3": 1.0
+      },
+      "cochange_only": {
+        "P@5": 0.4,
+        "R@10": 1.0,
+        "Hit@3": 1.0
+      },
+      "same_directory": {
+        "P@5": 0.2,
+        "R@10": 0.5,
+        "Hit@3": 1.0
+      },
+      "most_frequent": {
+        "P@5": 0.2,
+        "R@10": 0.5,
+        "Hit@3": 1.0
+      }
+    },
+    {
+      "sha": "515f5c5e6c99",
+      "revealed": "src/paymentservice/index.js",
+      "n_truth": 3,
+      "hindsight": {
+        "P@5": 0.4,
+        "R@10": 0.6667,
+        "Hit@3": 1.0
+      },
+      "cochange_only": {
+        "P@5": 0.2,
+        "R@10": 0.6667,
+        "Hit@3": 1.0
+      },
+      "same_directory": {
+        "P@5": 0.2,
+        "R@10": 0.3333,
+        "Hit@3": 0.0
+      },
+      "most_frequent": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      }
+    },
+    {
+      "sha": "6b38a1979117",
+      "revealed": "kubernetes-manifests/frontend.yaml",
+      "n_truth": 4,
+      "hindsight": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      },
+      "cochange_only": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      },
+      "same_directory": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      },
+      "most_frequent": {
+        "P@5": 0.2,
+        "R@10": 0.25,
+        "Hit@3": 0.0
+      }
+    },
+    {
+      "sha": "76b45a0f7a44",
+      "revealed": "docs/releasing/make-docker-images.sh",
+      "n_truth": 2,
+      "hindsight": {
+        "P@5": 0.2,
+        "R@10": 0.5,
+        "Hit@3": 1.0
+      },
+      "cochange_only": {
+        "P@5": 0.2,
+        "R@10": 0.5,
+        "Hit@3": 1.0
+      },
+      "same_directory": {
+        "P@5": 0.4,
+        "R@10": 1.0,
+        "Hit@3": 1.0
+      },
+      "most_frequent": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      }
+    },
+    {
+      "sha": "e46d1ed47b86",
+      "revealed": "kustomize/base/loadgenerator.yaml",
+      "n_truth": 12,
+      "hindsight": {
+        "P@5": 1.0,
+        "R@10": 0.8333,
+        "Hit@3": 1.0
+      },
+      "cochange_only": {
+        "P@5": 1.0,
+        "R@10": 0.8333,
+        "Hit@3": 1.0
+      },
+      "same_directory": {
+        "P@5": 1.0,
+        "R@10": 0.8333,
+        "Hit@3": 1.0
+      },
+      "most_frequent": {
+        "P@5": 0.2,
+        "R@10": 0.0833,
+        "Hit@3": 0.0
+      }
+    },
+    {
+      "sha": "02c59db9d0c5",
+      "revealed": "kubernetes-manifests/shippingservice.yaml",
+      "n_truth": 11,
+      "hindsight": {
+        "P@5": 1.0,
+        "R@10": 0.9091,
+        "Hit@3": 1.0
+      },
+      "cochange_only": {
+        "P@5": 1.0,
+        "R@10": 0.9091,
+        "Hit@3": 1.0
+      },
+      "same_directory": {
+        "P@5": 0.8,
+        "R@10": 0.8182,
+        "Hit@3": 1.0
+      },
+      "most_frequent": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      }
+    },
+    {
+      "sha": "43289ceef8d5",
+      "revealed": ".github/workflows/README.md",
+      "n_truth": 7,
+      "hindsight": {
+        "P@5": 0.0,
+        "R@10": 0.1429,
+        "Hit@3": 0.0
+      },
+      "cochange_only": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      },
+      "same_directory": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      },
+      "most_frequent": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      }
+    },
+    {
+      "sha": "02015ee81d1c",
+      "revealed": "helm-chart/templates/emailservice.yaml",
+      "n_truth": 7,
+      "hindsight": {
+        "P@5": 0.6,
+        "R@10": 0.8571,
+        "Hit@3": 1.0
+      },
+      "cochange_only": {
+        "P@5": 0.6,
+        "R@10": 0.8571,
+        "Hit@3": 1.0
+      },
+      "same_directory": {
+        "P@5": 0.6,
+        "R@10": 0.8571,
+        "Hit@3": 1.0
+      },
+      "most_frequent": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      }
+    },
+    {
+      "sha": "1ef948004654",
+      "revealed": ".github/workflows/cleanup.yaml",
+      "n_truth": 6,
+      "hindsight": {
+        "P@5": 0.4,
+        "R@10": 0.3333,
+        "Hit@3": 1.0
+      },
+      "cochange_only": {
+        "P@5": 0.4,
+        "R@10": 0.3333,
+        "Hit@3": 1.0
+      },
+      "same_directory": {
+        "P@5": 0.4,
+        "R@10": 0.3333,
+        "Hit@3": 1.0
+      },
+      "most_frequent": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      }
+    },
+    {
+      "sha": "b01d229e6f1f",
+      "revealed": "src/loadgenerator/requirements.in",
+      "n_truth": 1,
+      "hindsight": {
+        "P@5": 0.2,
+        "R@10": 1.0,
+        "Hit@3": 0.0
+      },
+      "cochange_only": {
+        "P@5": 0.2,
+        "R@10": 1.0,
+        "Hit@3": 0.0
+      },
+      "same_directory": {
+        "P@5": 0.2,
+        "R@10": 1.0,
+        "Hit@3": 1.0
+      },
+      "most_frequent": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      }
+    },
+    {
+      "sha": "986245932399",
+      "revealed": "src/frontend/handlers.go",
+      "n_truth": 5,
+      "hindsight": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      },
+      "cochange_only": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      },
+      "same_directory": {
+        "P@5": 0.2,
+        "R@10": 0.2,
+        "Hit@3": 1.0
+      },
+      "most_frequent": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      }
+    },
+    {
+      "sha": "f1cfac111d00",
+      "revealed": "src/frontend/handlers.go",
+      "n_truth": 1,
+      "hindsight": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      },
+      "cochange_only": {
+        "P@5": 0.0,
+        "R@10": 1.0,
+        "Hit@3": 0.0
+      },
+      "same_directory": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      },
+      "most_frequent": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      }
+    },
+    {
+      "sha": "64086c00a846",
+      "revealed": ".github/workflows/ci-pr-upstream.yaml",
+      "n_truth": 1,
+      "hindsight": {
+        "P@5": 0.2,
+        "R@10": 1.0,
+        "Hit@3": 1.0
+      },
+      "cochange_only": {
+        "P@5": 0.2,
+        "R@10": 1.0,
+        "Hit@3": 1.0
+      },
+      "same_directory": {
+        "P@5": 0.2,
+        "R@10": 1.0,
+        "Hit@3": 1.0
+      },
+      "most_frequent": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      }
+    },
+    {
+      "sha": "b84b8b7fa9fe",
+      "revealed": "kustomize/base/productcatalogservice.yaml",
+      "n_truth": 27,
+      "hindsight": {
+        "P@5": 1.0,
+        "R@10": 0.3704,
+        "Hit@3": 1.0
+      },
+      "cochange_only": {
+        "P@5": 1.0,
+        "R@10": 0.3704,
+        "Hit@3": 1.0
+      },
+      "same_directory": {
+        "P@5": 1.0,
+        "R@10": 0.3704,
+        "Hit@3": 1.0
+      },
+      "most_frequent": {
+        "P@5": 0.2,
+        "R@10": 0.037,
+        "Hit@3": 0.0
+      }
+    },
+    {
+      "sha": "6d78542783f0",
+      "revealed": "src/shippingservice/Dockerfile",
+      "n_truth": 3,
+      "hindsight": {
+        "P@5": 0.6,
+        "R@10": 1.0,
+        "Hit@3": 1.0
+      },
+      "cochange_only": {
+        "P@5": 0.4,
+        "R@10": 1.0,
+        "Hit@3": 1.0
+      },
+      "same_directory": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      },
+      "most_frequent": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      }
+    },
+    {
+      "sha": "d48c8244d594",
+      "revealed": "src/adservice/build.gradle",
+      "n_truth": 1,
+      "hindsight": {
+        "P@5": 0.2,
+        "R@10": 1.0,
+        "Hit@3": 1.0
+      },
+      "cochange_only": {
+        "P@5": 0.2,
+        "R@10": 1.0,
+        "Hit@3": 1.0
+      },
+      "same_directory": {
+        "P@5": 0.2,
+        "R@10": 1.0,
+        "Hit@3": 1.0
+      },
+      "most_frequent": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      }
+    },
+    {
+      "sha": "46405eed26bc",
+      "revealed": "src/paymentservice/Dockerfile",
+      "n_truth": 1,
+      "hindsight": {
+        "P@5": 0.2,
+        "R@10": 1.0,
+        "Hit@3": 1.0
+      },
+      "cochange_only": {
+        "P@5": 0.2,
+        "R@10": 1.0,
+        "Hit@3": 1.0
+      },
+      "same_directory": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      },
+      "most_frequent": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      }
+    },
+    {
+      "sha": "7ac4a1e0af2e",
+      "revealed": "src/frontend/templates/header.html",
+      "n_truth": 9,
+      "hindsight": {
+        "P@5": 0.8,
+        "R@10": 0.7778,
+        "Hit@3": 1.0
+      },
+      "cochange_only": {
+        "P@5": 0.8,
+        "R@10": 0.7778,
+        "Hit@3": 1.0
+      },
+      "same_directory": {
+        "P@5": 0.8,
+        "R@10": 0.6667,
+        "Hit@3": 1.0
+      },
+      "most_frequent": {
+        "P@5": 0.4,
+        "R@10": 0.2222,
+        "Hit@3": 1.0
+      }
+    },
+    {
+      "sha": "35040acc561a",
+      "revealed": "kustomize/base/productcatalogservice.yaml",
+      "n_truth": 13,
+      "hindsight": {
+        "P@5": 1.0,
+        "R@10": 0.7692,
+        "Hit@3": 1.0
+      },
+      "cochange_only": {
+        "P@5": 1.0,
+        "R@10": 0.7692,
+        "Hit@3": 1.0
+      },
+      "same_directory": {
+        "P@5": 1.0,
+        "R@10": 0.7692,
+        "Hit@3": 1.0
+      },
+      "most_frequent": {
+        "P@5": 0.2,
+        "R@10": 0.0769,
+        "Hit@3": 0.0
+      }
+    },
+    {
+      "sha": "d91d669711df",
+      "revealed": "kustomize/components/custom-base-url/README.md",
+      "n_truth": 1,
+      "hindsight": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      },
+      "cochange_only": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      },
+      "same_directory": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      },
+      "most_frequent": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      }
+    },
+    {
+      "sha": "9cdbc60fddc0",
+      "revealed": "src/productcatalogservice/go.mod",
+      "n_truth": 7,
+      "hindsight": {
+        "P@5": 0.0,
+        "R@10": 0.2857,
+        "Hit@3": 0.0
+      },
+      "cochange_only": {
+        "P@5": 0.0,
+        "R@10": 0.1429,
+        "Hit@3": 0.0
+      },
+      "same_directory": {
+        "P@5": 0.4,
+        "R@10": 0.2857,
+        "Hit@3": 1.0
+      },
+      "most_frequent": {
+        "P@5": 0.0,
+        "R@10": 0.1429,
+        "Hit@3": 0.0
+      }
+    },
+    {
+      "sha": "614b8f83e863",
+      "revealed": "terraform/providers.tf",
+      "n_truth": 1,
+      "hindsight": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      },
+      "cochange_only": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      },
+      "same_directory": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      },
+      "most_frequent": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      }
+    },
+    {
+      "sha": "d97cd5a3d16c",
+      "revealed": "kustomize/components/container-images-tag/kustomization.yaml",
+      "n_truth": 22,
+      "hindsight": {
+        "P@5": 1.0,
+        "R@10": 0.4545,
+        "Hit@3": 1.0
+      },
+      "cochange_only": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      },
+      "same_directory": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      },
+      "most_frequent": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      }
+    },
+    {
+      "sha": "290cee1a0108",
+      "revealed": "docs/cloudshell-tutorial.md",
+      "n_truth": 2,
+      "hindsight": {
+        "P@5": 0.4,
+        "R@10": 1.0,
+        "Hit@3": 1.0
+      },
+      "cochange_only": {
+        "P@5": 0.4,
+        "R@10": 1.0,
+        "Hit@3": 1.0
+      },
+      "same_directory": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      },
+      "most_frequent": {
+        "P@5": 0.2,
+        "R@10": 0.5,
+        "Hit@3": 1.0
+      }
+    },
+    {
+      "sha": "e336671a45ce",
+      "revealed": ".github/workflows/push-deploy.yaml",
+      "n_truth": 1,
+      "hindsight": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      },
+      "cochange_only": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      },
+      "same_directory": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      },
+      "most_frequent": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      }
+    },
+    {
+      "sha": "b6ab75e675ea",
+      "revealed": "helm-chart/templates/productcatalogservice.yaml",
+      "n_truth": 10,
+      "hindsight": {
+        "P@5": 0.8,
+        "R@10": 0.9,
+        "Hit@3": 1.0
+      },
+      "cochange_only": {
+        "P@5": 0.8,
+        "R@10": 0.9,
+        "Hit@3": 1.0
+      },
+      "same_directory": {
+        "P@5": 0.8,
+        "R@10": 0.8,
+        "Hit@3": 1.0
+      },
+      "most_frequent": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      }
+    },
+    {
+      "sha": "129e10ad84ac",
+      "revealed": "kustomize/base/recommendationservice.yaml",
+      "n_truth": 12,
+      "hindsight": {
+        "P@5": 1.0,
+        "R@10": 0.8333,
+        "Hit@3": 1.0
+      },
+      "cochange_only": {
+        "P@5": 1.0,
+        "R@10": 0.8333,
+        "Hit@3": 1.0
+      },
+      "same_directory": {
+        "P@5": 1.0,
+        "R@10": 0.8333,
+        "Hit@3": 1.0
+      },
+      "most_frequent": {
+        "P@5": 0.2,
+        "R@10": 0.0833,
+        "Hit@3": 0.0
+      }
+    },
+    {
+      "sha": "b0ee84587d8b",
+      "revealed": "src/cartservice/src/cartservice.csproj",
+      "n_truth": 4,
+      "hindsight": {
+        "P@5": 0.4,
+        "R@10": 0.5,
+        "Hit@3": 1.0
+      },
+      "cochange_only": {
+        "P@5": 0.4,
+        "R@10": 0.75,
+        "Hit@3": 1.0
+      },
+      "same_directory": {
+        "P@5": 0.2,
+        "R@10": 0.25,
+        "Hit@3": 1.0
+      },
+      "most_frequent": {
+        "P@5": 0.2,
+        "R@10": 0.25,
+        "Hit@3": 0.0
+      }
+    },
+    {
+      "sha": "40e5400ed93d",
+      "revealed": "src/loadgenerator/Dockerfile",
+      "n_truth": 4,
+      "hindsight": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      },
+      "cochange_only": {
+        "P@5": 0.2,
+        "R@10": 0.25,
+        "Hit@3": 0.0
+      },
+      "same_directory": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      },
+      "most_frequent": {
+        "P@5": 0.2,
+        "R@10": 0.25,
+        "Hit@3": 0.0
+      }
+    },
+    {
+      "sha": "916eeac8e730",
+      "revealed": "src/cartservice/src/Dockerfile",
+      "n_truth": 12,
+      "hindsight": {
+        "P@5": 0.4,
+        "R@10": 0.5833,
+        "Hit@3": 1.0
+      },
+      "cochange_only": {
+        "P@5": 0.6,
+        "R@10": 0.6667,
+        "Hit@3": 1.0
+      },
+      "same_directory": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      },
+      "most_frequent": {
+        "P@5": 0.2,
+        "R@10": 0.1667,
+        "Hit@3": 0.0
+      }
+    },
+    {
+      "sha": "342916bac6b2",
+      "revealed": "helm-chart/templates/emailservice.yaml",
+      "n_truth": 11,
+      "hindsight": {
+        "P@5": 1.0,
+        "R@10": 0.8182,
+        "Hit@3": 1.0
+      },
+      "cochange_only": {
+        "P@5": 1.0,
+        "R@10": 0.9091,
+        "Hit@3": 1.0
+      },
+      "same_directory": {
+        "P@5": 1.0,
+        "R@10": 0.8182,
+        "Hit@3": 1.0
+      },
+      "most_frequent": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      }
+    },
+    {
+      "sha": "ed7b94190026",
+      "revealed": "src/checkoutservice/Dockerfile",
+      "n_truth": 12,
+      "hindsight": {
+        "P@5": 1.0,
+        "R@10": 0.75,
+        "Hit@3": 1.0
+      },
+      "cochange_only": {
+        "P@5": 1.0,
+        "R@10": 0.75,
+        "Hit@3": 1.0
+      },
+      "same_directory": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      },
+      "most_frequent": {
+        "P@5": 0.2,
+        "R@10": 0.25,
+        "Hit@3": 1.0
+      }
+    },
+    {
+      "sha": "cfa3a1469ddd",
+      "revealed": "kustomize/base/cartservice.yaml",
+      "n_truth": 12,
+      "hindsight": {
+        "P@5": 1.0,
+        "R@10": 0.8333,
+        "Hit@3": 1.0
+      },
+      "cochange_only": {
+        "P@5": 1.0,
+        "R@10": 0.8333,
+        "Hit@3": 1.0
+      },
+      "same_directory": {
+        "P@5": 1.0,
+        "R@10": 0.8333,
+        "Hit@3": 1.0
+      },
+      "most_frequent": {
+        "P@5": 0.2,
+        "R@10": 0.0833,
+        "Hit@3": 0.0
+      }
+    },
+    {
+      "sha": "ccfb59088a3b",
+      "revealed": "src/paymentservice/Dockerfile",
+      "n_truth": 12,
+      "hindsight": {
+        "P@5": 1.0,
+        "R@10": 0.75,
+        "Hit@3": 1.0
+      },
+      "cochange_only": {
+        "P@5": 1.0,
+        "R@10": 0.75,
+        "Hit@3": 1.0
+      },
+      "same_directory": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      },
+      "most_frequent": {
+        "P@5": 0.2,
+        "R@10": 0.25,
+        "Hit@3": 1.0
+      }
+    },
+    {
+      "sha": "e94eb63b1a18",
+      "revealed": "src/paymentservice/index.js",
+      "n_truth": 1,
+      "hindsight": {
+        "P@5": 0.2,
+        "R@10": 1.0,
+        "Hit@3": 1.0
+      },
+      "cochange_only": {
+        "P@5": 0.2,
+        "R@10": 1.0,
+        "Hit@3": 1.0
+      },
+      "same_directory": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      },
+      "most_frequent": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      }
+    },
+    {
+      "sha": "00912a8925d5",
+      "revealed": "docs/development-guide.md",
+      "n_truth": 1,
+      "hindsight": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      },
+      "cochange_only": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      },
+      "same_directory": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      },
+      "most_frequent": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      }
+    },
+    {
+      "sha": "18f3b732934a",
+      "revealed": "kustomize/base/currencyservice.yaml",
+      "n_truth": 14,
+      "hindsight": {
+        "P@5": 1.0,
+        "R@10": 0.7143,
+        "Hit@3": 1.0
+      },
+      "cochange_only": {
+        "P@5": 1.0,
+        "R@10": 0.7143,
+        "Hit@3": 1.0
+      },
+      "same_directory": {
+        "P@5": 1.0,
+        "R@10": 0.7143,
+        "Hit@3": 1.0
+      },
+      "most_frequent": {
+        "P@5": 0.2,
+        "R@10": 0.0714,
+        "Hit@3": 0.0
+      }
+    },
+    {
+      "sha": "0434be5e7e97",
+      "revealed": "src/frontend/go.mod",
+      "n_truth": 25,
+      "hindsight": {
+        "P@5": 1.0,
+        "R@10": 0.36,
+        "Hit@3": 1.0
+      },
+      "cochange_only": {
+        "P@5": 1.0,
+        "R@10": 0.32,
+        "Hit@3": 1.0
+      },
+      "same_directory": {
+        "P@5": 0.4,
+        "R@10": 0.08,
+        "Hit@3": 1.0
+      },
+      "most_frequent": {
+        "P@5": 0.4,
+        "R@10": 0.24,
+        "Hit@3": 1.0
+      }
+    },
+    {
+      "sha": "2b284b944396",
+      "revealed": "src/productcatalogservice/Dockerfile",
+      "n_truth": 3,
+      "hindsight": {
+        "P@5": 0.6,
+        "R@10": 1.0,
+        "Hit@3": 1.0
+      },
+      "cochange_only": {
+        "P@5": 0.4,
+        "R@10": 1.0,
+        "Hit@3": 1.0
+      },
+      "same_directory": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      },
+      "most_frequent": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      }
+    },
+    {
+      "sha": "5645f23bfb92",
+      "revealed": "src/recommendationservice/Dockerfile",
+      "n_truth": 13,
+      "hindsight": {
+        "P@5": 0.2,
+        "R@10": 0.2308,
+        "Hit@3": 0.0
+      },
+      "cochange_only": {
+        "P@5": 0.4,
+        "R@10": 0.4615,
+        "Hit@3": 1.0
+      },
+      "same_directory": {
+        "P@5": 0.4,
+        "R@10": 0.1538,
+        "Hit@3": 1.0
+      },
+      "most_frequent": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      }
+    },
+    {
+      "sha": "11a66b24a747",
+      "revealed": "kustomize/base/paymentservice.yaml",
+      "n_truth": 24,
+      "hindsight": {
+        "P@5": 1.0,
+        "R@10": 0.4167,
+        "Hit@3": 1.0
+      },
+      "cochange_only": {
+        "P@5": 1.0,
+        "R@10": 0.4167,
+        "Hit@3": 1.0
+      },
+      "same_directory": {
+        "P@5": 1.0,
+        "R@10": 0.4167,
+        "Hit@3": 1.0
+      },
+      "most_frequent": {
+        "P@5": 0.4,
+        "R@10": 0.125,
+        "Hit@3": 1.0
+      }
+    },
+    {
+      "sha": "fc3a1f72ed3b",
+      "revealed": "src/shippingservice/tracker.go",
+      "n_truth": 3,
+      "hindsight": {
+        "P@5": 0.4,
+        "R@10": 1.0,
+        "Hit@3": 1.0
+      },
+      "cochange_only": {
+        "P@5": 0.4,
+        "R@10": 0.6667,
+        "Hit@3": 1.0
+      },
+      "same_directory": {
+        "P@5": 0.4,
+        "R@10": 1.0,
+        "Hit@3": 1.0
+      },
+      "most_frequent": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      }
+    },
+    {
+      "sha": "b3a12eea02fb",
+      "revealed": ".github/workflows/ci-main.yaml",
+      "n_truth": 1,
+      "hindsight": {
+        "P@5": 0.2,
+        "R@10": 1.0,
+        "Hit@3": 1.0
+      },
+      "cochange_only": {
+        "P@5": 0.2,
+        "R@10": 1.0,
+        "Hit@3": 1.0
+      },
+      "same_directory": {
+        "P@5": 0.2,
+        "R@10": 1.0,
+        "Hit@3": 1.0
+      },
+      "most_frequent": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      }
+    },
+    {
+      "sha": "8d0c276ae9d3",
+      "revealed": ".github/workflows/install-dependencies.sh",
+      "n_truth": 4,
+      "hindsight": {
+        "P@5": 0.4,
+        "R@10": 0.75,
+        "Hit@3": 1.0
+      },
+      "cochange_only": {
+        "P@5": 0.4,
+        "R@10": 0.5,
+        "Hit@3": 1.0
+      },
+      "same_directory": {
+        "P@5": 0.6,
+        "R@10": 1.0,
+        "Hit@3": 1.0
+      },
+      "most_frequent": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      }
+    },
+    {
+      "sha": "7f0b249c5148",
+      "revealed": ".github/workflows/cleanup.yaml",
+      "n_truth": 1,
+      "hindsight": {
+        "P@5": 0.2,
+        "R@10": 1.0,
+        "Hit@3": 1.0
+      },
+      "cochange_only": {
+        "P@5": 0.2,
+        "R@10": 1.0,
+        "Hit@3": 1.0
+      },
+      "same_directory": {
+        "P@5": 0.2,
+        "R@10": 1.0,
+        "Hit@3": 1.0
+      },
+      "most_frequent": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      }
+    },
+    {
+      "sha": "b5a6d5efb9b7",
+      "revealed": ".github/workflows/cleanup.yaml",
+      "n_truth": 2,
+      "hindsight": {
+        "P@5": 0.4,
+        "R@10": 1.0,
+        "Hit@3": 1.0
+      },
+      "cochange_only": {
+        "P@5": 0.4,
+        "R@10": 1.0,
+        "Hit@3": 1.0
+      },
+      "same_directory": {
+        "P@5": 0.4,
+        "R@10": 1.0,
+        "Hit@3": 1.0
+      },
+      "most_frequent": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      }
+    },
+    {
+      "sha": "abc2b9bdef00",
+      "revealed": ".github/workflows/ci-main.yaml",
+      "n_truth": 2,
+      "hindsight": {
+        "P@5": 0.4,
+        "R@10": 1.0,
+        "Hit@3": 1.0
+      },
+      "cochange_only": {
+        "P@5": 0.4,
+        "R@10": 1.0,
+        "Hit@3": 1.0
+      },
+      "same_directory": {
+        "P@5": 0.4,
+        "R@10": 1.0,
+        "Hit@3": 1.0
+      },
+      "most_frequent": {
+        "P@5": 0.0,
+        "R@10": 0.5,
+        "Hit@3": 0.0
+      }
+    },
+    {
+      "sha": "b1716297d5bc",
+      "revealed": ".github/workflows/ci-pr-upstream.yaml",
+      "n_truth": 1,
+      "hindsight": {
+        "P@5": 0.2,
+        "R@10": 1.0,
+        "Hit@3": 1.0
+      },
+      "cochange_only": {
+        "P@5": 0.2,
+        "R@10": 1.0,
+        "Hit@3": 1.0
+      },
+      "same_directory": {
+        "P@5": 0.2,
+        "R@10": 1.0,
+        "Hit@3": 1.0
+      },
+      "most_frequent": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      }
+    },
+    {
+      "sha": "b08eccf576f4",
+      "revealed": "helm-chart/templates/opentelemetry-collector.yaml",
+      "n_truth": 4,
+      "hindsight": {
+        "P@5": 0.0,
+        "R@10": 0.25,
+        "Hit@3": 0.0
+      },
+      "cochange_only": {
+        "P@5": 0.0,
+        "R@10": 0.25,
+        "Hit@3": 0.0
+      },
+      "same_directory": {
+        "P@5": 0.0,
+        "R@10": 0.25,
+        "Hit@3": 0.0
+      },
+      "most_frequent": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      }
+    },
+    {
+      "sha": "ded9d0061d30",
+      "revealed": "docs/releasing/README.md",
+      "n_truth": 2,
+      "hindsight": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      },
+      "cochange_only": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      },
+      "same_directory": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      },
+      "most_frequent": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      }
+    },
+    {
+      "sha": "bba1870d9a5f",
+      "revealed": "docs/releasing/README.md",
+      "n_truth": 1,
+      "hindsight": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      },
+      "cochange_only": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      },
+      "same_directory": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      },
+      "most_frequent": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      }
+    },
+    {
+      "sha": "d0e4eb290ed4",
+      "revealed": ".github/workflows/ci-pr-upstream.yaml",
+      "n_truth": 1,
+      "hindsight": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      },
+      "cochange_only": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      },
+      "same_directory": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      },
+      "most_frequent": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      }
+    },
+    {
+      "sha": "a09e54eada44",
+      "revealed": ".github/workflows/ci-pr-upstream.yaml",
+      "n_truth": 1,
+      "hindsight": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      },
+      "cochange_only": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      },
+      "same_directory": {
+        "P@5": 0.2,
+        "R@10": 1.0,
+        "Hit@3": 1.0
+      },
+      "most_frequent": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      }
+    },
+    {
+      "sha": "b3455a31bf2d",
+      "revealed": ".github/workflows/deploy-pr.yaml",
+      "n_truth": 1,
+      "hindsight": {
+        "P@5": 0.2,
+        "R@10": 1.0,
+        "Hit@3": 1.0
+      },
+      "cochange_only": {
+        "P@5": 0.2,
+        "R@10": 1.0,
+        "Hit@3": 1.0
+      },
+      "same_directory": {
+        "P@5": 0.2,
+        "R@10": 1.0,
+        "Hit@3": 1.0
+      },
+      "most_frequent": {
+        "P@5": 0.0,
+        "R@10": 1.0,
+        "Hit@3": 0.0
+      }
+    },
+    {
+      "sha": "b9a978db9e01",
+      "revealed": "kustomize/components/shopping-assistant/README.md",
+      "n_truth": 3,
+      "hindsight": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      },
+      "cochange_only": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      },
+      "same_directory": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      },
+      "most_frequent": {
+        "P@5": 0.2,
+        "R@10": 0.3333,
+        "Hit@3": 1.0
+      }
+    },
+    {
+      "sha": "c7cb6d5bfd6e",
+      "revealed": ".github/workflows/cleanup.yaml",
+      "n_truth": 1,
+      "hindsight": {
+        "P@5": 0.2,
+        "R@10": 1.0,
+        "Hit@3": 0.0
+      },
+      "cochange_only": {
+        "P@5": 0.2,
+        "R@10": 1.0,
+        "Hit@3": 1.0
+      },
+      "same_directory": {
+        "P@5": 0.2,
+        "R@10": 1.0,
+        "Hit@3": 0.0
+      },
+      "most_frequent": {
+        "P@5": 0.0,
+        "R@10": 0.0,
+        "Hit@3": 0.0
+      }
+    }
+  ]
+}
