@@ -61,6 +61,8 @@ class Settings:
     demo_port: int = 8000  # where a workspace instance finds the demo (its tour uses it)
     cors_origins: tuple[str, ...] = ()  # browser origins allowed to call this API
     results_dir: Path = ROOT / "eval" / "results"
+    # Incidents and Tests (PS 04 / PS 08) are frozen: hidden on the demo unless this is set
+    show_frozen: bool = False
 
     @property
     def repos_dir(self) -> Path:
@@ -117,6 +119,7 @@ def load_settings(env: dict[str, str] | None = None) -> Settings:
         demo_port=int(get("DEMO_PORT", "8000")),
         cors_origins=tuple(o.strip() for o in get("CORS_ORIGINS").split(",") if o.strip()),
         results_dir=_path(get("RESULTS_DIR", "eval/results")),
+        show_frozen=get("SHOW_FROZEN", "false").lower() == "true",
     )
 
 

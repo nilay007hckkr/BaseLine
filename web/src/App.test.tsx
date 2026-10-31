@@ -12,7 +12,8 @@ const DEMO = {
   mode: "demo",
   demo_port: 8000,
   repo: null,
-  features: ["ask", "impact", "map", "incidents", "tests", "proof", "risk", "docs", "data"],
+  // Incidents and Tests are frozen and hidden on the demo unless SHOW_FROZEN=true
+  features: ["ask", "impact", "map", "proof", "risk", "docs", "data"],
 };
 const WORKSPACE = { ...DEMO, mode: "workspace", features: ["ask", "impact", "map", "proof"] };
 const EMPTY = { repo: null, job: "idle", stage: "", progress: 0, measured: false };
@@ -103,9 +104,11 @@ describe("first visit", () => {
     expect(screen.getByRole("heading", { name: /Fly through the history/ })).toBeDefined();
     fireEvent.click(skip);
     expect(screen.getByRole("heading", { level: 1, name: "HINDSIGHT" })).toBeDefined();
-    for (const name of ["Home", "Ask", "Impact", "Map", "Incidents", "Tests", "Proof", "More"]) {
+    for (const name of ["Home", "Ask", "Impact", "Map", "Proof", "More"]) {
       expect(within(nav()).getByRole("button", { name })).toBeDefined();
     }
+    expect(within(nav()).queryByRole("button", { name: "Incidents" })).toBeNull();
+    expect(within(nav()).queryByRole("button", { name: "Tests" })).toBeNull();
     expect(JSON.parse(window.localStorage.getItem(KEY) ?? "{}")).toMatchObject({ onboarded: true });
   });
 });
@@ -119,9 +122,9 @@ describe("tour without 3D", () => {
     fireEvent.click(screen.getByRole("button", { name: /Continue/ }));
     expect(screen.getByRole("heading", { name: /never makes things up/ })).toBeDefined();
     // a gate not reached yet cannot be opened
-    expect(
-      screen.getByRole<HTMLButtonElement>("button", { name: /Gate 4: Incidents/ }).disabled,
-    ).toBe(true);
+    expect(screen.getByRole<HTMLButtonElement>("button", { name: /Gate 4: Map/ }).disabled).toBe(
+      true,
+    );
     fireEvent.click(screen.getByRole("button", { name: /Gate 1: Ask why/ }));
     expect(screen.getByRole("heading", { name: /Why is the code like this\?/ })).toBeDefined();
     for (let i = 0; i < 5; i++) fireEvent.click(screen.getByRole("button", { name: /Continue/ }));

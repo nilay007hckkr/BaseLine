@@ -3,6 +3,7 @@ providers' HTTP APIs are replaced by fakes; every payload below is FIXTURE data.
 
 from __future__ import annotations
 
+import dataclasses
 import json
 import sqlite3
 import threading
@@ -140,7 +141,12 @@ def test_config_and_workspace_endpoints(tmp_path):
     base = _settings(tmp_path)
     demo = _client(base, None)
     config = demo.get("/api/config").json()
-    assert config["mode"] == "demo" and "incidents" in config["features"]
+    # Incidents and Tests are frozen: hidden on the demo unless SHOW_FROZEN=true
+    assert config["mode"] == "demo" and "ask" in config["features"]
+    assert "incidents" not in config["features"] and "tests" not in config["features"]
+    frozen = _client(dataclasses.replace(base, show_frozen=True), None).get("/api/config").json()
+    assert "incidents" in frozen["features"] and "tests" in frozen["features"]
+    demo = _client(base, None)
     assert demo.get("/api/workspace/status").status_code == 404
     assert (
         demo.post("/api/workspace/connect", json={"url": "https://github.com/a/b"}).status_code

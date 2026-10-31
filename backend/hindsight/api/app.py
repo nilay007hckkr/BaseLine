@@ -95,19 +95,17 @@ if _base.cors_origins:  # e.g. the workspace instance's tour calls the demo's AP
         allow_headers=["Content-Type"],
     )
 
-DEMO_FEATURES: tuple[Feature, ...] = (
-    "ask",
-    "impact",
-    "map",
-    "incidents",
-    "tests",
-    "proof",
-    "risk",
-    "docs",
-    "data",
-)
-# incidents and tests need the demo shop (its logs and browser tests)
-WORKSPACE_FEATURES: tuple[Feature, ...] = ("ask", "impact", "map", "proof", "risk", "docs", "data")
+DEMO_FEATURES: tuple[Feature, ...] = ("ask", "impact", "map", "proof", "risk", "docs", "data")
+# Incidents and Tests (PS 04 / PS 08) are frozen; SHOW_FROZEN=true brings them back on the demo.
+# They need the demo shop (its logs and browser tests), so a workspace never shows them.
+FROZEN_FEATURES: tuple[Feature, ...] = ("incidents", "tests")
+WORKSPACE_FEATURES: tuple[Feature, ...] = DEMO_FEATURES
+
+
+def demo_features(settings: Settings) -> list[Feature]:
+    if not settings.show_frozen:
+        return list(DEMO_FEATURES)
+    return [*DEMO_FEATURES[:3], *FROZEN_FEATURES, *DEMO_FEATURES[3:]]
 
 
 def get_base_settings() -> Settings:
@@ -171,7 +169,7 @@ def app_config(settings: Cfg, workspace: WorkspaceDep) -> AppConfig:
             mode="demo",
             demo_port=settings.demo_port,
             repo=service.primary_web(settings),
-            features=list(DEMO_FEATURES),
+            features=demo_features(settings),
         )
     return AppConfig(
         mode="workspace",

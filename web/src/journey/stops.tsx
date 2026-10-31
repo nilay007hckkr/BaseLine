@@ -79,40 +79,42 @@ export const STOPS: Stop[] = [
     },
   },
   {
-    gate: "Incidents",
-    title: "Which change broke the shop?",
-    text: "From the broken service to the change behind it.",
-    tryLabel: "Show the latest incident",
-    achievement: "incident",
+    gate: "Map",
+    title: "How do the services connect?",
+    text: "Calls read from the source code, each link with its evidence.",
+    tryLabel: "Show the services and their calls",
+    achievement: "map",
     run: async (hs) => {
-      const list = await hs.incidents();
-      const latest = list[0];
-      if (!latest) return <>No incidents recorded yet.</>;
-      const detail = await hs.incident(latest.id);
+      const g = await hs.graph("", 1, false, true);
+      const services = g.nodes.filter((n) => n.kind === "Service").length;
+      const calls = g.edges.filter((e) => e.kind === "CALLS").length;
+      if (!services) return <>No services found in this repository.</>;
       return (
         <>
-          {list.length} incidents detected (faults injected on purpose). Latest: {detail.summary}
+          <strong>{services}</strong> services and <strong>{calls}</strong> calls between them,
+          found in the code.
         </>
       );
     },
   },
   {
-    gate: "Healing",
-    title: "Tests that heal, never hide a bug.",
-    text: "Renamed buttons heal. Real bugs still fail.",
-    tryLabel: "Show the measured result",
+    gate: "Who knows it",
+    title: "Which code hangs on one person?",
+    text: "One author behind most changes, and whether they are still around.",
+    tryLabel: "Show the knowledge at risk",
+    achievement: "risk",
     run: async (hs) => {
-      const cards = await hs.scorecard();
-      const green = cards.find(
-        (c) => c.suite === "heal" && c.metric === "Cosmetic changes kept green",
-      );
-      const refused = cards.find((c) => c.suite === "heal" && c.metric === "Defects refused");
-      if (!green || !refused) return <>No healing results yet.</>;
+      const r = await hs.risk();
+      const weakest = [...r.components].sort((a, b) => a.bus_factor - b.bus_factor)[0];
       return (
         <>
-          {pct(green.value)} of {green.n} tests survived cosmetic changes; {pct(refused.value)} of{" "}
-          {refused.n} real defects were caught; {/(\d+) false heals/.exec(green.note)?.[1] ?? "?"}{" "}
-          false heals.
+          <strong>{r.files.length}</strong> files hang on one person
+          {weakest ? (
+            <>
+              ; <strong>{weakest.component}</strong> has a bus factor of {weakest.bus_factor}
+            </>
+          ) : null}
+          .
         </>
       );
     },
@@ -126,7 +128,10 @@ export const STOPS: Stop[] = [
     run: async (hs) => {
       const cards = await hs.scorecard();
       const r10 = cards.find((c) => c.suite === "impact" && c.metric === "R@10");
-      const change = cards.find((c) => c.suite === "rca" && c.metric === "Change Hit@1");
+      const trick = cards.find(
+        (c) => c.suite === "ask" && c.metric === "Not found on trick questions",
+      );
+      if (!r10 && !trick) return <>No results yet.</>;
       return (
         <>
           {r10 ? (
@@ -135,10 +140,9 @@ export const STOPS: Stop[] = [
               {pct(r10.baseline_value)}, n={r10.n}).{" "}
             </>
           ) : null}
-          {change ? (
+          {trick ? (
             <>
-              Incidents: guilty change ranked first in {pct(change.value)} (n={change.n},
-              synthetic).
+              Ask: {pct(trick.value)} of trick questions answered “not found” (n={trick.n}).
             </>
           ) : null}
         </>

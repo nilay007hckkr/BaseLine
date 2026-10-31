@@ -32,11 +32,11 @@ const DEMO_STEPS: Step[] = [
     color: "c-learned",
   },
   {
-    title: "Find the cause",
-    text: "From an error to the change behind it.",
-    example: "The demo shop's incidents",
-    view: "incidents",
-    color: "c-broken",
+    title: "Who knows it",
+    text: "Code that hangs on one person.",
+    example: "Bus factor per service",
+    view: "risk",
+    color: "c-people",
   },
 ];
 
@@ -70,36 +70,55 @@ interface Figure {
   vs: string;
 }
 
-/** The headline numbers, all read from the result files (nothing typed by hand). */
-function figures(cards: ScoreCard[]): Figure[] {
+function method(card: ScoreCard, name: string): number | undefined {
+  return card.methods.find((m) => m.name === name)?.value;
+}
+
+/** The headline numbers, all read from the result files and the data (nothing typed by hand). */
+function figures(cards: ScoreCard[], botShare: number | undefined): Figure[] {
   const out: Figure[] = [];
   const r10 = find(cards, "impact", "R@10");
   if (r10) {
+    const dir = method(r10, "same_directory");
+    const co = method(r10, "cochange_only");
     out.push({
       value: pct(r10.value),
-      label: "Files found",
-      vs: `top 10 · simple ${pct(r10.baseline_value)} · n=${String(r10.n)}`,
+      label: "Affected files found",
+      vs: [
+        "top 10",
+        dir === undefined ? "" : `same folder ${pct(dir)}`,
+        co === undefined ? "" : `changed-together ${pct(co)}`,
+        `n=${String(r10.n)}`,
+      ]
+        .filter(Boolean)
+        .join(" · "),
     });
   }
-  const change = find(cards, "rca", "Change Hit@1");
-  if (change) {
+  const trick = find(cards, "ask", "Not found on trick questions");
+  if (trick) {
+    const plain = method(trick, "model_without_sources");
     out.push({
-      value: pct(change.value),
-      label: "Culprit first",
-      vs: `latest deploy ${pct(change.baseline_value)} · n=${String(change.n)} · synthetic`,
+      value: pct(trick.value),
+      label: "Trick questions refused",
+      vs: [plain === undefined ? "" : `plain model ${pct(plain)}`, `n=${String(trick.n)}`]
+        .filter(Boolean)
+        .join(" · "),
     });
   }
-  const green = find(cards, "heal", "Cosmetic changes kept green");
-  if (green) {
+  const cited = find(cards, "ask", "Linked issue cited");
+  if (cited) {
     out.push({
-      value: pct(green.value),
-      label: "Tests healed",
-      vs: `simple ${pct(green.baseline_value)} · n=${String(green.n)} · synthetic`,
+      value: pct(cited.value),
+      label: "Right source cited",
+      vs: `the linked issue · n=${String(cited.n)}`,
     });
-    const falseHeals = /(\d+) false heals/.exec(green.note)?.[1];
-    if (falseHeals !== undefined) {
-      out.push({ value: falseHeals, label: "Bugs hidden", vs: "target 0" });
-    }
+  }
+  if (botShare !== undefined && botShare > 0) {
+    out.push({
+      value: pct(botShare),
+      label: "Bot commits set aside",
+      vs: "before anything is counted",
+    });
   }
   return out;
 }
@@ -111,12 +130,13 @@ export function Home() {
   const repo = useQuery({ queryKey: ["stats"], queryFn: api.stats });
   const s = (repo.data?.stats ?? null) as {
     commits?: number;
+    bot_share?: number;
     nodes_by_kind?: Record<string, number>;
   } | null;
   const web = (repo.data?.repo as { web?: string } | null)?.web ?? "";
   const name = web.replace("https://github.com/", "");
   const steps = mode === "workspace" ? WORKSPACE_STEPS : DEMO_STEPS;
-  const figs = figures(scores.data ?? []);
+  const figs = figures(scores.data ?? [], s?.bot_share);
   return (
     <>
       <div className="hello">Hi, explorer · {mode === "workspace" && name ? name : level.name}</div>

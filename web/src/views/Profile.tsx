@@ -1,10 +1,26 @@
 import { BadgeCheck, Lock } from "lucide-react";
+import type { Feature } from "../api/client";
+import { useInstance } from "../instance";
 import { ACHIEVEMENTS, XP_PER_LEVEL, useApp, type AchievementId } from "../state";
+
+/** Badges that belong to a page this instance may hide. */
+const NEEDS: Partial<Record<AchievementId, Feature>> = {
+  incident: "incidents",
+  test: "tests",
+  risk: "risk",
+  map: "map",
+  impact: "impact",
+  proof: "proof",
+};
 
 /** Your progress through Hindsight: level, XP and the badges for trying each feature. */
 export function Profile() {
   const { unlocked, xp, level, setOnboarded } = useApp();
-  const ids = Object.keys(ACHIEVEMENTS) as AchievementId[];
+  const { features } = useInstance();
+  const ids = (Object.keys(ACHIEVEMENTS) as AchievementId[]).filter((id) => {
+    const need = NEEDS[id];
+    return need === undefined || features.includes(need);
+  });
   return (
     <>
       <div className="label">Visitor</div>
@@ -22,7 +38,7 @@ export function Profile() {
         <div className="cm-row">
           <span>Badges</span>
           <span className="cm-row-value c-people">
-            {unlocked.length}/{ids.length}
+            {ids.filter((id) => unlocked.includes(id)).length}/{ids.length}
           </span>
         </div>
         <div className="cm-row">

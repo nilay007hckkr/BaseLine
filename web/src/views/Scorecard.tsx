@@ -250,7 +250,7 @@ export function Scorecard() {
   const { unlock } = useApp();
   const [tab, setTab] = useState<Tab>("impact");
   const q = useQuery({ queryKey: ["scorecard"], queryFn: api.scorecard });
-  const { mode } = useInstance();
+  const { mode, features } = useInstance();
   const status = useQuery({
     queryKey: ["workspace"],
     queryFn: api.workspaceStatus,
@@ -259,7 +259,13 @@ export function Scorecard() {
   useEffect(() => {
     unlock("proof");
   }, [unlock]);
-  const tabs = mode === "workspace" ? TABS.filter((t) => t.key === "impact") : TABS;
+  // the incident and healing suites belong to the frozen Incidents and Tests pages
+  const tabs = TABS.filter((t) => {
+    if (t.key === "rca") return features.includes("incidents");
+    if (t.key === "heal") return features.includes("tests");
+    if (t.key === "elsewhere") return mode === "demo";
+    return true;
+  });
   return (
     <>
       <PageHead

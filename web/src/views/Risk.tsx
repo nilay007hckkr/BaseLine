@@ -1,9 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
+import { useEffect } from "react";
 import { api } from "../api/client";
+import { useApp } from "../state";
 import { ErrorBox, Loading, PageHead, Section, fmtDate, pct } from "../ui";
 
 export function Risk() {
+  const { unlock } = useApp();
   const q = useQuery({ queryKey: ["risk"], queryFn: api.risk });
+  useEffect(() => {
+    if (q.isSuccess) unlock("risk");
+  }, [q.isSuccess, unlock]);
   if (q.isPending) return <Loading />;
   if (q.isError) return <ErrorBox error={q.error} />;
   const { files, components, min_changes, inactive_after_days } = q.data;

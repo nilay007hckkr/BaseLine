@@ -37,6 +37,8 @@ export const ACHIEVEMENTS = {
   trick: { title: "Not fooled", text: "Saw Hindsight refuse a trick question", xp: 150 },
   impact: { title: "Blast radius", text: "Checked what a change affects", xp: 100 },
   map: { title: "Cartographer", text: "Explored the knowledge map", xp: 100 },
+  risk: { title: "Knowledge keeper", text: "Found code that hangs on one person", xp: 100 },
+  // the frozen Incidents and Tests pages (shown only with SHOW_FROZEN=true)
   incident: { title: "First responder", text: "Opened an incident", xp: 100 },
   test: { title: "Gardener", text: "Ran a self-healing test", xp: 100 },
   rate: { title: "Fact checker", text: "Rated an answer", xp: 150 },
