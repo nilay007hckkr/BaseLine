@@ -1,0 +1,3097 @@
+{
+  "name": "ask_answer_key",
+  "created_at": "2026-10-31T23:23:25Z",
+  "command": "make eval-ask",
+  "code_sha": "4734eddb6bb181d1af77b5be9620e97d9a3ca7c7",
+  "repo": {
+    "url": "https://github.com/GoogleCloudPlatform/microservices-demo",
+    "web": "https://github.com/GoogleCloudPlatform/microservices-demo",
+    "owner": "GoogleCloudPlatform",
+    "name": "microservices-demo",
+    "path": "/home/nilay/code/hindsight/data/repos/GoogleCloudPlatform__microservices-demo",
+    "head_sha": "c7cb6d5bfd6ea3aed768634ebbcb98cb7a523712",
+    "head_ts": 1793132320
+  },
+  "model": "none configured (quoted answers)",
+  "questions_file": "eval/questions.yaml",
+  "trick_file": "eval/questions-trick.yaml",
+  "sets": {
+    "answerable": {
+      "n": 68,
+      "methods": {
+        "hindsight": {
+          "answered": {
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0
+          },
+          "gold_in_sources": {
+            "value": 0.9118,
+            "ci_low": 0.8382,
+            "ci_high": 0.9706
+          },
+          "gold_cited": {
+            "value": 0.7794,
+            "ci_low": 0.6765,
+            "ci_high": 0.8676
+          }
+        },
+        "keyword_only": {
+          "gold_in_sources": {
+            "value": 0.4118,
+            "ci_low": 0.2941,
+            "ci_high": 0.5294
+          }
+        }
+      }
+    },
+    "answerable_no_hash": {
+      "n": 68,
+      "methods": {
+        "hindsight": {
+          "answered": {
+            "value": 0.8971,
+            "ci_low": 0.8235,
+            "ci_high": 0.9559
+          },
+          "gold_in_sources": {
+            "value": 0.4706,
+            "ci_low": 0.3529,
+            "ci_high": 0.5735
+          },
+          "gold_cited": {
+            "value": 0.1912,
+            "ci_low": 0.1029,
+            "ci_high": 0.2794
+          }
+        },
+        "keyword_only": {
+          "gold_in_sources": {
+            "value": 0.4118,
+            "ci_low": 0.2941,
+            "ci_high": 0.5294
+          }
+        }
+      }
+    },
+    "trick": {
+      "n": 12,
+      "n_plain_model_replies": 0,
+      "methods": {
+        "hindsight": {
+          "not_found": {
+            "value": 0.75,
+            "ci_low": 0.5,
+            "ci_high": 1.0
+          }
+        }
+      }
+    }
+  },
+  "rows": [
+    {
+      "id": "q001",
+      "set": "answerable",
+      "question": "Why was src/frontend/main.go changed in commit 342a2d5 (\"Resolve compilation error in frontend\")?",
+      "gold": [
+        "gh:31"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": true,
+      "claims": 3,
+      "answer": "Commit 342a2d5 by Eno Compton on 2018-08-27 changed main.go: Resolve compilation error in frontend (#32) | Pull request #32: Resolve compilation error in frontend",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/342a2d5754d5014cdda702465d7f0fa51ad18484",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/32"
+      ],
+      "notes": [
+        "answered from the history of commit 342a2d5"
+      ]
+    },
+    {
+      "id": "q001",
+      "set": "answerable_no_hash",
+      "question": "Why was src/frontend/main.go changed (\"Resolve compilation error in frontend\")?",
+      "gold": [
+        "gh:31"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": true,
+      "claims": 3,
+      "answer": "Pull request #3477: fix: resolve checkout frontend error rate >20% (P2 alert) \u2014 \u201cFile \u00b7 Change \u00b7 \u00b7 ------ \u00b7 -------- \u00b7 \u00b7 src/productcatalogservice/product_catalog.go \u00b7 Race condition fix: single parseCatalog() call + mutex sync \u00b7 \u00b7 src/productcatalogservice/product_catalog_test.go \u00b7 New concurrent race tests \u00b7 \u00b7 src/productcatalogservice/server.go \u00b7 gRPC keepalive + signal handler mutex fix \u00b7 \u00b7 src\u201d | Issue #31: Frontend doesn't compile. \u2014 \u201cCompiling the frontend at this commit (currently master) produces this error:\u201d",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/issues/31",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/3477"
+      ],
+      "notes": []
+    },
+    {
+      "id": "q002",
+      "set": "answerable",
+      "question": "Why was .travis.yml changed in commit 6d96944 (\"travis: add docker build for images\")?",
+      "gold": [
+        "gh:37"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": false,
+      "claims": 3,
+      "answer": "Commit 6d96944 by Ahmet Alp Balkan on 2018-09-06 changed .travis.yml, skaffold.yaml: travis: add docker build for images (#38) | Pull request #38: travis: add docker build for images",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/6d969441585ade8c91c235115c7cdb12ac61354f",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/38"
+      ],
+      "notes": [
+        "answered from the history of commit 6d96944"
+      ]
+    },
+    {
+      "id": "q002",
+      "set": "answerable_no_hash",
+      "question": "Why was .travis.yml changed (\"travis: add docker build for images\")?",
+      "gold": [
+        "gh:37"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": false,
+      "gold_cited": false,
+      "keyword_gold_in_top": false,
+      "claims": 3,
+      "answer": "Commit 6d96944 by Ahmet Alp Balkan on 2018-09-06 changed .travis.yml, skaffold.yaml: travis: add docker build for images (#38) | Pull request #38: travis: add docker build for images",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/6d969441585ade8c91c235115c7cdb12ac61354f",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/38"
+      ],
+      "notes": []
+    },
+    {
+      "id": "q003",
+      "set": "answerable",
+      "question": "Why was src/frontend/main.go changed in commit 0f23d6b (\"frontend: add simple /healthz endpoint\")?",
+      "gold": [
+        "gh:34"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": true,
+      "claims": 3,
+      "answer": "Commit 0f23d6b by Ahmet Alp Balkan on 2018-09-05 changed frontend.yaml, main.go: frontend: add simple /healthz endpoint | Issue #34: frontend: decouple healthcheck endpoint from path=/",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/0f23d6bbf9ac1f7b9f5f8e19cf71fa83f9d62d0b",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/issues/34"
+      ],
+      "notes": [
+        "answered from the history of commit 0f23d6b"
+      ]
+    },
+    {
+      "id": "q003",
+      "set": "answerable_no_hash",
+      "question": "Why was src/frontend/main.go changed (\"frontend: add simple /healthz endpoint\")?",
+      "gold": [
+        "gh:34"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": false,
+      "keyword_gold_in_top": true,
+      "claims": 3,
+      "answer": "Commit 0f23d6b by Ahmet Alp Balkan on 2018-09-05 changed frontend.yaml, main.go: frontend: add simple /healthz endpoint | Pull request #3304: feat: structured health check endpoints with dependency status \u2014 \u201cWire /health (structured JSON) and /livez (simple liveness) endpoints into the frontend service\u201d",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/0f23d6bbf9ac1f7b9f5f8e19cf71fa83f9d62d0b",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/3304"
+      ],
+      "notes": []
+    },
+    {
+      "id": "q004",
+      "set": "answerable",
+      "question": "Why was src/emailservice/Dockerfile changed in commit 2924250 (\"emailservice Image Optimization\")?",
+      "gold": [
+        "gh:49"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": false,
+      "claims": 3,
+      "answer": "Commit 2924250 by Colin Nelson on 2018-09-25 changed Dockerfile: emailservice Image Optimization (#51) | Pull request #51: emailservice Image Optimization",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/29242504491623edd1e6089c104c6fbce24646f7",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/51"
+      ],
+      "notes": [
+        "answered from the history of commit 2924250"
+      ]
+    },
+    {
+      "id": "q004",
+      "set": "answerable_no_hash",
+      "question": "Why was src/emailservice/Dockerfile changed (\"emailservice Image Optimization\")?",
+      "gold": [
+        "gh:49"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": false,
+      "gold_cited": false,
+      "keyword_gold_in_top": false,
+      "claims": 3,
+      "answer": "Commit be21220 by Mathieu Benoit on 2022-08-31 changed renovate.json, Dockerfile, logger.py and 3 more files: `python`:3.9 + `recommendation` and `emailservice` container images optimization (#984) \u2014 \u201coptimize recommendationservice Dockerfile like emailservice\u201d | Commit 2924250 by Colin Nelson on 2018-09-25 changed Dockerfile: emailservice Image Optimization (#51)",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/29242504491623edd1e6089c104c6fbce24646f7",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/be21220dcb7f276eb60495128a2b70e088824244"
+      ],
+      "notes": []
+    },
+    {
+      "id": "q005",
+      "set": "answerable",
+      "question": "Why was src/cartservice/src/services/HealthCheckService.cs changed in commit be65dd1 (\"cartservice: fix health Check() method signature\")?",
+      "gold": [
+        "gh:50"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": true,
+      "claims": 3,
+      "answer": "Commit be65dd1 by Ahmet Alp Balkan on 2018-09-28 changed HealthImpl.cs, cartservice.csproj: cartservice: fix health Check() method signature (#57) | Pull request #57: cartservice: fix health Check() method signature",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/be65dd1fcd739d48e51ff60e3267cdc6b2b878f6",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/57"
+      ],
+      "notes": [
+        "answered from the history of commit be65dd1"
+      ]
+    },
+    {
+      "id": "q005",
+      "set": "answerable_no_hash",
+      "question": "Why was src/cartservice/src/services/HealthCheckService.cs changed (\"cartservice: fix health Check() method signature\")?",
+      "gold": [
+        "gh:50"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": false,
+      "keyword_gold_in_top": true,
+      "claims": 3,
+      "answer": "Commit be65dd1 by Ahmet Alp Balkan on 2018-09-28 changed HealthImpl.cs, cartservice.csproj: cartservice: fix health Check() method signature (#57) | Pull request #57: cartservice: fix health Check() method signature",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/be65dd1fcd739d48e51ff60e3267cdc6b2b878f6",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/57"
+      ],
+      "notes": []
+    },
+    {
+      "id": "q006",
+      "set": "answerable",
+      "question": "Why was src/adservice/Dockerfile changed in commit 571285d (\"Optimized adservice Image Size\")?",
+      "gold": [
+        "gh:64"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": false,
+      "gold_cited": false,
+      "keyword_gold_in_top": false,
+      "claims": 3,
+      "answer": "Commit 571285d by Colin Nelson on 2018-10-09 changed Dockerfile: Optimized adservice Image Size (#67) | Pull request #67: Optimized adservice Image Size",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/571285d9aa497153253bcc908d0a59edf59a8549",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/67"
+      ],
+      "notes": [
+        "answered from the history of commit 571285d"
+      ]
+    },
+    {
+      "id": "q006",
+      "set": "answerable_no_hash",
+      "question": "Why was src/adservice/Dockerfile changed (\"Optimized adservice Image Size\")?",
+      "gold": [
+        "gh:64"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": false,
+      "gold_cited": false,
+      "keyword_gold_in_top": false,
+      "claims": 3,
+      "answer": "src/adservice/Dockerfile | Pull request #3577: perf(adservice): optimize Docker image layers by copying only installDist artifacts",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/3577",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/67#discussion_r223081667"
+      ],
+      "notes": []
+    },
+    {
+      "id": "q007",
+      "set": "answerable",
+      "question": "Why was src/currencyservice/Dockerfile changed in commit 34227a6 (\"currencyservice: Optimized Docker image with multi stage builds, and using alpine as a base image\")?",
+      "gold": [
+        "gh:69"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": false,
+      "keyword_gold_in_top": false,
+      "claims": 3,
+      "answer": "Commit 34227a6 by Colin Nelson on 2018-10-09 changed Dockerfile: currencyservice: Optimized Docker image with multi stage builds, and using alpine as a base image. (#70) | Pull request #70: Optimized currencyservice's Image size",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/34227a64a6f9125e4728bd94ff1e71cdc409136b",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/70"
+      ],
+      "notes": [
+        "answered from the history of commit 34227a6"
+      ]
+    },
+    {
+      "id": "q007",
+      "set": "answerable_no_hash",
+      "question": "Why was src/currencyservice/Dockerfile changed (\"currencyservice: Optimized Docker image with multi stage builds, and using alpine as a base image\")?",
+      "gold": [
+        "gh:69"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": false,
+      "gold_cited": false,
+      "keyword_gold_in_top": false,
+      "claims": 3,
+      "answer": "Commit 34227a6 by Colin Nelson on 2018-10-09 changed Dockerfile: currencyservice: Optimized Docker image with multi stage builds, and using alpine as a base image. (#70) | Commit 571285d by Colin Nelson on 2018-10-09 changed Dockerfile: Optimized adservice Image Size (#67) \u2014 \u201cadservice: Reduced docker image size to ~165MB (down from ~886MB) by switching to alpine and using multi stage builds\u201d",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/34227a64a6f9125e4728bd94ff1e71cdc409136b",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/571285d9aa497153253bcc908d0a59edf59a8549"
+      ],
+      "notes": []
+    },
+    {
+      "id": "q008",
+      "set": "answerable",
+      "question": "Why was .travis.yml changed in commit 51da493 (\"Fix build for skaffold 0.16\")?",
+      "gold": [
+        "gh:76"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": true,
+      "claims": 3,
+      "answer": "Commit 51da493 by Ahmet Alp Balkan on 2018-10-15 changed .travis.yml, skaffold.yaml: Fix build for skaffold 0.16 (#77) | Issue #76: Update skaffold config for compatibility with newer versions \u2014 \u201cRunning skaffold run on v 0.16.0 gives error: config version out of date: run skaffold fix\u201d",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/51da4930aef87c5a1192824407c9b76b5ef8e330",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/issues/76"
+      ],
+      "notes": [
+        "answered from the history of commit 51da493"
+      ]
+    },
+    {
+      "id": "q008",
+      "set": "answerable_no_hash",
+      "question": "Why was .travis.yml changed (\"Fix build for skaffold 0.16\")?",
+      "gold": [
+        "gh:76"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": false,
+      "keyword_gold_in_top": true,
+      "claims": 3,
+      "answer": "There are already 3 places that refer to the skaffold version (cloudbuild.yaml, .travis.yml, skaffold.yaml) and documenting it would add a 4th place. | It might be because I keep changing the skaffold.yaml spec version and updating skaffold version in .travis.yml.",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/issues/127#issuecomment-456276410",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/98#discussion_r237686303"
+      ],
+      "notes": []
+    },
+    {
+      "id": "q009",
+      "set": "answerable",
+      "question": "Why was src/productcatalogservice/server.go changed in commit c91dca7 (\"Toggle bug in ProductCatalogService for demos\")?",
+      "gold": [
+        "gh:84"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": false,
+      "claims": 3,
+      "answer": "Commit c91dca7 by Th\u00e9o Chamley on 2018-12-17 changed README.md, server.go: Toggle bug in ProductCatalogService for demos (#85) | Pull request #85: Toggle bug in ProductCatalogService for demos",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/c91dca764f5f29b26428fe21f44cee27016543e5",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/85"
+      ],
+      "notes": [
+        "answered from the history of commit c91dca7"
+      ]
+    },
+    {
+      "id": "q009",
+      "set": "answerable_no_hash",
+      "question": "Why was src/productcatalogservice/server.go changed (\"Toggle bug in ProductCatalogService for demos\")?",
+      "gold": [
+        "gh:84"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": false,
+      "gold_cited": false,
+      "keyword_gold_in_top": false,
+      "claims": 3,
+      "answer": "Commit c91dca7 by Th\u00e9o Chamley on 2018-12-17 changed README.md, server.go: Toggle bug in ProductCatalogService for demos (#85) | Pull request #85: Toggle bug in ProductCatalogService for demos",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/c91dca764f5f29b26428fe21f44cee27016543e5",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/85"
+      ],
+      "notes": []
+    },
+    {
+      "id": "q010",
+      "set": "answerable",
+      "question": "Why was src/adservice/Dockerfile changed in commit 52a9d34 (\"Adservice: Add libc6-compat runtime dependency\")?",
+      "gold": [
+        "gh:89"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": false,
+      "claims": 3,
+      "answer": "Commit 52a9d34 by Romain Vrignaud on 2018-10-29 changed Dockerfile: Adservice: Add libc6-compat runtime dependency (#90) | Pull request #90: Adservice: Add libc6-compat runtime dependency",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/52a9d346f651f51b121d716fe8ec5f9efa39dbfe",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/90"
+      ],
+      "notes": [
+        "answered from the history of commit 52a9d34"
+      ]
+    },
+    {
+      "id": "q010",
+      "set": "answerable_no_hash",
+      "question": "Why was src/adservice/Dockerfile changed (\"Adservice: Add libc6-compat runtime dependency\")?",
+      "gold": [
+        "gh:89"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": false,
+      "keyword_gold_in_top": false,
+      "claims": 3,
+      "answer": "Commit 52a9d34 by Romain Vrignaud on 2018-10-29 changed Dockerfile: Adservice: Add libc6-compat runtime dependency (#90) | Pull request #90: Adservice: Add libc6-compat runtime dependency",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/52a9d346f651f51b121d716fe8ec5f9efa39dbfe",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/90"
+      ],
+      "notes": []
+    },
+    {
+      "id": "q011",
+      "set": "answerable",
+      "question": "Why was src/emailservice/requirements.txt changed in commit 9b055ca (\"update requests package\")?",
+      "gold": [
+        "gh:91"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": false,
+      "claims": 3,
+      "answer": "Commit 9b055ca by davidstanke on 2018-10-30: update requests package (#92) | Pull request #92: update requests package",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/9b055cabfbf1f4ed370f1ac17657c5a23bae1681",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/92"
+      ],
+      "notes": [
+        "answered from the history of commit 9b055ca"
+      ]
+    },
+    {
+      "id": "q011",
+      "set": "answerable_no_hash",
+      "question": "Why was src/emailservice/requirements.txt changed (\"update requests package\")?",
+      "gold": [
+        "gh:91"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": false,
+      "gold_cited": false,
+      "keyword_gold_in_top": false,
+      "claims": 3,
+      "answer": "Renovate's update to src/emailservice/requirements.txt and src/recommendationservice/requirements.txt failed. | It looks like this pull-request failed to regenerate src/recommendationservice/requirements.txt and src/emailservice/requirements.txt.",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/2515#issuecomment-2082481341",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/2548#issuecomment-2107405221"
+      ],
+      "notes": []
+    },
+    {
+      "id": "q012",
+      "set": "answerable",
+      "question": "Why was README.md changed in commit 8b5d64b (\"README: add disk space + IP troubleshooting\")?",
+      "gold": [
+        "gh:94"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": false,
+      "claims": 3,
+      "answer": "Commit 8b5d64b by Ahmet Alp Balkan on 2018-11-07 changed README.md: README: add disk space + IP troubleshooting (#95) | Pull request #95: README: add disk space + IP troubleshooting",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/8b5d64b61f28665e9fc71e46ae1484423dedad2b",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/95"
+      ],
+      "notes": [
+        "answered from the history of commit 8b5d64b"
+      ]
+    },
+    {
+      "id": "q012",
+      "set": "answerable_no_hash",
+      "question": "Why was README.md changed (\"README: add disk space + IP troubleshooting\")?",
+      "gold": [
+        "gh:94"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": false,
+      "keyword_gold_in_top": false,
+      "claims": 3,
+      "answer": "Commit 8b5d64b by Ahmet Alp Balkan on 2018-11-07 changed README.md: README: add disk space + IP troubleshooting (#95) | Pull request #95: README: add disk space + IP troubleshooting",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/8b5d64b61f28665e9fc71e46ae1484423dedad2b",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/95"
+      ],
+      "notes": []
+    },
+    {
+      "id": "q013",
+      "set": "answerable",
+      "question": "Why was README.md changed in commit 8dabe7f (\"remove gcr repo name from images\")?",
+      "gold": [
+        "gh:17"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": false,
+      "claims": 3,
+      "answer": "Commit 8dabe7f by Dave Stanke on 2018-12-03 changed README.md, cloudbuild.yaml, adservice.yaml and 11 more files: remove gcr repo name from images (#98) | Pull request #98: remove gcr repo name from images",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/8dabe7ff94368a9a03da124dc2b2c2c0e659c961",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/98"
+      ],
+      "notes": [
+        "answered from the history of commit 8dabe7f"
+      ]
+    },
+    {
+      "id": "q013",
+      "set": "answerable_no_hash",
+      "question": "Why was README.md changed (\"remove gcr repo name from images\")?",
+      "gold": [
+        "gh:17"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": false,
+      "gold_cited": false,
+      "keyword_gold_in_top": false,
+      "claims": 3,
+      "answer": "Commit 8dabe7f by Dave Stanke on 2018-12-03 changed README.md, cloudbuild.yaml, adservice.yaml and 11 more files: remove gcr repo name from images (#98) | Pull request #98: remove gcr repo name from images",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/8dabe7ff94368a9a03da124dc2b2c2c0e659c961",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/98"
+      ],
+      "notes": []
+    },
+    {
+      "id": "q014",
+      "set": "answerable",
+      "question": "Why was src/adservice/src/main/java/hipstershop/AdService.java changed in commit 33ca3b6 (\"Unify jaeger enabling method for adservice\")?",
+      "gold": [
+        "gh:114"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": false,
+      "claims": 3,
+      "answer": "Commit 33ca3b6 by rghetia on 2019-01-09 changed adservice.yaml, AdService.java: Unify jaeger enabling method for adservice. (#115) | Pull request #115: Unify jaeger enabling method for adservice.",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/33ca3b63d82698035ffc1230dcb650885a005197",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/115"
+      ],
+      "notes": [
+        "text matching the question's words is not about adservice, src/adservice/src/main/java/hipstershop/adservice.java, so it is not used",
+        "answered from the history of commit 33ca3b6"
+      ]
+    },
+    {
+      "id": "q014",
+      "set": "answerable_no_hash",
+      "question": "Why was src/adservice/src/main/java/hipstershop/AdService.java changed (\"Unify jaeger enabling method for adservice\")?",
+      "gold": [
+        "gh:114"
+      ],
+      "status": "not_found",
+      "mode": "none",
+      "gold_in_sources": false,
+      "gold_cited": false,
+      "keyword_gold_in_top": false,
+      "claims": 0,
+      "answer": "",
+      "cited": [],
+      "notes": [
+        "text matching the question's words is not about adservice, src/adservice/src/main/java/hipstershop/adservice.java, so it is not used",
+        "best evidence covers 60% of the question (needs 60%)"
+      ]
+    },
+    {
+      "id": "q015",
+      "set": "answerable",
+      "question": "Why was README.md changed in commit ea424cb (\"add skaffold version note\")?",
+      "gold": [
+        "gh:127"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": true,
+      "claims": 3,
+      "answer": "Commit ea424cb by Ahmet Alp Balkan on 2019-01-22 changed README.md: add skaffold version note | Issue #127: skaffold version skew causing issues",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/ea424cb9f7a23f69d0ce1b7793c28ec6660550df",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/issues/127"
+      ],
+      "notes": [
+        "answered from the history of commit ea424cb"
+      ]
+    },
+    {
+      "id": "q015",
+      "set": "answerable_no_hash",
+      "question": "Why was README.md changed (\"add skaffold version note\")?",
+      "gold": [
+        "gh:127"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": false,
+      "gold_cited": false,
+      "keyword_gold_in_top": true,
+      "claims": 2,
+      "answer": "Commit ea424cb by Ahmet Alp Balkan on 2019-01-22 changed README.md: add skaffold version note | Adding a small note of \"ensure latest version of skaffold\" will make it better for cases when you work with demo, then don't do anything for a while, then get back to it.",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/ea424cb9f7a23f69d0ce1b7793c28ec6660550df",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/issues/127#issuecomment-456307027"
+      ],
+      "notes": []
+    },
+    {
+      "id": "q016",
+      "set": "answerable",
+      "question": "Why was README.md changed in commit 1d452f4 (\"Adds make-release script, static k8s manifests\")?",
+      "gold": [
+        "gh:75"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": false,
+      "claims": 3,
+      "answer": "Commit 1d452f4 by Megan O'Keefe on 2019-01-29 changed README.md, README.md, make-docker-images.sh and 3 more files: Adds make-release script, static k8s manifests (#132) | Pull request #132: Adds make-release script, static k8s manifests",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/1d452f449a56608e72d88372ae47b8dce9e364c8",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/132"
+      ],
+      "notes": [
+        "answered from the history of commit 1d452f4"
+      ]
+    },
+    {
+      "id": "q016",
+      "set": "answerable_no_hash",
+      "question": "Why was README.md changed (\"Adds make-release script, static k8s manifests\")?",
+      "gold": [
+        "gh:75"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": false,
+      "gold_cited": false,
+      "keyword_gold_in_top": false,
+      "claims": 3,
+      "answer": "Commit 1d452f4 by Megan O'Keefe on 2019-01-29 changed README.md, README.md, make-docker-images.sh and 3 more files: Adds make-release script, static k8s manifests (#132) | Pull request #132: Adds make-release script, static k8s manifests",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/1d452f449a56608e72d88372ae47b8dce9e364c8",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/132"
+      ],
+      "notes": []
+    },
+    {
+      "id": "q017",
+      "set": "answerable",
+      "question": "Why was src/loadgenerator/locustfile.py changed in commit 458bf50 (\"credit card expired\")?",
+      "gold": [
+        "gh:164"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": false,
+      "claims": 3,
+      "answer": "Commit 458bf50 by Ahmet Alp Balkan on 2019-02-27 changed locustfile.py: credit card expired (#167) | Pull request #167: credit card expired",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/458bf50b95b3cf367f43dc87bf430f8159076760",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/167"
+      ],
+      "notes": [
+        "answered from the history of commit 458bf50"
+      ]
+    },
+    {
+      "id": "q017",
+      "set": "answerable_no_hash",
+      "question": "Why was src/loadgenerator/locustfile.py changed (\"credit card expired\")?",
+      "gold": [
+        "gh:164"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": false,
+      "gold_cited": false,
+      "keyword_gold_in_top": false,
+      "claims": 3,
+      "answer": "paymentservice \u00b7 Node.js \u00b7 Charges the given credit card info (mock) with the given amount and returns a transaction ID. | Commit 458bf50 by Ahmet Alp Balkan on 2019-02-27 changed locustfile.py: credit card expired (#167)",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/blob/HEAD/README.md",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/458bf50b95b3cf367f43dc87bf430f8159076760"
+      ],
+      "notes": []
+    },
+    {
+      "id": "q018",
+      "set": "answerable",
+      "question": "Why was docs/releasing/make-release-artifacts.sh changed in commit a0a9852 (\"hack: comment out autogenerated warning\")?",
+      "gold": [
+        "gh:181"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": false,
+      "claims": 3,
+      "answer": "Commit a0a9852 by Ahmet Alp Balkan on 2019-03-08 changed make-release-artifacts.sh, istio-manifests.yaml, kubernetes-manifests.yaml: hack: comment out autogenerated warning (#182) | Pull request #182: hack: comment out autogenerated warning",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/a0a9852afe969ff6d70e59f5ea75942b971eea78",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/182"
+      ],
+      "notes": [
+        "answered from the history of commit a0a9852"
+      ]
+    },
+    {
+      "id": "q018",
+      "set": "answerable_no_hash",
+      "question": "Why was docs/releasing/make-release-artifacts.sh changed (\"hack: comment out autogenerated warning\")?",
+      "gold": [
+        "gh:181"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": false,
+      "gold_cited": false,
+      "keyword_gold_in_top": false,
+      "claims": 3,
+      "answer": "yup, the next release that happens, whoever runs the make-release.sh, the region tags will appear after # ---------------------------------------------------------- # WARNING: This file is autogenerated. | Commit a0a9852 by Ahmet Alp Balkan on 2019-03-08 changed make-release-artifacts.sh, istio-manifests.yaml, kubernetes-manifests.yaml: hack: comment out autogenerated warning (#182)",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/a0a9852afe969ff6d70e59f5ea75942b971eea78",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/684#discussion_r784262222"
+      ],
+      "notes": []
+    },
+    {
+      "id": "q019",
+      "set": "answerable",
+      "question": "Why was src/currencyservice/package-lock.json changed in commit bb41c7f (\"Updates stackdriver agents for node.js services\")?",
+      "gold": [
+        "gh:199"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": false,
+      "claims": 3,
+      "answer": "Commit bb41c7f by Megan O'Keefe on 2019-07-11 changed package.json, package.json: Updates stackdriver agents for node.js services (#236) | Pull request #236: Updates stackdriver agents for node.js services",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/bb41c7fe0225112788fd9987507942fa5b7cf0ac",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/236"
+      ],
+      "notes": [
+        "answered from the history of commit bb41c7f"
+      ]
+    },
+    {
+      "id": "q019",
+      "set": "answerable_no_hash",
+      "question": "Why was src/currencyservice/package-lock.json changed (\"Updates stackdriver agents for node.js services\")?",
+      "gold": [
+        "gh:199"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": false,
+      "gold_cited": false,
+      "keyword_gold_in_top": false,
+      "claims": 2,
+      "answer": "Pull request #236: Updates stackdriver agents for node.js services | Commit bb41c7f by Megan O'Keefe on 2019-07-11 changed package.json, package.json: Updates stackdriver agents for node.js services (#236)",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/bb41c7fe0225112788fd9987507942fa5b7cf0ac",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/236"
+      ],
+      "notes": []
+    },
+    {
+      "id": "q020",
+      "set": "answerable",
+      "question": "Why was src/cartservice/src/cartstore/RedisCartStore.cs changed in commit 156dfce (\"[cartservice] Increases health check timeout\")?",
+      "gold": [
+        "gh:74"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": false,
+      "claims": 3,
+      "answer": "Commit 156dfce by Megan O'Keefe on 2019-08-19 changed kubernetes-manifests.yaml, HealthImpl.cs, cartservice.csproj and 1 more files: [cartservice] Increases health check timeout (#240) | Pull request #240: [cartservice] Increases health check timeout",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/156dfcec8a5a4a9085b011e58188519455fa4806",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/240"
+      ],
+      "notes": [
+        "answered from the history of commit 156dfce"
+      ]
+    },
+    {
+      "id": "q020",
+      "set": "answerable_no_hash",
+      "question": "Why was src/cartservice/src/cartstore/RedisCartStore.cs changed (\"[cartservice] Increases health check timeout\")?",
+      "gold": [
+        "gh:74"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": false,
+      "gold_cited": false,
+      "keyword_gold_in_top": false,
+      "claims": 2,
+      "answer": "The readiness probe for Cartservice is the Ping function in RedisCartStore. | src/cartservice/src/cartstore/RedisCartStore.cs",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/issues/74#issuecomment-508578104",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/838#discussion_r881618583",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/838#discussion_r883718021"
+      ],
+      "notes": []
+    },
+    {
+      "id": "q021",
+      "set": "answerable",
+      "question": "Why was src/cartservice/genproto.bat changed in commit 2177813 (\"cartservice: Create genproto.sh\")?",
+      "gold": [
+        "gh:19"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": true,
+      "claims": 3,
+      "answer": "Commit 2177813 by djmailhot on 2019-09-29 changed genproto.bat, genproto.sh: cartservice: Create genproto.sh (#249) \u2014 \u201cAdd src/cartservice/genproto.sh\u201d | Pull request #249: cartservice: Create genproto.sh",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/2177813c44a83f3f6bc77e14d88accf986dd3a4c",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/249"
+      ],
+      "notes": [
+        "answered from the history of commit 2177813"
+      ]
+    },
+    {
+      "id": "q021",
+      "set": "answerable_no_hash",
+      "question": "Why was src/cartservice/genproto.bat changed (\"cartservice: Create genproto.sh\")?",
+      "gold": [
+        "gh:19"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": true,
+      "claims": 3,
+      "answer": "Issue #19: cartservice: Create genproto.sh | Commit 2177813 by djmailhot on 2019-09-29 changed genproto.bat, genproto.sh: cartservice: Create genproto.sh (#249) \u2014 \u201cAdd src/cartservice/genproto.sh\u201d",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/2177813c44a83f3f6bc77e14d88accf986dd3a4c",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/issues/19"
+      ],
+      "notes": []
+    },
+    {
+      "id": "q022",
+      "set": "answerable",
+      "question": "Why was README.md changed in commit 61dd049 (\"Fix skaffold install link\")?",
+      "gold": [
+        "gh:260"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": true,
+      "claims": 3,
+      "answer": "Commit 61dd049 by Ahmet Alp Balkan on 2019-11-04 changed README.md: Fix skaffold install link | Issue #260: Link in README.md to install skaffold not working",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/61dd04992bd2392ffbd05a98d3bff01111c12bf7",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/issues/260"
+      ],
+      "notes": [
+        "answered from the history of commit 61dd049"
+      ]
+    },
+    {
+      "id": "q022",
+      "set": "answerable_no_hash",
+      "question": "Why was README.md changed (\"Fix skaffold install link\")?",
+      "gold": [
+        "gh:260"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": true,
+      "claims": 3,
+      "answer": "Issue #260: Link in README.md to install skaffold not working | Commit d23fe9c by Heechul Ryu on 2019-03-07 changed README.md: Fix the half-broken url for skaffold installation (#178) \u2014 \u201cfix install skaffold link\u201d",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/d23fe9cf33f0445f50f35f1927293c03c6ecd537",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/issues/260"
+      ],
+      "notes": []
+    },
+    {
+      "id": "q023",
+      "set": "answerable",
+      "question": "Why was .gitignore changed in commit 8cfb88b (\"Standardizes loadgen behavior for Istio mTLS=STRICT\")?",
+      "gold": [
+        "gh:211"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": true,
+      "claims": 3,
+      "answer": "Commit 8cfb88b by Megan O'Keefe on 2019-12-16 changed .gitignore, README.md, frontend.yaml and 4 more files: Standardizes loadgen behavior for Istio mTLS=STRICT (#279) | Pull request #279: Standardizes loadgen behavior for Istio mTLS=STRICT",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/8cfb88bf2f4eb1843b08b45138b4020b5681493f",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/279"
+      ],
+      "notes": [
+        "answered from the history of commit 8cfb88b"
+      ]
+    },
+    {
+      "id": "q023",
+      "set": "answerable_no_hash",
+      "question": "Why was .gitignore changed (\"Standardizes loadgen behavior for Istio mTLS=STRICT\")?",
+      "gold": [
+        "gh:211"
+      ],
+      "status": "not_found",
+      "mode": "none",
+      "gold_in_sources": false,
+      "gold_cited": false,
+      "keyword_gold_in_top": true,
+      "claims": 0,
+      "answer": "",
+      "cited": [],
+      "notes": [
+        "no source says anything about 'gitignore', the question's most specific word"
+      ]
+    },
+    {
+      "id": "q024",
+      "set": "answerable",
+      "question": "Why was src/emailservice/email_server.py changed in commit 04b2084 (\"[WIP] Fixes emailservice CrashLoop when Workload Identity is enabled\")?",
+      "gold": [
+        "gh:255"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": false,
+      "keyword_gold_in_top": false,
+      "claims": 3,
+      "answer": "Commit 04b2084 by Megan O'Keefe on 2019-12-17 changed emailservice.yaml, email_server.py, recommendation_server.py: [WIP] Fixes emailservice CrashLoop when Workload Identity is enabled (#280) | Pull request #280: [WIP] Fixes emailservice CrashLoop when Workload Identity is enabled",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/04b2084779f8d53bea0e036ed7aefef252c6eddb",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/280"
+      ],
+      "notes": [
+        "answered from the history of commit 04b2084"
+      ]
+    },
+    {
+      "id": "q024",
+      "set": "answerable_no_hash",
+      "question": "Why was src/emailservice/email_server.py changed (\"[WIP] Fixes emailservice CrashLoop when Workload Identity is enabled\")?",
+      "gold": [
+        "gh:255"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": false,
+      "keyword_gold_in_top": false,
+      "claims": 2,
+      "answer": "Commit 04b2084 by Megan O'Keefe on 2019-12-17 changed emailservice.yaml, email_server.py, recommendation_server.py: [WIP] Fixes emailservice CrashLoop when Workload Identity is enabled (#280) | Pull request #280: [WIP] Fixes emailservice CrashLoop when Workload Identity is enabled",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/04b2084779f8d53bea0e036ed7aefef252c6eddb",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/280"
+      ],
+      "notes": []
+    },
+    {
+      "id": "q025",
+      "set": "answerable",
+      "question": "Why was src/frontend/handlers.go changed in commit 05758f5 (\"Hide currency conversion after checkout\")?",
+      "gold": [
+        "gh:333"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": true,
+      "claims": 3,
+      "answer": "Commit 05758f5 by Megan O'Keefe on 2020-05-06 changed handlers.go, header.html: Hide currency conversion after checkout (#343) | Pull request #343: Hides currency conversion after checkout",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/05758f56b859b733d54728edab354c00fbe712f6",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/343"
+      ],
+      "notes": [
+        "answered from the history of commit 05758f5"
+      ]
+    },
+    {
+      "id": "q025",
+      "set": "answerable_no_hash",
+      "question": "Why was src/frontend/handlers.go changed (\"Hide currency conversion after checkout\")?",
+      "gold": [
+        "gh:333"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": false,
+      "keyword_gold_in_top": true,
+      "claims": 2,
+      "answer": "Commit 05758f5 by Megan O'Keefe on 2020-05-06 changed handlers.go, header.html: Hide currency conversion after checkout (#343) | I think the best option would be to hide the currency conversion form on this page through a template variable.",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/05758f56b859b733d54728edab354c00fbe712f6",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/issues/333#issuecomment-621350623"
+      ],
+      "notes": []
+    },
+    {
+      "id": "q026",
+      "set": "answerable",
+      "question": "Why was README.md changed in commit 6c2b3fc (\"Update README.md to increase minikube disk size\")?",
+      "gold": [
+        "gh:345"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": false,
+      "claims": 3,
+      "answer": "Commit 6c2b3fc by Matheus Henrique Raymundo on 2020-06-01 changed README.md: Update README.md to increase minikube disk size (#347) | Pull request #347: Increase Minikube disk size",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/6c2b3fc83ef92af40333580fc0a9d4d11a5a5a71",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/347"
+      ],
+      "notes": [
+        "answered from the history of commit 6c2b3fc"
+      ]
+    },
+    {
+      "id": "q026",
+      "set": "answerable_no_hash",
+      "question": "Why was README.md changed (\"Update README.md to increase minikube disk size\")?",
+      "gold": [
+        "gh:345"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": false,
+      "keyword_gold_in_top": false,
+      "claims": 2,
+      "answer": "Commit 6c2b3fc by Matheus Henrique Raymundo on 2020-06-01 changed README.md: Update README.md to increase minikube disk size (#347) | Pull request #347: Increase Minikube disk size",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/6c2b3fc83ef92af40333580fc0a9d4d11a5a5a71",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/347"
+      ],
+      "notes": []
+    },
+    {
+      "id": "q027",
+      "set": "answerable",
+      "question": "Why was README.md changed in commit 147ca5a (\"Add skaffold version instructions to Option 2 install\")?",
+      "gold": [
+        "gh:340"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": false,
+      "claims": 3,
+      "answer": "Commit 147ca5a by Megan O'Keefe on 2020-06-02 changed README.md: Add skaffold version instructions to Option 2 install (#354) | Pull request #354: Add skaffold version instructions to Option 2 install",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/147ca5a4a09a5c1a5f4dc0d5aa4757069c247ccd",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/354"
+      ],
+      "notes": [
+        "answered from the history of commit 147ca5a"
+      ]
+    },
+    {
+      "id": "q027",
+      "set": "answerable_no_hash",
+      "question": "Why was README.md changed (\"Add skaffold version instructions to Option 2 install\")?",
+      "gold": [
+        "gh:340"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": false,
+      "gold_cited": false,
+      "keyword_gold_in_top": false,
+      "claims": 2,
+      "answer": "Commit 147ca5a by Megan O'Keefe on 2020-06-02 changed README.md: Add skaffold version instructions to Option 2 install (#354) | Pull request #354: Add skaffold version instructions to Option 2 install",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/147ca5a4a09a5c1a5f4dc0d5aa4757069c247ccd",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/354"
+      ],
+      "notes": []
+    },
+    {
+      "id": "q028",
+      "set": "answerable",
+      "question": "Why was README.md changed in commit f047333 (\"Adds instructions to enable stackdriver APIs\")?",
+      "gold": [
+        "gh:341"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": false,
+      "claims": 3,
+      "answer": "Commit f047333 by Megan O'Keefe on 2020-06-02 changed README.md: Adds instructions to enable stackdriver APIs (#355) | Pull request #355: Adds instructions to enable stackdriver APIs",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/f047333579067bad2bf15d2880afd7986ee29244",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/355"
+      ],
+      "notes": [
+        "answered from the history of commit f047333"
+      ]
+    },
+    {
+      "id": "q028",
+      "set": "answerable_no_hash",
+      "question": "Why was README.md changed (\"Adds instructions to enable stackdriver APIs\")?",
+      "gold": [
+        "gh:341"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": false,
+      "keyword_gold_in_top": false,
+      "claims": 2,
+      "answer": "Commit f047333 by Megan O'Keefe on 2020-06-02 changed README.md: Adds instructions to enable stackdriver APIs (#355) | Pull request #355: Adds instructions to enable stackdriver APIs",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/f047333579067bad2bf15d2880afd7986ee29244",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/355"
+      ],
+      "notes": []
+    },
+    {
+      "id": "q029",
+      "set": "answerable",
+      "question": "Why was src/cartservice/src/Dockerfile changed in commit 0d635b9 (\"cartservice: add libssl to allow connecting to external redis instances\")?",
+      "gold": [
+        "gh:363"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": false,
+      "claims": 3,
+      "answer": "Commit 0d635b9 by Janos Lenart on 2020-08-26 changed Dockerfile: cartservice: add libssl to allow connecting to external redis instances (#388) | Pull request #388: cartservice: add libssl to allow connecting to external redis instances",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/0d635b9a0e9bba0fcb0e9523801e94c59a9ded8d",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/388"
+      ],
+      "notes": [
+        "answered from the history of commit 0d635b9"
+      ]
+    },
+    {
+      "id": "q029",
+      "set": "answerable_no_hash",
+      "question": "Why was src/cartservice/src/Dockerfile changed (\"cartservice: add libssl to allow connecting to external redis instances\")?",
+      "gold": [
+        "gh:363"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": false,
+      "gold_cited": false,
+      "keyword_gold_in_top": false,
+      "claims": 3,
+      "answer": "Commit 0d635b9 by Janos Lenart on 2020-08-26 changed Dockerfile: cartservice: add libssl to allow connecting to external redis instances (#388) | Pull request #388: cartservice: add libssl to allow connecting to external redis instances",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/0d635b9a0e9bba0fcb0e9523801e94c59a9ded8d",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/388"
+      ],
+      "notes": []
+    },
+    {
+      "id": "q030",
+      "set": "answerable",
+      "question": "Why was src/frontend/static/styles/styles.css changed in commit 8a451d6 (\"Add footer refs to UI for session & request id\")?",
+      "gold": [
+        "gh:361"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": true,
+      "claims": 3,
+      "answer": "Commit 8a451d6 by djmailhot on 2020-10-27 changed styles.css, footer.html: Add footer refs to UI for session & request id (#407) | Pull request #407: Add footer refs to UI for session & request id",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/8a451d6b1565cd3a92768413ce543f296c62cee9",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/407"
+      ],
+      "notes": [
+        "answered from the history of commit 8a451d6"
+      ]
+    },
+    {
+      "id": "q030",
+      "set": "answerable_no_hash",
+      "question": "Why was src/frontend/static/styles/styles.css changed (\"Add footer refs to UI for session & request id\")?",
+      "gold": [
+        "gh:361"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": false,
+      "keyword_gold_in_top": true,
+      "claims": 2,
+      "answer": "Pull request #3372: feat(frontend): session-scoped wishlist \u2014 save for later (AIP-159) \u2014 \u201cFile \u00b7 Change \u00b7 \u00b7 ------ \u00b7 -------- \u00b7 \u00b7 src/frontend/main.go \u00b7 cookieWishlist constant; GET + POST /wishlist routes \u00b7 \u00b7 src/frontend/handlers.go \u00b7 wishlistFromCookie, updateWishlist helpers; viewWishlistHandler, saveToWishlistHandler; wishlist_size in common data; in_wishlist/just_saved in productHandler \u00b7 \u00b7 src/fronte\u201d | Pull request #3352: feat: browser-side product search on home page \u2014 \u201csrc/frontend/static/styles/styles.css \u2014 pill-shaped search bar styles with search icon and clear button\u201d",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/3352",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/3372"
+      ],
+      "notes": []
+    },
+    {
+      "id": "q031",
+      "set": "answerable",
+      "question": "Why was src/checkoutservice/Dockerfile changed in commit a9e95bc (\"Move to go modules\")?",
+      "gold": [
+        "gh:408"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": false,
+      "claims": 3,
+      "answer": "Commit a9e95bc by Ahmet Alp Balkan on 2020-10-13 changed Dockerfile, Gopkg.toml, go.mod and 9 more files: Move to go modules (#410) | Pull request #410: Move to go modules",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/a9e95bc05c5bbbe985b1fbc51dd62c4d01ca65b1",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/410"
+      ],
+      "notes": [
+        "answered from the history of commit a9e95bc"
+      ]
+    },
+    {
+      "id": "q031",
+      "set": "answerable_no_hash",
+      "question": "Why was src/checkoutservice/Dockerfile changed (\"Move to go modules\")?",
+      "gold": [
+        "gh:408"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": false,
+      "gold_cited": false,
+      "keyword_gold_in_top": false,
+      "claims": 3,
+      "answer": "diff diff --git a/src/emailservice/Dockerfile b/src/emailservice/Dockerfile index 9105a5a5..3a69c2a3 100644 --- a/src/emailservice/Dockerfile +++ b/src/emailservice/Dockerfile @@ -17,7 +17,7 @@ FROM --platform=$BUILDPLATFORM python:3.12.8-alpine@sha256:54bec49592c8455de8d59 FROM base AS builder | src/checkoutservice/Dockerfile",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/2512#discussion_r1583013521",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/2589#issuecomment-2595000682"
+      ],
+      "notes": []
+    },
+    {
+      "id": "q032",
+      "set": "answerable",
+      "question": "Why was src/loadgenerator/Dockerfile changed in commit 73ceec6 (\"Update loadgenerator Dockerfile to fix Pip incompatibility\")?",
+      "gold": [
+        "gh:406"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": false,
+      "keyword_gold_in_top": true,
+      "claims": 3,
+      "answer": "Commit 73ceec6 by djmailhot on 2020-10-16 changed Dockerfile: Update loadgenerator Dockerfile to fix Pip incompatibility (#413) | Pull request #413: Update loadgenerator Dockerfile to fix Pip incompatibility",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/73ceec6fd790b1cf0ea37c65e6f7f5aae6452ffb",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/413"
+      ],
+      "notes": [
+        "answered from the history of commit 73ceec6"
+      ]
+    },
+    {
+      "id": "q032",
+      "set": "answerable_no_hash",
+      "question": "Why was src/loadgenerator/Dockerfile changed (\"Update loadgenerator Dockerfile to fix Pip incompatibility\")?",
+      "gold": [
+        "gh:406"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": false,
+      "gold_cited": false,
+      "keyword_gold_in_top": true,
+      "claims": 2,
+      "answer": "Commit 73ceec6 by djmailhot on 2020-10-16 changed Dockerfile: Update loadgenerator Dockerfile to fix Pip incompatibility (#413) | Pull request #413: Update loadgenerator Dockerfile to fix Pip incompatibility",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/73ceec6fd790b1cf0ea37c65e6f7f5aae6452ffb",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/413"
+      ],
+      "notes": []
+    },
+    {
+      "id": "q033",
+      "set": "answerable",
+      "question": "Why was .github/pull_request_template.md changed in commit 41a2599 (\"CI enhancements + staging cluster\")?",
+      "gold": [
+        "gh:424"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": false,
+      "keyword_gold_in_top": false,
+      "claims": 3,
+      "answer": "Commit 41a2599 by Megan O'Keefe on 2020-11-09 changed README.md, frontend-ingress.yaml, frontend-nodeport.yaml and 9 more files: CI enhancements + staging cluster (#425) | Pull request #425: Github actions enhancements (kind->GKE, staging cluster)",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/41a2599451fe59f5d8198a3ccd58749b3791b529",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/425"
+      ],
+      "notes": [
+        "text matching the question's words is not about .github/pull_request_template.md, so it is not used",
+        "answered from the history of commit 41a2599"
+      ]
+    },
+    {
+      "id": "q033",
+      "set": "answerable_no_hash",
+      "question": "Why was .github/pull_request_template.md changed (\"CI enhancements + staging cluster\")?",
+      "gold": [
+        "gh:424"
+      ],
+      "status": "not_found",
+      "mode": "none",
+      "gold_in_sources": false,
+      "gold_cited": false,
+      "keyword_gold_in_top": false,
+      "claims": 0,
+      "answer": "",
+      "cited": [],
+      "notes": [
+        "text matching the question's words is not about .github/pull_request_template.md, so it is not used",
+        "best evidence covers 60% of the question (needs 60%)"
+      ]
+    },
+    {
+      "id": "q034",
+      "set": "answerable",
+      "question": "Why was src/productcatalogservice/server_test.go changed in commit cbd3c96 (\"Fixed broken unit test (product catalog service)\")?",
+      "gold": [
+        "gh:426"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": true,
+      "claims": 3,
+      "answer": "Commit cbd3c96 by Dmitriy Sadkovoy on 2021-03-17 changed server_test.go: Fixed broken unit test (product catalog service) (#509) | Pull request #509: fixed broken unit test (product catalog service)",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/cbd3c9643400de7471807821e212a6f3db38ed14",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/509"
+      ],
+      "notes": [
+        "answered from the history of commit cbd3c96"
+      ]
+    },
+    {
+      "id": "q034",
+      "set": "answerable_no_hash",
+      "question": "Why was src/productcatalogservice/server_test.go changed (\"Fixed broken unit test (product catalog service)\")?",
+      "gold": [
+        "gh:426"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": false,
+      "keyword_gold_in_top": true,
+      "claims": 3,
+      "answer": "Commit cbd3c96 by Dmitriy Sadkovoy on 2021-03-17 changed server_test.go: Fixed broken unit test (product catalog service) (#509) | Pull request #509: fixed broken unit test (product catalog service)",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/cbd3c9643400de7471807821e212a6f3db38ed14",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/509"
+      ],
+      "notes": []
+    },
+    {
+      "id": "q035",
+      "set": "answerable",
+      "question": "Why was kubernetes-manifests/adservice.yaml changed in commit 2fe3d49 (\"Fix adservice deployment typo\")?",
+      "gold": [
+        "gh:451"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": false,
+      "claims": 3,
+      "answer": "Commit 2fe3d49 by Megan O'Keefe on 2021-03-23 changed adservice.yaml: Fix adservice deployment typo (#515) | Pull request #515: Fix adservice deployment typo",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/2fe3d49bb88af4175befbed3ff2fba57ed2dcab6",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/515"
+      ],
+      "notes": [
+        "answered from the history of commit 2fe3d49"
+      ]
+    },
+    {
+      "id": "q035",
+      "set": "answerable_no_hash",
+      "question": "Why was kubernetes-manifests/adservice.yaml changed (\"Fix adservice deployment typo\")?",
+      "gold": [
+        "gh:451"
+      ],
+      "status": "not_found",
+      "mode": "none",
+      "gold_in_sources": false,
+      "gold_cited": false,
+      "keyword_gold_in_top": false,
+      "claims": 0,
+      "answer": "",
+      "cited": [],
+      "notes": [
+        "no source says anything about 'typo', the question's most specific word"
+      ]
+    },
+    {
+      "id": "q036",
+      "set": "answerable",
+      "question": "Why was src/cartservice/src/Program.cs changed in commit 1167a58 (\"Fix dotnet CLI tests for Github actions\")?",
+      "gold": [
+        "gh:428"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": false,
+      "claims": 3,
+      "answer": "Commit 1167a58 by deesejohn on 2021-03-25 changed ci-master.yaml, ci-pr.yaml, .gitignore and 14 more files: Fix dotnet CLI tests for Github actions (#516) | Pull request #516: Fix dotnet CLI tests for Github actions",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/1167a58fb79953142a973958e37975105747c2e5",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/516"
+      ],
+      "notes": [
+        "answered from the history of commit 1167a58"
+      ]
+    },
+    {
+      "id": "q036",
+      "set": "answerable_no_hash",
+      "question": "Why was src/cartservice/src/Program.cs changed (\"Fix dotnet CLI tests for Github actions\")?",
+      "gold": [
+        "gh:428"
+      ],
+      "status": "not_found",
+      "mode": "none",
+      "gold_in_sources": false,
+      "gold_cited": false,
+      "keyword_gold_in_top": false,
+      "claims": 0,
+      "answer": "",
+      "cited": [],
+      "notes": [
+        "no source says anything about 'program', the question's most specific word"
+      ]
+    },
+    {
+      "id": "q037",
+      "set": "answerable",
+      "question": "Why was src/frontend/handlers.go changed in commit 168f8d3 (\"Set ENV_PLATFORM default to `local`, auto-detect `gcp`\")?",
+      "gold": [
+        "gh:334"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": false,
+      "keyword_gold_in_top": true,
+      "claims": 3,
+      "answer": "Commit 168f8d3 by Megan O'Keefe on 2021-04-09 changed frontend.yaml, handlers.go, styles.css: Set ENV_PLATFORM default to `local`, auto-detect `gcp` (#529) \u2014 \u201cSet ENV_PLATFORM default to local, auto-detect gcp (#529)\u201d | Pull request #529: Set ENV_PLATFORM default to `local`, auto-detect `gcp` \u2014 \u201cSet ENV_PLATFORM default to local, auto-detect gcp\u201d",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/168f8d37c84b9535e5a6cf6a4ae0fbc2d59a2ce5",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/529"
+      ],
+      "notes": [
+        "answered from the history of commit 168f8d3"
+      ]
+    },
+    {
+      "id": "q037",
+      "set": "answerable_no_hash",
+      "question": "Why was src/frontend/handlers.go changed (\"Set ENV_PLATFORM default to `local`, auto-detect `gcp`\")?",
+      "gold": [
+        "gh:334"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": false,
+      "keyword_gold_in_top": true,
+      "claims": 3,
+      "answer": "Commit 168f8d3 by Megan O'Keefe on 2021-04-09 changed frontend.yaml, handlers.go, styles.css: Set ENV_PLATFORM default to `local`, auto-detect `gcp` (#529) \u2014 \u201cSet ENV_PLATFORM default to local, auto-detect gcp (#529)\u201d | Pull request #529: Set ENV_PLATFORM default to `local`, auto-detect `gcp` \u2014 \u201cSet ENV_PLATFORM default to local, auto-detect gcp\u201d",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/168f8d37c84b9535e5a6cf6a4ae0fbc2d59a2ce5",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/529"
+      ],
+      "notes": []
+    },
+    {
+      "id": "q038",
+      "set": "answerable",
+      "question": "Why was src/frontend/handlers.go changed in commit 4d732ba (\"Match currency logo to currency\")?",
+      "gold": [
+        "gh:483"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": false,
+      "keyword_gold_in_top": false,
+      "claims": 3,
+      "answer": "Commit 4d732ba by Megan O'Keefe on 2021-04-12 changed ci-pr.yaml, handlers.go, styles.css and 1 more files: Match currency logo to currency (#530) | Pull request #530: Match currency logo to currency",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/4d732ba68a8ce5460dc8f646bad651a435c2937d",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/530"
+      ],
+      "notes": [
+        "answered from the history of commit 4d732ba"
+      ]
+    },
+    {
+      "id": "q038",
+      "set": "answerable_no_hash",
+      "question": "Why was src/frontend/handlers.go changed (\"Match currency logo to currency\")?",
+      "gold": [
+        "gh:483"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": false,
+      "gold_cited": false,
+      "keyword_gold_in_top": false,
+      "claims": 3,
+      "answer": "Commit 4d732ba by Megan O'Keefe on 2021-04-12 changed ci-pr.yaml, handlers.go, styles.css and 1 more files: Match currency logo to currency (#530) | src/frontend/handlers.go",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/4d732ba68a8ce5460dc8f646bad651a435c2937d",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/602#discussion_r715868771"
+      ],
+      "notes": []
+    },
+    {
+      "id": "q039",
+      "set": "answerable",
+      "question": "Why was docs/releasing/make-docker-images.sh changed in commit b0160db (\"Fix building docker image for cartservice. PR 516 moved cartservice build artifacts to one level down to src directory breaking automated builds\")?",
+      "gold": [
+        "gh:534"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": true,
+      "claims": 3,
+      "answer": "Commit b0160db by Sitaram IYER on 2021-04-27 changed make-docker-images.sh: Fix building docker image for cartservice. PR 516 moved cartservice build artifacts to one level down to src directory breaking automated builds (#535) | Pull request #535: Fix for failed docker image build \u2014 \u201cPR 516 moved cartservice build artifacts to one level down to src directory breaking automated builds.\u201d",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/b0160dbd72b131bb649afb49190bfe44d75d0da2",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/535"
+      ],
+      "notes": [
+        "answered from the history of commit b0160db"
+      ]
+    },
+    {
+      "id": "q039",
+      "set": "answerable_no_hash",
+      "question": "Why was docs/releasing/make-docker-images.sh changed (\"Fix building docker image for cartservice. PR 516 moved cartservice build artifacts to one level down to src directory breaking automated builds\")?",
+      "gold": [
+        "gh:534"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": true,
+      "claims": 3,
+      "answer": "Commit b0160db by Sitaram IYER on 2021-04-27 changed make-docker-images.sh: Fix building docker image for cartservice. PR 516 moved cartservice build artifacts to one level down to src directory breaking automated builds (#535) | Pull request #535: Fix for failed docker image build \u2014 \u201cPR 516 moved cartservice build artifacts to one level down to src directory breaking automated builds.\u201d",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/b0160dbd72b131bb649afb49190bfe44d75d0da2",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/535"
+      ],
+      "notes": []
+    },
+    {
+      "id": "q040",
+      "set": "answerable",
+      "question": "Why was src/loadgenerator/Dockerfile changed in commit 83a61a3 (\"Loadgenerator - call Locust directly from Dockerfile\")?",
+      "gold": [
+        "gh:555"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": true,
+      "claims": 3,
+      "answer": "Commit 83a61a3 by Jay Windsor on 2021-06-17 changed Dockerfile, loadgen.sh: Loadgenerator - call Locust directly from Dockerfile (#557) | Pull request #557: Make loadgenerator debug-able \u2014 \u201cCalls locust directly from Dockerfile so skaffold python debugger can attach to the pure python process, make other changes to ensure successful debug out of the box.\u201d",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/83a61a3328fe747d5f06ea398ce02ff2a5e5c3e3",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/557"
+      ],
+      "notes": [
+        "answered from the history of commit 83a61a3"
+      ]
+    },
+    {
+      "id": "q040",
+      "set": "answerable_no_hash",
+      "question": "Why was src/loadgenerator/Dockerfile changed (\"Loadgenerator - call Locust directly from Dockerfile\")?",
+      "gold": [
+        "gh:555"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": false,
+      "gold_cited": false,
+      "keyword_gold_in_top": true,
+      "claims": 3,
+      "answer": "Commit 83a61a3 by Jay Windsor on 2021-06-17 changed Dockerfile, loadgen.sh: Loadgenerator - call Locust directly from Dockerfile (#557) | Pull request #3588: loadgenerator: migrate Locust to Perfscale \u2014 \u201cdocker build -t microservices-demo-loadgen:faker-local src/loadgenerator passed; faker.wasm is present and no compiler/Python/Locust executables are installed.\u201d",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/83a61a3328fe747d5f06ea398ce02ff2a5e5c3e3",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/3588"
+      ],
+      "notes": []
+    },
+    {
+      "id": "q041",
+      "set": "answerable",
+      "question": "Why was src/checkoutservice/Dockerfile changed in commit 8a1d20a (\"Go services - allow skaffold to pass in go build flags\")?",
+      "gold": [
+        "gh:556"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": true,
+      "claims": 3,
+      "answer": "Commit 8a1d20a by Jay Windsor on 2021-06-17 changed Dockerfile, Dockerfile, Dockerfile and 1 more files: Go services - allow skaffold to pass in go build flags(#558) | Pull request #558: Fixing golang Dockerfiles to work with `skaffold debug` \u2014 \u201cAllow skaffold to pass in go build flags\u201d",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/8a1d20a189970adf221b29f4cf7b28305c5eb979",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/558"
+      ],
+      "notes": [
+        "answered from the history of commit 8a1d20a"
+      ]
+    },
+    {
+      "id": "q041",
+      "set": "answerable_no_hash",
+      "question": "Why was src/checkoutservice/Dockerfile changed (\"Go services - allow skaffold to pass in go build flags\")?",
+      "gold": [
+        "gh:556"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": false,
+      "gold_cited": false,
+      "keyword_gold_in_top": true,
+      "claims": 2,
+      "answer": "Commit 8a1d20a by Jay Windsor on 2021-06-17 changed Dockerfile, Dockerfile, Dockerfile and 1 more files: Go services - allow skaffold to pass in go build flags(#558) | Pull request #558: Fixing golang Dockerfiles to work with `skaffold debug` \u2014 \u201cAllow skaffold to pass in go build flags\u201d",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/8a1d20a189970adf221b29f4cf7b28305c5eb979",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/558"
+      ],
+      "notes": []
+    },
+    {
+      "id": "q042",
+      "set": "answerable",
+      "question": "Why was src/cartservice/src/cartstore/RedisCartStore.cs changed in commit 447474f (\"Enable redis cart store reconnect\")?",
+      "gold": [
+        "gh:561"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": false,
+      "keyword_gold_in_top": false,
+      "claims": 3,
+      "answer": "Commit 447474f by Megan O'Keefe on 2021-06-21 changed RedisCartStore.cs: Enable redis cart store reconnect (#562) | Pull request #562: Enable redis cart store reconnect",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/447474f9114b836f121e0dbd65212408c2241aee",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/562"
+      ],
+      "notes": [
+        "answered from the history of commit 447474f"
+      ]
+    },
+    {
+      "id": "q042",
+      "set": "answerable_no_hash",
+      "question": "Why was src/cartservice/src/cartstore/RedisCartStore.cs changed (\"Enable redis cart store reconnect\")?",
+      "gold": [
+        "gh:561"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": false,
+      "keyword_gold_in_top": false,
+      "claims": 2,
+      "answer": "I think the erratic pings are actually due to redis, when enabled -- local store's Ping always just returns true, takes < 1ms to run: | System.ApplicationException: Wasn't able to connect to redis > [cartservice-8d9dbdd5d-7g4cg server] at cartservice.cartstore.RedisCartStore.EnsureRedisConnected()",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/issues/561#issuecomment-876809226",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/issues/74#issuecomment-508578104"
+      ],
+      "notes": []
+    },
+    {
+      "id": "q043",
+      "set": "answerable",
+      "question": "Why was src/cartservice/src/cartstore/RedisCartStore.cs changed in commit efeba9e (\"Enhance cartservice's Redis reconnection policy\")?",
+      "gold": [
+        "gh:561"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": false,
+      "keyword_gold_in_top": false,
+      "claims": 3,
+      "answer": "Commit efeba9e by Nim Jayawardena on 2021-07-13 changed RedisCartStore.cs: Enhance cartservice's Redis reconnection policy (#578) | Pull request #578: Enhance cartservice's Redis reconnection policy",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/efeba9e75269a8fa306eb9c7cc8ce65131a14a59",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/578"
+      ],
+      "notes": [
+        "answered from the history of commit efeba9e"
+      ]
+    },
+    {
+      "id": "q043",
+      "set": "answerable_no_hash",
+      "question": "Why was src/cartservice/src/cartstore/RedisCartStore.cs changed (\"Enhance cartservice's Redis reconnection policy\")?",
+      "gold": [
+        "gh:561"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": false,
+      "gold_cited": false,
+      "keyword_gold_in_top": false,
+      "claims": 3,
+      "answer": "System.ApplicationException: Wasn't able to connect to redis > [cartservice-8d9dbdd5d-7g4cg server] at cartservice.cartstore.RedisCartStore.EnsureRedisConnected() | Pull request #578: Enhance cartservice's Redis reconnection policy",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/issues/561#issuecomment-876809226",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/578"
+      ],
+      "notes": []
+    },
+    {
+      "id": "q044",
+      "set": "answerable",
+      "question": "Why was docs/development-guide.md changed in commit faef8b8 (\"Use skaffold modules & update docs\")?",
+      "gold": [
+        "gh:492"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": false,
+      "claims": 3,
+      "answer": "Commit faef8b8 by Nim Jayawardena on 2021-10-11 changed development-guide.md, skaffold.yaml: Use skaffold modules & update docs (#609) | Pull request #609: Use skaffold modules & update relevant docs",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/faef8b8800e8e8c9c91fbbbb413a73b2c1042fcf",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/609"
+      ],
+      "notes": [
+        "answered from the history of commit faef8b8"
+      ]
+    },
+    {
+      "id": "q044",
+      "set": "answerable_no_hash",
+      "question": "Why was docs/development-guide.md changed (\"Use skaffold modules & update docs\")?",
+      "gold": [
+        "gh:492"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": false,
+      "keyword_gold_in_top": false,
+      "claims": 3,
+      "answer": "how should we update the doc inside /docs/development-guide.md? | The link inside development-guide.md will only make it discoverable to Online Boutique users, so consider improving discoverability of your samples by including it in https://blog.tilt.dev/ or https://docs.tilt.dev/.",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/1167#discussion_r1010486249",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/1366#issuecomment-1353336340"
+      ],
+      "notes": []
+    },
+    {
+      "id": "q045",
+      "set": "answerable",
+      "question": "Why was src/currencyservice/server.js changed in commit 3f437db (\"node 12 -> node 16, grpc -> grpc-js\")?",
+      "gold": [
+        "gh:538"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": false,
+      "keyword_gold_in_top": false,
+      "claims": 3,
+      "answer": "Commit 3f437db by Megan O'Keefe on 2021-11-25 changed Dockerfile, package.json, server.js and 3 more files: node 12 -> node 16, grpc -> grpc-js (#630) | Pull request #630: node 12 -> node 16, grpc -> grpc-js \u2014 \u201cUpgrades the node base images for currency and payment service from Node 12 to Node 16.\u201d",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/3f437db38680ee8aa9e1a0b195ccd2d6bb30deaf",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/630"
+      ],
+      "notes": [
+        "answered from the history of commit 3f437db"
+      ]
+    },
+    {
+      "id": "q045",
+      "set": "answerable_no_hash",
+      "question": "Why was src/currencyservice/server.js changed (\"node 12 -> node 16, grpc -> grpc-js\")?",
+      "gold": [
+        "gh:538"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": false,
+      "keyword_gold_in_top": false,
+      "claims": 3,
+      "answer": "currencyservice \u00b7 Node.js \u00b7 Converts one money amount to another currency. | Pull request #3379: feat(currencyservice): reimplement in C++ with contract tests \u2014 \u201cUnknown currency codes**: Node.js silently returns zero; C++ returns INVALID_ARGUMENT gRPC status\u201d",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/blob/HEAD/README.md",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/3379"
+      ],
+      "notes": []
+    },
+    {
+      "id": "q046",
+      "set": "answerable",
+      "question": "Why was src/frontend/handlers.go changed in commit 09956ca (\"improvement: add cluster, pod and zonal details to the page footer\")?",
+      "gold": [
+        "gh:628"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": false,
+      "gold_cited": false,
+      "keyword_gold_in_top": false,
+      "claims": 3,
+      "answer": "Commit 09956ca by Shabir Mohamed Abdul Samadh on 2021-11-26 changed handlers.go, footer.html: improvement: add cluster, pod and zonal details to the page footer (#636) | Pull request #636: improvement: add cluster, pod and zonal details to the page footer",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/09956ca431a02be0829ca29ed64c45d7c08c8dac",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/636"
+      ],
+      "notes": [
+        "answered from the history of commit 09956ca"
+      ]
+    },
+    {
+      "id": "q046",
+      "set": "answerable_no_hash",
+      "question": "Why was src/frontend/handlers.go changed (\"improvement: add cluster, pod and zonal details to the page footer\")?",
+      "gold": [
+        "gh:628"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": false,
+      "gold_cited": false,
+      "keyword_gold_in_top": false,
+      "claims": 2,
+      "answer": "Pull request #636: improvement: add cluster, pod and zonal details to the page footer | Commit 09956ca by Shabir Mohamed Abdul Samadh on 2021-11-26 changed handlers.go, footer.html: improvement: add cluster, pod and zonal details to the page footer (#636)",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/09956ca431a02be0829ca29ed64c45d7c08c8dac",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/636"
+      ],
+      "notes": []
+    },
+    {
+      "id": "q047",
+      "set": "answerable",
+      "question": "Why was src/adservice/build.gradle changed in commit f9dedc7 (\"Upgrade log4j from 2.13.3 to 2.15.0\")?",
+      "gold": [
+        "gh:655"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": true,
+      "claims": 3,
+      "answer": "Commit f9dedc7 by Nim Jayawardena on 2021-12-10 changed build.gradle: Upgrade log4j from 2.13.3 to 2.15.0 (#656) | Pull request #656: Upgrade log4j from 2.13.3 to 2.15.0",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/f9dedc7946fc8269bdb4f6df2b0d5acc65b20c1c",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/656"
+      ],
+      "notes": [
+        "answered from the history of commit f9dedc7"
+      ]
+    },
+    {
+      "id": "q047",
+      "set": "answerable_no_hash",
+      "question": "Why was src/adservice/build.gradle changed (\"Upgrade log4j from 2.13.3 to 2.15.0\")?",
+      "gold": [
+        "gh:655"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": true,
+      "claims": 3,
+      "answer": "Issue #655: Vulnerable Log4J version (CVE-2021-44228) \u2014 \u201cIncluded via: https://github.com/GoogleCloudPlatform/microservices-demo/blob/master/src/adservice/build.gradle#L48\u201d | openjdk generic 25+36-LTS openssl apk 3.5.4-r0 3.5.4-r0 org.apache.logging.log4j/log4j-api maven 2.25.2 2.25.2 org.apache.logging.log4j/log4j-core maven 2.25.2 2.25.2 org.codehaus.mojo/animal-sniffer-annotations maven 1.24 1.24 org.gradle.wrapper.GradleWrapperMain/gradle-wrapper maven UNKNOWN UNKNOWN org.jctools/jctool",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/issues/655",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/3160#issuecomment-3592957667"
+      ],
+      "notes": []
+    },
+    {
+      "id": "q048",
+      "set": "answerable",
+      "question": "Why was src/paymentservice/index.js changed in commit 2e796c9 (\"Turn off GCP integrations by default\")?",
+      "gold": [
+        "gh:663"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": true,
+      "claims": 3,
+      "answer": "Commit 2e796c9 by Megan O'Keefe on 2021-12-29 changed README.md, gcp-instrumentation.md, adservice.yaml and 9 more files: Turn off GCP integrations by default (#665) | Pull request #665: Turn off GCP integrations by default",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/2e796c9dbb439f3fef16d748eb321723d4f6d035",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/665"
+      ],
+      "notes": [
+        "answered from the history of commit 2e796c9"
+      ]
+    },
+    {
+      "id": "q048",
+      "set": "answerable_no_hash",
+      "question": "Why was src/paymentservice/index.js changed (\"Turn off GCP integrations by default\")?",
+      "gold": [
+        "gh:663"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": true,
+      "claims": 3,
+      "answer": "Pull request #665: Turn off GCP integrations by default | Commit 2e796c9 by Megan O'Keefe on 2021-12-29 changed README.md, gcp-instrumentation.md, adservice.yaml and 9 more files: Turn off GCP integrations by default (#665)",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/2e796c9dbb439f3fef16d748eb321723d4f6d035",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/665"
+      ],
+      "notes": []
+    },
+    {
+      "id": "q049",
+      "set": "answerable",
+      "question": "Why was src/frontend/deployment_details.go changed in commit 6b25a1a (\"Fix Deployment Details Bug\")?",
+      "gold": [
+        "gh:697"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": false,
+      "gold_cited": false,
+      "keyword_gold_in_top": false,
+      "claims": 3,
+      "answer": "Commit 6b25a1a by Nim Jayawardena on 2022-02-02 changed deployment_details.go, handlers.go, footer.html: Fix Deployment Details Bug (#699) | Pull request #699: Fix Deployment Details Bug",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/6b25a1a4f577b11cf0051505491ac128b2bf651f",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/699"
+      ],
+      "notes": [
+        "answered from the history of commit 6b25a1a"
+      ]
+    },
+    {
+      "id": "q049",
+      "set": "answerable_no_hash",
+      "question": "Why was src/frontend/deployment_details.go changed (\"Fix Deployment Details Bug\")?",
+      "gold": [
+        "gh:697"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": false,
+      "gold_cited": false,
+      "keyword_gold_in_top": false,
+      "claims": 2,
+      "answer": "Pull request #699: Fix Deployment Details Bug | src/frontend/deployment_details.go",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/699",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/699#discussion_r795947140",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/699#discussion_r796894892"
+      ],
+      "notes": []
+    },
+    {
+      "id": "q050",
+      "set": "answerable",
+      "question": "Why was README.md changed in commit 34dc19e (\"Correct service count in README.md\")?",
+      "gold": [
+        "gh:834"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": false,
+      "claims": 3,
+      "answer": "Commit 34dc19e by tiago-maia on 2022-05-20 changed README.md: Correct service count in README.md (#835) | Pull request #835: Updated README.md file",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/34dc19e6aa3c5e01ea60092ee6dbe3fbfdf74e6a",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/835"
+      ],
+      "notes": [
+        "answered from the history of commit 34dc19e"
+      ]
+    },
+    {
+      "id": "q050",
+      "set": "answerable_no_hash",
+      "question": "Why was README.md changed (\"Correct service count in README.md\")?",
+      "gold": [
+        "gh:834"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": false,
+      "gold_cited": false,
+      "keyword_gold_in_top": false,
+      "claims": 3,
+      "answer": "Commit 34dc19e by tiago-maia on 2022-05-20 changed README.md: Correct service count in README.md (#835) | Commit 51116a8 by Gabe Weiss on 2023-03-17 changed README.md, README.md, README.md and 5 more files: Add AlloyDB as a Kustomize backend option (#1578) \u2014 \u201cPut it back to the correct format to get the specified service account correctly.\u201d",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/34dc19e6aa3c5e01ea60092ee6dbe3fbfdf74e6a",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/51116a8f811b6f323374b8a70d8df52220659030"
+      ],
+      "notes": []
+    },
+    {
+      "id": "q051",
+      "set": "answerable",
+      "question": "Why was docs/development-guide.md changed in commit db83a62 (\"Clarify port-forwarding step for local dev\")?",
+      "gold": [
+        "gh:895"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": true,
+      "claims": 3,
+      "answer": "Commit db83a62 by Olivier Bourgeois on 2022-06-24 changed development-guide.md: Clarify port-forwarding step for local dev (#901) | Pull request #901: Clarify port-forwarding step for local dev",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/db83a62d7139393adc25ef4d54e37b085f986bf0",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/901"
+      ],
+      "notes": [
+        "answered from the history of commit db83a62"
+      ]
+    },
+    {
+      "id": "q051",
+      "set": "answerable_no_hash",
+      "question": "Why was docs/development-guide.md changed (\"Clarify port-forwarding step for local dev\")?",
+      "gold": [
+        "gh:895"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": false,
+      "keyword_gold_in_top": true,
+      "claims": 2,
+      "answer": "Commit db83a62 by Olivier Bourgeois on 2022-06-24 changed development-guide.md: Clarify port-forwarding step for local dev (#901) | Pull request #901: Clarify port-forwarding step for local dev",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/db83a62d7139393adc25ef4d54e37b085f986bf0",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/901"
+      ],
+      "notes": []
+    },
+    {
+      "id": "q052",
+      "set": "answerable",
+      "question": "Why was docs/development-guide.md changed in commit 3fe7687 (\"Fix Enabling Workload Identity Link\")?",
+      "gold": [
+        "gh:1195"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": true,
+      "claims": 3,
+      "answer": "Commit 3fe7687 by Marcelo Feitoza Parisi on 2022-10-23 changed development-guide.md: Fix Enabling Workload Identity Link (#1201) | Pull request #1201: Fix Enabling Workload Identity Link",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/3fe76875074f13a07beb1d722662b6f50d101818",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/1201"
+      ],
+      "notes": [
+        "answered from the history of commit 3fe7687"
+      ]
+    },
+    {
+      "id": "q052",
+      "set": "answerable_no_hash",
+      "question": "Why was docs/development-guide.md changed (\"Fix Enabling Workload Identity Link\")?",
+      "gold": [
+        "gh:1195"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": true,
+      "claims": 3,
+      "answer": "Issue #1195: Broken Link in Workload Identity | Commit 3fe7687 by Marcelo Feitoza Parisi on 2022-10-23 changed development-guide.md: Fix Enabling Workload Identity Link (#1201)",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/3fe76875074f13a07beb1d722662b6f50d101818",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/issues/1195"
+      ],
+      "notes": []
+    },
+    {
+      "id": "q053",
+      "set": "answerable",
+      "question": "Why was .github/workflows/push-deploy.yaml changed in commit 4c4c275 (\"Remove latest tag\")?",
+      "gold": [
+        "gh:696"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": true,
+      "claims": 3,
+      "answer": "Commit 4c4c275 by vaishnavi-ramanujapuram on 2022-12-13 changed push-deploy.yaml: Remove latest tag (#1394) \u2014 \u201cremoved the latest tag in push-deploy.yaml\u201d | Pull request #1394: Remove latest tag",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/4c4c2757ecfd7d2e8a7a30c30c3d3888c8f4c017",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/1394"
+      ],
+      "notes": [
+        "answered from the history of commit 4c4c275"
+      ]
+    },
+    {
+      "id": "q053",
+      "set": "answerable_no_hash",
+      "question": "Why was .github/workflows/push-deploy.yaml changed (\"Remove latest tag\")?",
+      "gold": [
+        "gh:696"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": true,
+      "claims": 3,
+      "answer": "Issue #696: Remove use of `latest` tag \u2014 \u201cWe are using the latest tag in the main branch's GitHub Action called \"Push and Deploy\": https://github.com/GoogleCloudPlatform/microservices-demo/blob/e1c04f89be61b9af59f6a277539757675b1a60df/.github/workflows/push-deploy.yaml#L33-L35\u201d | @vaishnavi-ramanujapuram, I believe you can remove these 3 lines completely: # tag as latest skaffold build --default-repo=gcr.io/$PROJECT_ID \\ --tag=latest from /.github/workflows/push-deploy.yaml.",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/issues/696",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/issues/696#issuecomment-1347109995"
+      ],
+      "notes": []
+    },
+    {
+      "id": "q054",
+      "set": "answerable",
+      "question": "Why was docs/releasing/make-release-artifacts.sh changed in commit 58b6cd2 (\"Fix kubernetes-manifests/kustomization.yaml empty components issue\")?",
+      "gold": [
+        "gh:1435"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": false,
+      "claims": 3,
+      "answer": "Commit 58b6cd2 by Luan Pham on 2023-01-18 changed make-release-artifacts.sh, kustomization.yaml: Fix kubernetes-manifests/kustomization.yaml empty components issue (#1436) | Pull request #1436: Fix kubernetes-manifests/kustomization.yaml empty components issue",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/58b6cd21c3f050d064598575d3df6c525a7ceaea",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/1436"
+      ],
+      "notes": [
+        "answered from the history of commit 58b6cd2"
+      ]
+    },
+    {
+      "id": "q054",
+      "set": "answerable_no_hash",
+      "question": "Why was docs/releasing/make-release-artifacts.sh changed (\"Fix kubernetes-manifests/kustomization.yaml empty components issue\")?",
+      "gold": [
+        "gh:1435"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": false,
+      "gold_cited": false,
+      "keyword_gold_in_top": false,
+      "claims": 3,
+      "answer": "Commit 34da24c by Greg Bray on 2023-03-17 changed README.md, cloudshell-tutorial.md, service-mesh.md and 9 more files: Introduce Istio/ASM Kustomize component (#1601) \u2014 \u201cupdate hack/make-release-artifacts.sh and kustomize/kustomization.yaml\u201d | Pull request #3545: Add resource requests/limits for initContainers \u2014 \u201crelease/kubernetes-manifests.yaml is generated by docs/releasing/make-release-artifacts.sh and was left untouched.\u201d",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/34da24cb6d51e3039c835841eda4d4dae5daf716",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/3545"
+      ],
+      "notes": []
+    },
+    {
+      "id": "q055",
+      "set": "answerable",
+      "question": "Why was kustomize/README.md changed in commit ed267fb (\"feat: customize cluster provisioning\")?",
+      "gold": [
+        "gh:1478"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": true,
+      "claims": 3,
+      "answer": "Commit ed267fb by minherz on 2023-03-01 changed README.md, kustomization.yaml, kustomization.yaml and 21 more files: feat: customize cluster provisioning (#1566) | Pull request #1566: feat: customize cluster provisioning",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/ed267fb74c6fd7361b3ca43c1e4ad729458e0e90",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/1566"
+      ],
+      "notes": [
+        "answered from the history of commit ed267fb"
+      ]
+    },
+    {
+      "id": "q055",
+      "set": "answerable_no_hash",
+      "question": "Why was kustomize/README.md changed (\"feat: customize cluster provisioning\")?",
+      "gold": [
+        "gh:1478"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": false,
+      "keyword_gold_in_top": true,
+      "claims": 2,
+      "answer": "Commit ed267fb by minherz on 2023-03-01 changed README.md, kustomization.yaml, kustomization.yaml and 21 more files: feat: customize cluster provisioning (#1566) | Pull request #1566: feat: customize cluster provisioning",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/ed267fb74c6fd7361b3ca43c1e4ad729458e0e90",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/1566"
+      ],
+      "notes": []
+    },
+    {
+      "id": "q056",
+      "set": "answerable",
+      "question": "Why was kustomize/cloud-ops-sandbox/base/kustomization.yaml changed in commit 30c62eb (\"fix: rollback customizations made in\")?",
+      "gold": [
+        "gh:1572"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": false,
+      "gold_cited": false,
+      "keyword_gold_in_top": false,
+      "claims": 3,
+      "answer": "Commit 30c62eb by minherz on 2023-03-03 changed kustomization.yaml, kustomization.yaml, kustomization.yaml and 3 more files: fix: rollback customizations made in #1566 (#1573) | Pull request #1566: feat: customize cluster provisioning \u2014 \u201cTesting Procedure Testing of CloudOps Sandbox kustomizations will be implemented in cloud-ops-sandbox repo.\u201d",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/30c62eb234b683a22395d31a022af54223ef924d",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/1566"
+      ],
+      "notes": [
+        "answered from the history of commit 30c62eb"
+      ]
+    },
+    {
+      "id": "q056",
+      "set": "answerable_no_hash",
+      "question": "Why was kustomize/cloud-ops-sandbox/base/kustomization.yaml changed (\"fix: rollback customizations made in\")?",
+      "gold": [
+        "gh:1572"
+      ],
+      "status": "not_found",
+      "mode": "none",
+      "gold_in_sources": false,
+      "gold_cited": false,
+      "keyword_gold_in_top": false,
+      "claims": 0,
+      "answer": "",
+      "cited": [],
+      "notes": [
+        "no source says anything about 'rollback', the question's most specific word"
+      ]
+    },
+    {
+      "id": "q057",
+      "set": "answerable",
+      "question": "Why was README.md changed in commit 34da24c (\"Introduce Istio/ASM Kustomize component\")?",
+      "gold": [
+        "gh:1203"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": false,
+      "gold_cited": false,
+      "keyword_gold_in_top": false,
+      "claims": 3,
+      "answer": "Commit 34da24c by Greg Bray on 2023-03-17 changed README.md, cloudshell-tutorial.md, service-mesh.md and 9 more files: Introduce Istio/ASM Kustomize component (#1601) | Pull request #1601: Introduce Istio/ASM Kustomize component",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/34da24cb6d51e3039c835841eda4d4dae5daf716",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/1601"
+      ],
+      "notes": [
+        "answered from the history of commit 34da24c"
+      ]
+    },
+    {
+      "id": "q057",
+      "set": "answerable_no_hash",
+      "question": "Why was README.md changed (\"Introduce Istio/ASM Kustomize component\")?",
+      "gold": [
+        "gh:1203"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": false,
+      "gold_cited": false,
+      "keyword_gold_in_top": false,
+      "claims": 3,
+      "answer": "Commit 34da24c by Greg Bray on 2023-03-17 changed README.md, cloudshell-tutorial.md, service-mesh.md and 9 more files: Introduce Istio/ASM Kustomize component (#1601) | Pull request #1601: Introduce Istio/ASM Kustomize component",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/34da24cb6d51e3039c835841eda4d4dae5daf716",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/1601"
+      ],
+      "notes": []
+    },
+    {
+      "id": "q058",
+      "set": "answerable",
+      "question": "Why was .gitattributes changed in commit 53e5d2e (\"Add .gitattributes to convert \"CR + LF\" to \"LF\"\")?",
+      "gold": [
+        "gh:1434"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": false,
+      "claims": 3,
+      "answer": "Commit 53e5d2e by Nim Jayawardena on 2023-04-12 changed . gitattributes: Add .gitattributes to convert \"CR + LF\" to \"LF\" (#1688) | Pull request #1688: Add .gitattributes to convert \"CR + LF\" to \"LF\"",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/53e5d2e641c311630af4fcdca0aeb9752aed2b91",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/1688"
+      ],
+      "notes": [
+        "answered from the history of commit 53e5d2e"
+      ]
+    },
+    {
+      "id": "q058",
+      "set": "answerable_no_hash",
+      "question": "Why was .gitattributes changed (\"Add .gitattributes to convert \"CR + LF\" to \"LF\"\")?",
+      "gold": [
+        "gh:1434"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": false,
+      "keyword_gold_in_top": false,
+      "claims": 3,
+      "answer": "Commit 53e5d2e by Nim Jayawardena on 2023-04-12 changed . gitattributes: Add .gitattributes to convert \"CR + LF\" to \"LF\" (#1688) | Pull request #1806: Convert CRLF to LF \u2014 \u201cI ran: git add --renormalize . to convert the following files to LF (from CRLF):\u201d",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/53e5d2e641c311630af4fcdca0aeb9752aed2b91",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/1806"
+      ],
+      "notes": []
+    },
+    {
+      "id": "q059",
+      "set": "answerable",
+      "question": "Why was kustomize/components/alloydb/kustomization.yaml changed in commit bf30937 (\"replace patchesStrategicMerge with patches\")?",
+      "gold": [
+        "gh:1564"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": true,
+      "claims": 3,
+      "answer": "Commit bf30937 by Smeet nagda on 2023-04-19 changed kustomization.yaml, kustomization.yaml, kustomization.yaml and 8 more files: replace patchesStrategicMerge with patches (#1689) | Pull request #1689: replace patchesStrategicMerge with patches",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/bf30937d424b7a1f8c782c6e6496394e1ef50ec3",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/1689"
+      ],
+      "notes": [
+        "answered from the history of commit bf30937"
+      ]
+    },
+    {
+      "id": "q059",
+      "set": "answerable_no_hash",
+      "question": "Why was kustomize/components/alloydb/kustomization.yaml changed (\"replace patchesStrategicMerge with patches\")?",
+      "gold": [
+        "gh:1564"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": true,
+      "claims": 3,
+      "answer": "kustomize/components/memorystore/kustomization.yaml | Pull request #2488: Refactor Kustomize components (service-accounts, shopping-assistant) \u2014 \u201c../kustomize/components/alloydb\u201d",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/1102#discussion_r1002101340",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/2488"
+      ],
+      "notes": []
+    },
+    {
+      "id": "q060",
+      "set": "answerable",
+      "question": "Why was src/currencyservice/server.js changed in commit 57b41ae (\"Set OTEL service Name in node js services\")?",
+      "gold": [
+        "gh:2142"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": false,
+      "claims": 3,
+      "answer": "Commit 57b41ae by pablochacin on 2023-10-19 changed package.json, server.js, index.js and 1 more files: Set OTEL service Name in node js services (#2194) | Pull request #2194: Set OTEL service Name in node js services",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/57b41ae9f3dc3ed8d4d565671688c1cbad7aa8c8",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/2194"
+      ],
+      "notes": [
+        "answered from the history of commit 57b41ae"
+      ]
+    },
+    {
+      "id": "q060",
+      "set": "answerable_no_hash",
+      "question": "Why was src/currencyservice/server.js changed (\"Set OTEL service Name in node js services\")?",
+      "gold": [
+        "gh:2142"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": false,
+      "keyword_gold_in_top": false,
+      "claims": 3,
+      "answer": "[paymentservice-7b9b585dd6-wb8ml server] {\"severity\":\"info\",\"time\":1639373063472,\"pid\":1,\"hostname\":\"paymentservice-7b9b585dd6-wb8ml\",\"name\":\"paymentservice-server\",\"message\":\"PaymentService gRPC server started on port 50051\",\"v\":1} > [paymentservice-7b9b585dd6-wb8ml server] /usr/src/app/node_modules/@google-cloud/prof | Issue #663: Multiple services crashing out of the box due to missing credentials (local cluster) \u2014 \u201c(Use node --trace-warnings ... to show where the warning was created) {\"severity\":\"info\",\"time\":1639616372944,\"pid\":1,\"hostname\":\"currencyservice-68b9dd7dcb-nc4fh\",\"name\":\"currencyservice-server\",\"message\":\"CurrencyService gRPC server started on port 7000\",\"v\":1} /usr/src/app/node_modules/@google-cloud/profiler/build/s\u201d",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/issues/647#issuecomment-992117212",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/issues/663"
+      ],
+      "notes": []
+    },
+    {
+      "id": "q061",
+      "set": "answerable",
+      "question": "Why was .github/header-checker-lint.yml changed in commit 42ddb30 (\"build: Add GitHub bot to check license headers\")?",
+      "gold": [
+        "gh:2210"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": true,
+      "claims": 3,
+      "answer": "Commit 42ddb30 by Nim Jayawardena on 2023-10-18 changed header-checker-lint.yml: build: Add GitHub bot to check license headers (#2211) | Pull request #2211: build: Add GitHub bot to check license headers",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/42ddb30837d26be68d4c261ef68df3e7e9537c13",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/2211"
+      ],
+      "notes": [
+        "answered from the history of commit 42ddb30"
+      ]
+    },
+    {
+      "id": "q061",
+      "set": "answerable_no_hash",
+      "question": "Why was .github/header-checker-lint.yml changed (\"build: Add GitHub bot to check license headers\")?",
+      "gold": [
+        "gh:2210"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": true,
+      "claims": 3,
+      "answer": "Pull request #2211: build: Add GitHub bot to check license headers | Commit 42ddb30 by Nim Jayawardena on 2023-10-18 changed header-checker-lint.yml: build: Add GitHub bot to check license headers (#2211)",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/42ddb30837d26be68d4c261ef68df3e7e9537c13",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/2211"
+      ],
+      "notes": []
+    },
+    {
+      "id": "q062",
+      "set": "answerable",
+      "question": "Why was src/currencyservice/server.js changed in commit 515f5c5 (\"Use pino instead of console.log\")?",
+      "gold": [
+        "gh:674"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": true,
+      "claims": 3,
+      "answer": "Commit 515f5c5 by DracFiendMG on 2023-11-23 changed server.js, index.js, logger.js and 1 more files: Use pino instead of console.log  (#2263) \u2014 \u201cUse pino instead of console.log (#2263)\u201d | Pull request #2263: Use pino instead of console.log ",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/515f5c5e6c995d7d6ccf75fed1bd056976fa3efa",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/2263"
+      ],
+      "notes": [
+        "answered from the history of commit 515f5c5"
+      ]
+    },
+    {
+      "id": "q062",
+      "set": "answerable_no_hash",
+      "question": "Why was src/currencyservice/server.js changed (\"Use pino instead of console.log\")?",
+      "gold": [
+        "gh:674"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": true,
+      "claims": 3,
+      "answer": "Issue #674: Use `pino` instead of `console.log` \u2014 \u201cUse pino instead of console.log\u201d | Suggestion: Should we use pino instead of console.log?",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/issues/674",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/665#discussion_r774204647"
+      ],
+      "notes": []
+    },
+    {
+      "id": "q063",
+      "set": "answerable",
+      "question": "Why was helm-chart/templates/checkoutservice.yaml changed in commit 02015ee (\"fix: display service name in Cloud Trace\")?",
+      "gold": [
+        "gh:2349"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": true,
+      "claims": 3,
+      "answer": "Commit 02015ee by minherz on 2024-01-23 changed checkoutservice.yaml, currencyservice.yaml, emailservice.yaml and 5 more files: fix: display service name in Cloud Trace (#2350) | Pull request #2350: fix: display service name in Cloud Trace",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/02015ee81d1c10287615bc4bd9e2e03b747cbec2",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/2350"
+      ],
+      "notes": [
+        "text matching the question's words is not about checkoutservice, helm-chart/templates/checkoutservice.yaml, so it is not used",
+        "answered from the history of commit 02015ee"
+      ]
+    },
+    {
+      "id": "q063",
+      "set": "answerable_no_hash",
+      "question": "Why was helm-chart/templates/checkoutservice.yaml changed (\"fix: display service name in Cloud Trace\")?",
+      "gold": [
+        "gh:2349"
+      ],
+      "status": "not_found",
+      "mode": "none",
+      "gold_in_sources": false,
+      "gold_cited": false,
+      "keyword_gold_in_top": true,
+      "claims": 0,
+      "answer": "",
+      "cited": [],
+      "notes": [
+        "text matching the question's words is not about checkoutservice, helm-chart/templates/checkoutservice.yaml, so it is not used",
+        "best evidence covers 60% of the question (needs 60%)"
+      ]
+    },
+    {
+      "id": "q064",
+      "set": "answerable",
+      "question": "Why was src/frontend/handlers.go changed in commit f1cfac1 (\"Refactor common default templating payload in frontend\")?",
+      "gold": [
+        "gh:2450"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": false,
+      "gold_cited": false,
+      "keyword_gold_in_top": false,
+      "claims": 3,
+      "answer": "Commit f1cfac1 by Olivier Bourgeois on 2024-04-12 changed handlers.go, footer.html: Refactor common default templating payload in frontend (#2473) | Pull request #2473: Refactor common default templating payload in frontend",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/f1cfac111d00c79baf762f09953753a888ba8d2e",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/2473"
+      ],
+      "notes": [
+        "answered from the history of commit f1cfac1"
+      ]
+    },
+    {
+      "id": "q064",
+      "set": "answerable_no_hash",
+      "question": "Why was src/frontend/handlers.go changed (\"Refactor common default templating payload in frontend\")?",
+      "gold": [
+        "gh:2450"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": false,
+      "gold_cited": false,
+      "keyword_gold_in_top": false,
+      "claims": 3,
+      "answer": "Pull request #2473: Refactor common default templating payload in frontend | Commit f1cfac1 by Olivier Bourgeois on 2024-04-12 changed handlers.go, footer.html: Refactor common default templating payload in frontend (#2473)",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/f1cfac111d00c79baf762f09953753a888ba8d2e",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/2473"
+      ],
+      "notes": []
+    },
+    {
+      "id": "q065",
+      "set": "answerable",
+      "question": "Why was src/loadgenerator/locustfile.py changed in commit 3fefee7 (\"Replace HttpUser with FastHttpUser\")?",
+      "gold": [
+        "gh:1973"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": true,
+      "claims": 3,
+      "answer": "Commit 3fefee7 by Olivier Bourgeois on 2024-04-18 changed locustfile.py: Replace HttpUser with FastHttpUser (#2495) | Pull request #2495: Replace HttpUser with FastHttpUser",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/3fefee73ec304dedcbddfcd0ec3027e167b9189a",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/2495"
+      ],
+      "notes": [
+        "answered from the history of commit 3fefee7"
+      ]
+    },
+    {
+      "id": "q065",
+      "set": "answerable_no_hash",
+      "question": "Why was src/loadgenerator/locustfile.py changed (\"Replace HttpUser with FastHttpUser\")?",
+      "gold": [
+        "gh:1973"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": true,
+      "claims": 3,
+      "answer": "In the meanwhile, I found that by replacing HttpUser with FastHttpUser the problem seems to go away so it might be something in the configuration of HttpUser that causes the issue.(a default request flag maybe) | Issue #1973: Replace Locust load generator's httpUser with fastHttpUser",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/issues/1973",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/issues/1973#issuecomment-1653446828"
+      ],
+      "notes": []
+    },
+    {
+      "id": "q066",
+      "set": "answerable",
+      "question": "Why was src/adservice/Dockerfile changed in commit d48c824 (\"Comment out profiler in adservice\")?",
+      "gold": [
+        "gh:2511"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": false,
+      "claims": 3,
+      "answer": "Commit d48c824 by Olivier Bourgeois on 2024-05-02 changed Dockerfile, build.gradle: Comment out profiler in adservice (#2518) | Pull request #2518: Comment out profiler in adservice",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/d48c8244d594d7455e63ede0034c5be7a16bcd2a",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/2518"
+      ],
+      "notes": [
+        "answered from the history of commit d48c824"
+      ]
+    },
+    {
+      "id": "q066",
+      "set": "answerable_no_hash",
+      "question": "Why was src/adservice/Dockerfile changed (\"Comment out profiler in adservice\")?",
+      "gold": [
+        "gh:2511"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": false,
+      "gold_cited": false,
+      "keyword_gold_in_top": false,
+      "claims": 3,
+      "answer": "Commit f35fdbc by rghetia on 2018-08-23 changed .gitignore, adservice.yaml, demo.proto and 15 more files: Initial commit for Ads Service. (#21) \u2014 \u201cRefactor Ads to Ad Move building AdService to Docker Use default setting for Stackdriver Exporter.\u201d | Pull request #1806: Convert CRLF to LF \u2014 \u201c@marcghanime mentioned in this comment that they were able to fix the issue by converting src\\adservice\\gradlew.bat (and 2 other files) to LF (from CRLF).\u201d",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/f35fdbcac332cd52b248ebd143da097aa3bb2127",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/1806"
+      ],
+      "notes": []
+    },
+    {
+      "id": "q067",
+      "set": "answerable",
+      "question": "Why was helm-chart/templates/adservice.yaml changed in commit 342916b (\"fix: nest .Values.seccompProfile.enable and .Values.securityContext.enabled correctly\")?",
+      "gold": [
+        "gh:2872",
+        "gh:2873"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": true,
+      "claims": 3,
+      "answer": "Commit 342916b by CarstenSon on 2025-01-29 changed adservice.yaml, cartservice.yaml, checkoutservice.yaml and 9 more files: fix: nest .Values.seccompProfile.enable and .Values.securityContext.enabled correctly (#2874) | Pull request #2874: fix: nest .Values.seccompProfile.enable and .Values.securityContext.enabled correctly",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/342916bac6b256ee5d8f949c5616fb1627a8992d",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/2874"
+      ],
+      "notes": [
+        "answered from the history of commit 342916b"
+      ]
+    },
+    {
+      "id": "q067",
+      "set": "answerable_no_hash",
+      "question": "Why was helm-chart/templates/adservice.yaml changed (\"fix: nest .Values.seccompProfile.enable and .Values.securityContext.enabled correctly\")?",
+      "gold": [
+        "gh:2872",
+        "gh:2873"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": true,
+      "claims": 3,
+      "answer": "Commit f8e2900 by Mathieu Benoit on 2022-12-08 changed helm-chart-ci.yaml, make-helm-chart.sh, make-release.sh and 20 more files: Online Boutique's Helm chart (#1353) \u2014 \u201cLink to values.yaml in helm-chart/README.md\u201d | Pull request #2874: fix: nest .Values.seccompProfile.enable and .Values.securityContext.enabled correctly",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/f8e290019aea0b0e056e4765e624ce19541e886a",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/2874"
+      ],
+      "notes": []
+    },
+    {
+      "id": "q068",
+      "set": "answerable",
+      "question": "Why was skaffold.yaml changed in commit 79be00a (\"Fix loadgenerator in skaffold.yaml\")?",
+      "gold": [
+        "gh:2927"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": false,
+      "claims": 3,
+      "answer": "Commit 79be00a by Mathieu Benoit on 2025-06-27 changed skaffold.yaml: Fix loadgenerator in skaffold.yaml (#2986) | Pull request #2986: Fix loadgenerator in skaffold.yaml",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/79be00aea1877384fe26ea5fa843dc610a8d6a9d",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/2986"
+      ],
+      "notes": [
+        "answered from the history of commit 79be00a"
+      ]
+    },
+    {
+      "id": "q068",
+      "set": "answerable_no_hash",
+      "question": "Why was skaffold.yaml changed (\"Fix loadgenerator in skaffold.yaml\")?",
+      "gold": [
+        "gh:2927"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": false,
+      "gold_cited": false,
+      "keyword_gold_in_top": false,
+      "claims": 3,
+      "answer": "Commit 79be00a by Mathieu Benoit on 2025-06-27 changed skaffold.yaml: Fix loadgenerator in skaffold.yaml (#2986) | Pull request #2986: Fix loadgenerator in skaffold.yaml",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/79be00aea1877384fe26ea5fa843dc610a8d6a9d",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/2986"
+      ],
+      "notes": []
+    },
+    {
+      "id": "t01",
+      "set": "trick",
+      "question": "Why did checkoutservice switch from gRPC to GraphQL?",
+      "status": "not_found",
+      "mode": "none",
+      "plain_model_answered": null,
+      "claims": 0,
+      "notes": [
+        "text matching the question's words is not about checkoutservice, so it is not used",
+        "best evidence covers 44% of the question (needs 60%)"
+      ]
+    },
+    {
+      "id": "t02",
+      "set": "trick",
+      "question": "Why was the cart moved from Redis to MongoDB?",
+      "status": "not_found",
+      "mode": "none",
+      "plain_model_answered": null,
+      "claims": 0,
+      "notes": [
+        "no source says anything about 'mongodb', the question's most specific word"
+      ]
+    },
+    {
+      "id": "t03",
+      "set": "trick",
+      "question": "Why was emailservice rewritten in Go?",
+      "status": "answered",
+      "mode": "extractive",
+      "plain_model_answered": null,
+      "claims": 3,
+      "notes": []
+    },
+    {
+      "id": "t04",
+      "set": "trick",
+      "question": "Why did the frontend replace its Go templates with a React single-page app?",
+      "status": "not_found",
+      "mode": "none",
+      "plain_model_answered": null,
+      "claims": 0,
+      "notes": [
+        "text matching the question's words is not about frontend, so it is not used",
+        "best evidence covers 52% of the question (needs 60%)"
+      ]
+    },
+    {
+      "id": "t05",
+      "set": "trick",
+      "question": "Why was adservice removed from the project?",
+      "status": "answered",
+      "mode": "extractive",
+      "plain_model_answered": null,
+      "claims": 3,
+      "notes": []
+    },
+    {
+      "id": "t06",
+      "set": "trick",
+      "question": "Why does shippingservice charge customers in Bitcoin?",
+      "status": "not_found",
+      "mode": "none",
+      "plain_model_answered": null,
+      "claims": 0,
+      "notes": [
+        "no project history mentions 'bitcoin'",
+        "text matching the question's words is not about shippingservice, so it is not used",
+        "best evidence covers 46% of the question (needs 60%)"
+      ]
+    },
+    {
+      "id": "t07",
+      "set": "trick",
+      "question": "Why was Kafka added between checkoutservice and emailservice?",
+      "status": "not_found",
+      "mode": "none",
+      "plain_model_answered": null,
+      "claims": 0,
+      "notes": [
+        "text matching the question's words is not about checkoutservice, emailservice, so it is not used",
+        "best evidence covers 57% of the question (needs 60%)"
+      ]
+    },
+    {
+      "id": "t08",
+      "set": "trick",
+      "question": "Why did the project move from Kubernetes to Docker Swarm?",
+      "status": "not_found",
+      "mode": "none",
+      "plain_model_answered": null,
+      "claims": 0,
+      "notes": [
+        "no source says anything about 'swarm', the question's most specific word"
+      ]
+    },
+    {
+      "id": "t09",
+      "set": "trick",
+      "question": "Why does currencyservice store its exchange rates in PostgreSQL?",
+      "status": "answered",
+      "mode": "extractive",
+      "plain_model_answered": null,
+      "claims": 1,
+      "notes": []
+    },
+    {
+      "id": "t10",
+      "set": "trick",
+      "question": "Why was the loadgenerator rewritten from Locust to JMeter?",
+      "status": "not_found",
+      "mode": "none",
+      "plain_model_answered": null,
+      "claims": 0,
+      "notes": [
+        "text matching the question's words is not about loadgenerator, so it is not used",
+        "best evidence covers 47% of the question (needs 60%)"
+      ]
+    },
+    {
+      "id": "t11",
+      "set": "trick",
+      "question": "Why did productcatalogservice move its catalog into Elasticsearch?",
+      "status": "not_found",
+      "mode": "none",
+      "plain_model_answered": null,
+      "claims": 0,
+      "notes": [
+        "no source says anything about 'elasticsearch', the question's most specific word"
+      ]
+    },
+    {
+      "id": "t12",
+      "set": "trick",
+      "question": "Who will maintain paymentservice next year?",
+      "status": "not_found",
+      "mode": "none",
+      "plain_model_answered": null,
+      "claims": 0,
+      "notes": [
+        "text matching the question's words is not about paymentservice, so it is not used",
+        "best evidence covers 45% of the question (needs 60%)"
+      ]
+    }
+  ]
+}

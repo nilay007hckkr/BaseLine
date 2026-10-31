@@ -38,9 +38,9 @@ Result files: `eval/results/impact-20261030T195628Z.json`, `eval/results/impact-
 
 ## Why-answers (answer key: generated links + hand-written trick questions)
 
-- Repository: https://github.com/GoogleCloudPlatform/microservices-demo at `c7cb6d5`; code `2194e58`; model: none configured (quoted answers)
+- Repository: https://github.com/GoogleCloudPlatform/microservices-demo at `c7cb6d5`; code `78bbc4d`; model: none configured (quoted answers)
 - Answerable (generated from explicit "Fixes #N" links, gold = the issue): **n = 68**, each asked twice: naming the commit hash, and naming only the file and the change
-- Result file: `eval/results/ask-20261031T232454Z.json` (created 2026-10-31T23:24:54Z)
+- Result file: `eval/results/ask-20261031T232825Z.json` (created 2026-10-31T23:28:25Z)
 
 | Question names | Measure | Hindsight | Keyword search only |
 |---|---|---|---|

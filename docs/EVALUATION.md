@@ -91,6 +91,16 @@ Mixed answer key (decided 2026-10-31), so that the team does not pick the questi
      adservice removed?" (the false word is common), "Why does currencyservice store its rates in
      PostgreSQL?" and "Who will maintain paymentservice next year?" (a question about the future).
      The trick set is now in-sample for this rule; a new blind set is the real test.
+  5. Data refresh with a GitHub token (2026-10-31): all issue, PR, comment and review lists
+     complete; 4,635 comments and 1,349 review comments added; 110 explicit "Fixes #N" links.
+     The generated answer key grew from 25 to **68** questions. First run on it
+     (`ask-20261031T232325Z.json`, code `4734edd`): naming the commit, the issue was among the
+     sources in 0.91 and cited in 0.78; the new review comments sat at the same distance as the
+     issue and pushed it out of the top sources. Fix: along a blame or named-commit path, the PR
+     and the issue come before the comments on them. Result (`ask-20261031T232825Z.json`, code
+     `78bbc4d`, n = 68): naming the commit, answered 1.00, issue among the sources 1.00, cited
+     0.94 (keyword search alone finds it in 0.41); file and change only, answered 0.90, among the
+     sources 0.47 (keyword 0.41), cited 0.19; trick "not found" 0.75 (9 of 12).
 - **Model runs:** not yet recorded. On the build machine the local Ollama install lacks its model
   runtime (HTTP 500 on every call), so every number above is for quoted answers; the
   plain-model baseline needs a working model.
