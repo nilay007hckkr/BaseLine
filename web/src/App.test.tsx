@@ -365,6 +365,21 @@ describe("workspace", () => {
   });
 });
 
+describe("additional features", () => {
+  it("shows Incidents and Tests after the PS 06 pages, behind a divider", async () => {
+    onboarded();
+    stubApi({ "/api/config": { ...DEMO, features: [...DEMO.features, "incidents", "tests"] } });
+    renderApp();
+    const main = await screen.findByRole("navigation", { name: "Main" });
+    const names = within(main)
+      .getAllByRole("button")
+      .map((b) => b.textContent);
+    expect(names).toEqual(["Home", "Ask", "Impact", "Map", "Proof", "Incidents", "Tests", "More"]);
+    expect(main.querySelectorAll(".nav-sep")).toHaveLength(1);
+    expect(screen.getByText(/Also built on the same graph/)).toBeDefined();
+  });
+});
+
 describe("plain language", () => {
   it("explains a technical word", () => {
     render(<Term id="R@10" />);

@@ -330,6 +330,14 @@ textarea::placeholder {
   color: var(--text);
   border-color: transparent;
 }
+.nav-sep {
+  flex: none;
+  align-self: center;
+  width: 1px;
+  height: 18px;
+  margin: 0 10px 8px;
+  background: var(--line-2);
+}
 .nav-tab.active {
   color: var(--text);
   border-bottom-color: var(--text);

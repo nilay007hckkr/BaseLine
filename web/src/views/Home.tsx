@@ -128,7 +128,13 @@ function figures(cards: ScoreCard[], botShare: number | undefined): Figure[] {
 
 export function Home() {
   const { go, level } = useApp();
-  const { mode } = useInstance();
+  const { mode, features } = useInstance();
+  const extras = (
+    [
+      ["incidents", "Incidents", "which change broke the demo shop"],
+      ["tests", "Tests", "browser tests from tickets that heal, never hide a bug"],
+    ] as const
+  ).filter(([key]) => features.includes(key));
   const scores = useQuery({ queryKey: ["scorecard"], queryFn: api.scorecard });
   const repo = useQuery({ queryKey: ["stats"], queryFn: api.stats });
   const s = (repo.data?.stats ?? null) as {
@@ -194,6 +200,26 @@ export function Home() {
             ))}
           </div>
         </>
+      ) : null}
+
+      {extras.length ? (
+        <p className="small muted" style={{ margin: "18px 0" }}>
+          Also built on the same graph:{" "}
+          {extras.map(([key, label, text], i) => (
+            <span key={key}>
+              {i ? " · " : ""}
+              <button
+                className="link"
+                onClick={() => {
+                  go(key);
+                }}
+              >
+                {label}
+              </button>{" "}
+              ({text})
+            </span>
+          ))}
+        </p>
       ) : null}
 
       <button

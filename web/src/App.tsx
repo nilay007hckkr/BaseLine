@@ -1,6 +1,15 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Repeat, Trophy } from "lucide-react";
-import { Suspense, lazy, useEffect, useMemo, useRef, useState, type ComponentType } from "react";
+import {
+  Fragment,
+  Suspense,
+  lazy,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ComponentType,
+} from "react";
 import { api, type AppConfig, type Feature, type WorkspaceStatus } from "./api/client";
 import { DEMO_CONFIG, InstanceProvider, toInstance, useInstance } from "./instance";
 import { ACHIEVEMENTS, AppStateProvider, useApp, type ViewKey } from "./state";
@@ -16,15 +25,34 @@ import { Tests } from "./views/Tests";
 
 const Journey = lazy(() => import("./journey/Journey").then((m) => ({ default: m.Journey })));
 
-/** The top-level pages, in the order of the top bar. */
-const TABS: { key: ViewKey; label: string; view: ComponentType; needs?: Feature }[] = [
+/** The top-level pages, in the order of the top bar: the core (PS 06) first, then the additional
+ * features (PS 04 and PS 08) after a divider. */
+const TABS: {
+  key: ViewKey;
+  label: string;
+  view: ComponentType;
+  needs?: Feature;
+  extra?: string;
+}[] = [
   { key: "home", label: "Home", view: Home },
   { key: "ask", label: "Ask", view: Ask, needs: "ask" },
   { key: "impact", label: "Impact", view: Impact, needs: "impact" },
   { key: "graph", label: "Map", view: Graph, needs: "map" },
-  { key: "incidents", label: "Incidents", view: Incidents, needs: "incidents" },
-  { key: "tests", label: "Tests", view: Tests, needs: "tests" },
   { key: "scorecard", label: "Proof", view: Scorecard, needs: "proof" },
+  {
+    key: "incidents",
+    label: "Incidents",
+    view: Incidents,
+    needs: "incidents",
+    extra: "Additional feature: which change broke the demo shop (PS 04)",
+  },
+  {
+    key: "tests",
+    label: "Tests",
+    view: Tests,
+    needs: "tests",
+    extra: "Additional feature: browser tests from tickets that heal, never hide a bug (PS 08)",
+  },
 ];
 
 function RepoChip() {
@@ -104,17 +132,22 @@ function Shell() {
           </h1>
         </button>
         <nav className="nav" aria-label="Main">
-          {tabs.map((t) => (
-            <button
-              key={t.key}
-              className={t.key === view ? "nav-tab active" : "nav-tab"}
-              aria-current={t.key === view ? "page" : undefined}
-              onClick={() => {
-                go(t.key);
-              }}
-            >
-              {t.label}
-            </button>
+          {tabs.map((t, i) => (
+            <Fragment key={t.key}>
+              {t.extra && !tabs[i - 1]?.extra ? (
+                <span className="nav-sep" aria-hidden="true" title="Additional features" />
+              ) : null}
+              <button
+                className={t.key === view ? "nav-tab active" : "nav-tab"}
+                aria-current={t.key === view ? "page" : undefined}
+                title={t.extra}
+                onClick={() => {
+                  go(t.key);
+                }}
+              >
+                {t.label}
+              </button>
+            </Fragment>
           ))}
           <button
             className={inMore ? "nav-tab active" : "nav-tab"}

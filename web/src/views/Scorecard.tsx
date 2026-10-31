@@ -232,9 +232,10 @@ type Tab = "ask" | "impact" | "rca" | "heal" | "elsewhere";
 const TABS: { key: Tab; label: string }[] = [
   { key: "ask", label: "Ask" },
   { key: "impact", label: "Impact" },
+  { key: "elsewhere", label: "Elsewhere" },
+  // additional features (PS 04 / PS 08)
   { key: "rca", label: "Incidents" },
   { key: "heal", label: "Healing" },
-  { key: "elsewhere", label: "Elsewhere" },
 ];
 
 function Suite({ suite, cards }: { suite: string; cards: ScoreCard[] }) {

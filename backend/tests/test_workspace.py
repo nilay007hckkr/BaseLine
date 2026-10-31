@@ -141,11 +141,12 @@ def test_config_and_workspace_endpoints(tmp_path):
     base = _settings(tmp_path)
     demo = _client(base, None)
     config = demo.get("/api/config").json()
-    # Incidents and Tests are frozen: hidden on the demo unless SHOW_FROZEN=true
-    assert config["mode"] == "demo" and "ask" in config["features"]
-    assert "incidents" not in config["features"] and "tests" not in config["features"]
-    frozen = _client(dataclasses.replace(base, show_frozen=True), None).get("/api/config").json()
-    assert "incidents" in frozen["features"] and "tests" in frozen["features"]
+    # Incidents and Tests (PS 04 / PS 08) are shown on the demo as additional features, after the
+    # PS 06 pages; SHOW_FROZEN=false hides them
+    assert config["mode"] == "demo" and config["features"][:4] == ["ask", "impact", "map", "proof"]
+    assert config["features"][-2:] == ["incidents", "tests"]
+    hidden = _client(dataclasses.replace(base, show_frozen=False), None).get("/api/config").json()
+    assert "incidents" not in hidden["features"] and "tests" not in hidden["features"]
     demo = _client(base, None)
     assert demo.get("/api/workspace/status").status_code == 404
     assert (

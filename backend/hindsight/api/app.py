@@ -98,8 +98,9 @@ if _base.cors_origins:  # e.g. the workspace instance's tour calls the demo's AP
     )
 
 DEMO_FEATURES: tuple[Feature, ...] = ("ask", "impact", "map", "proof", "risk", "docs", "data")
-# Incidents and Tests (PS 04 / PS 08) are frozen; SHOW_FROZEN=true brings them back on the demo.
-# They need the demo shop (its logs and browser tests), so a workspace never shows them.
+# Incidents and Tests (PS 04 / PS 08): no new work, shown on the demo as additional features
+# (SHOW_FROZEN=false hides them). They need the demo shop (its logs and browser tests), so a
+# workspace never shows them.
 FROZEN_FEATURES: tuple[Feature, ...] = ("incidents", "tests")
 WORKSPACE_FEATURES: tuple[Feature, ...] = DEMO_FEATURES
 
@@ -107,7 +108,7 @@ WORKSPACE_FEATURES: tuple[Feature, ...] = DEMO_FEATURES
 def demo_features(settings: Settings) -> list[Feature]:
     if not settings.show_frozen:
         return list(DEMO_FEATURES)
-    return [*DEMO_FEATURES[:3], *FROZEN_FEATURES, *DEMO_FEATURES[3:]]
+    return [*DEMO_FEATURES, *FROZEN_FEATURES]
 
 
 def get_base_settings() -> Settings:
