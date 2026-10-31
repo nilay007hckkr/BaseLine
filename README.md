@@ -143,8 +143,9 @@ never typed by hand. The same file reports the impact protocol on two more publi
 - The answer check is keyword-based. It verifies that cited text exists and covers the claim's key
   words; it is not a full meaning check.
 - Answer scoring covers questions the history links explicitly ("Fixes #N"), n = 25. When the question
-  names only the file and the change (not the commit), the issue behind it is cited in 28% of answers:
-  busy files share words with many commits. Trick-question abstention needs the hand-written set.
+  names only the file and the change (not the commit), the issue behind it is cited in 24% of answers:
+  busy files share words with many commits. Trick questions: 9 of 12 answered "not found" (a set the
+  rule was fixed on, so in-sample). All numbers so far are for quoted answers, not model-written ones.
 - Impact weights are defaults, not tuned. The gain over "co-change only" is small and its confidence
   interval overlaps; the gain over the directory and frequency baselines is clear.
 - The PR check is read-only: nothing is posted to GitHub (copy and paste by design).

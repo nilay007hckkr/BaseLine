@@ -37,9 +37,11 @@ Mixed answer key (decided 2026-10-31), so that the team does not pick the questi
     numbers and closing keywords removed: *Why was `src/x/main.go` changed in commit `abc1234`
     ("subject")?*, as a newcomer would ask after `git blame`;
   - gold: issue N, the reason the change was made.
-- **Trick** (`eval/questions-trick.yaml`, written by hand **before any run**; template in
+- **Trick** (`eval/questions-trick.yaml`, written by hand; template in
   `eval/questions-trick.example.yaml`): ≥ 10 false premises, changes that never happened and
-  questions the history cannot answer. The right answer to each is "not found".
+  questions the history cannot answer. The right answer to each is "not found". The current 12
+  were written on 2026-10-31 after the answerable results had been seen (not blind) and committed
+  (`c7d96a5`) before they were first scored; git shows the order.
 - **Metrics** (95% bootstrap CI, 1,000 resamples, seed 13):
   - answerable: answered; the linked issue among the sources; the linked issue cited by a claim;
   - trick: answered "not found".
@@ -70,6 +72,20 @@ Mixed answer key (decided 2026-10-31), so that the team does not pick the questi
      cited 0.28. With the hash: 1.00 on all three. The intervals still overlap with keyword
      search; the trick questions (unseen) are the check that this did not make Ask answer more
      when it should not.
+  4. First trick run (`ask-20261031T230310Z.json`, code `c7d96a5`, quoted answers): only 6 of
+     12 answered "not found". Every wrong answer passed on common words ("moved", "removed",
+     "store", "next year") while its most specific word (MongoDB, Docker Swarm, PostgreSQL,
+     Elasticsearch) appeared in no source. Rule added: the sources that cover the question must
+     contain its rarest word, or the answer is "not found" (blame and named-commit answers keep
+     their path). Result (`ask-20261031T230652Z.json`, code `7c202ea`): trick "not found" 9 of 12
+     (0.75); with the file and change only, answered 0.88, issue among the sources 0.60, cited
+     0.24 (was 0.92 / 0.64 / 0.28); naming the commit, still 1.00. Still answered: "Why was
+     adservice removed?" (the false word is common), "Why does currencyservice store its rates in
+     PostgreSQL?" and "Who will maintain paymentservice next year?" (a question about the future).
+     The trick set is now in-sample for this rule; a new blind set is the real test.
+- **Model runs:** not yet recorded. On the build machine the local Ollama install lacks its model
+  runtime (HTTP 500 on every call), so every number above is for quoted answers; the
+  plain-model baseline needs a working model.
 - **Failure analysis (file + change variant, `c88a6c9`):** 9 of 25 miss the issue. Most name busy
   files (README.md, skaffold.yaml, .travis.yml) where many other commits share the question's
   words; 2 end in "not found" because the matching text does not name the file. Another 9 find

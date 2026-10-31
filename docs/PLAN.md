@@ -40,7 +40,7 @@ Judging: clarity of thought, implementation, working or not, what is unique. Und
 |---|---|---|---|
 | P1 | Data refresh: older PR texts, the issues the history closes, discussions | `make stats`: more PRs/issues with text, GitHub-confirmed commit → PR links | PRs 962 → 2,800 with text, issues 38 → 67, 2,106 confirmed links; comments wait for a token or the next hour |
 | P2 | Demo and docs for PS 06 only: Home, tour, badges, DEMO.md, PS06.md | No frozen page on the demo; every scripted step run on real data | done |
-| P3 | Measure Ask: generated answer key + hand-written trick questions, keyword and plain-model baselines | `eval/results/ask-*.json` with code SHA, per-question rows, Proof tab | done; trick questions to be written by the team |
+| P3 | Measure Ask: generated answer key + hand-written trick questions, keyword and plain-model baselines | `eval/results/ask-*.json` with code SHA, per-question rows, Proof tab | done: answerable 25 (two variants), trick 9 of 12 "not found" after the rarest-word rule; model run blocked (local Ollama has no runtime) |
 | P4 | PR check (PS bonus): `hindsight check --pr N`, Impact › Check PR, paste-ready comment | Real open PR → summary with reasons | done (PR #3592) |
 | P5 | Function and class names in questions → their lines → git blame | Real function → its lines and history | done (GetQuote) |
 | P6 | Docs that may be out of date, with commit evidence | Docs page list; Impact › Docs says so | done |

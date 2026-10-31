@@ -36,20 +36,24 @@ Result files: `eval/results/impact-20261030T195628Z.json`, `eval/results/impact-
 
 ## Why-answers (answer key: generated links + hand-written trick questions)
 
-- Repository: https://github.com/GoogleCloudPlatform/microservices-demo at `c7cb6d5`; code `c88a6c9`; model: none answered (ollama/qwen2.5:7b configured but did not reply; quoted answers)
+- Repository: https://github.com/GoogleCloudPlatform/microservices-demo at `c7cb6d5`; code `7c202ea`; model: none configured (quoted answers)
 - Answerable (generated from explicit "Fixes #N" links, gold = the issue): **n = 25**, each asked twice: naming the commit hash, and naming only the file and the change
-- Result file: `eval/results/ask-20261031T224009Z.json` (created 2026-10-31T22:40:09Z)
+- Result file: `eval/results/ask-20261031T230652Z.json` (created 2026-10-31T23:06:52Z)
 
 | Question names | Measure | Hindsight | Keyword search only |
 |---|---|---|---|
 | commit hash | Answered | 1.000 [1.000, 1.000] | - |
 | commit hash | Linked issue among the sources | 1.000 [1.000, 1.000] | 0.600 [0.400, 0.800] |
 | commit hash | Linked issue cited by a claim | 1.000 [1.000, 1.000] | - |
-| file + change | Answered | 0.920 [0.800, 1.000] | - |
-| file + change | Linked issue among the sources | 0.640 [0.440, 0.840] | 0.600 [0.400, 0.800] |
-| file + change | Linked issue cited by a claim | 0.280 [0.120, 0.440] | - |
+| file + change | Answered | 0.880 [0.720, 1.000] | - |
+| file + change | Linked issue among the sources | 0.600 [0.400, 0.800] | 0.600 [0.400, 0.800] |
+| file + change | Linked issue cited by a claim | 0.240 [0.080, 0.400] | - |
 
-- Trick questions: not measured yet (eval/questions-trick.yaml is missing).
+- Trick questions (hand-written, committed before they were first scored; right answer is "not found"): **n = 12**
+
+| Measure | Hindsight | Same model, no sources |
+|---|---|---|
+| Answered "not found" | 0.750 [0.500, 1.000] | not run (no model) |
 
 Brackets are 95% bootstrap confidence intervals (1,000 resamples, seed 13). Protocol: docs/EVALUATION.md §3. A person checks 10 answers separately (the ask-handcheck CSV).
 
