@@ -173,6 +173,62 @@ class GitHubCache:
                 client.close()
         return fetched, stopped
 
+    def pull_request(self, number: int, max_pages: int = 3) -> dict[str, Any]:
+        """One pull request's title, state and changed files (read-only; cached as
+        prcheck-<n>.json, refreshed while the PR is open). Raises LookupError when GitHub has no
+        such PR and RuntimeError when GitHub cannot be read."""
+        self.dir.mkdir(parents=True, exist_ok=True)
+        path = self.dir / f"prcheck-{number:06d}.json"
+        if path.exists():
+            cached: dict[str, Any] = json.loads(path.read_text())
+            if cached.get("state") != "open":
+                return cached
+        headers = {"Accept": "application/vnd.github+json", "User-Agent": "hindsight-ingest"}
+        if self.token:
+            headers["Authorization"] = f"Bearer {self.token}"
+        client = self.client or httpx.Client(timeout=30, headers=headers)
+        base = f"{API}/repos/{self.owner}/{self.repo}/pulls/{number}"
+        try:
+            pr = self._get(client, base, headers)
+            files: list[dict[str, Any]] = []
+            for page in range(1, max_pages + 1):
+                batch = self._get(client, f"{base}/files?per_page={PER_PAGE}&page={page}", headers)
+                files += batch
+                if len(batch) < PER_PAGE:
+                    break
+        except httpx.HTTPError as exc:
+            if path.exists():
+                return json.loads(path.read_text())
+            raise RuntimeError(f"GitHub not reachable ({type(exc).__name__})") from exc
+        finally:
+            if self.client is None:
+                client.close()
+        out = {
+            "number": number,
+            "title": pr.get("title") or "",
+            "state": "merged" if pr.get("merged_at") else pr.get("state") or "",
+            "url": pr.get("html_url")
+            or f"https://github.com/{self.owner}/{self.repo}/pull/{number}",
+            "author": (pr.get("user") or {}).get("login") or "",
+            "files": [f["filename"] for f in files if f.get("filename")],
+            "added": [f["filename"] for f in files if f.get("status") == "added"],
+            "truncated": len(files) >= PER_PAGE * max_pages,
+            "fetched_at": int(time.time()),
+        }
+        path.write_text(json.dumps(out))
+        return out
+
+    @staticmethod
+    def _get(client: httpx.Client, url: str, headers: dict[str, str]) -> Any:
+        resp = client.get(url, headers=headers)
+        if resp.status_code == 404:
+            raise LookupError("GitHub has no such pull request")
+        if resp.status_code in (403, 429):
+            raise RuntimeError("GitHub rate limit reached; try again later or set GITHUB_TOKEN")
+        if resp.status_code != 200:
+            raise RuntimeError(f"GitHub returned HTTP {resp.status_code}")
+        return resp.json()
+
     def items(self, kind: str) -> Iterator[dict[str, Any]]:
         seen: set[Any] = set()
         for path in sorted(self.dir.glob(f"{kind}-*.json")):

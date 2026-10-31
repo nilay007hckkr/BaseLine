@@ -76,6 +76,13 @@ def main(argv: list[str] | None = None) -> int:
     p_impact = sub.add_parser("impact", help="what a change affects")
     p_impact.add_argument("--files", nargs="*", default=[])
     p_impact.add_argument("--commit")
+    p_check = sub.add_parser(
+        "check", help="PR check: impact summary of a GitHub PR or a local branch (read-only)"
+    )
+    which = p_check.add_mutually_exclusive_group(required=True)
+    which.add_argument("--pr", type=int, help="pull request number on the ingested repository")
+    which.add_argument("--base", help="local branch: files changed since it left this base")
+    p_check.add_argument("--markdown", action="store_true", help="print a PR comment")
     sub.add_parser("risk", help="knowledge at risk")
     p_collect = sub.add_parser("collect", help="stream logs from the local cluster into LogSense")
     p_collect.add_argument("--minutes", type=float, help="stop after this many minutes")
@@ -148,6 +155,31 @@ def main(argv: list[str] | None = None) -> int:
 
             graph = graph_reader(conn, settings)
             _print(impact_report(conn, files=args.files, commit=args.commit, graph=graph))
+        elif args.cmd == "check":
+            from hindsight.api.service import repo_dir
+            from hindsight.brain.impact import impact_report
+            from hindsight.brain.prcheck import branch_files, markdown, pr_report
+
+            graph = graph_reader(conn, settings)
+            try:
+                if args.pr:
+                    report = pr_report(conn, settings, args.pr, graph=graph)
+                else:
+                    repo = repo_dir(conn)
+                    if repo is None:
+                        print("no local clone: run `make ingest` first", file=sys.stderr)
+                        return 1
+                    files = branch_files(repo, args.base)
+                    report = impact_report(conn, files=files, graph=graph)
+                    note = f"branch vs {args.base}: {len(files)} files changed"
+                    report = report.model_copy(update={"notes": [note, *report.notes]})
+            except (LookupError, RuntimeError) as exc:
+                print(str(exc), file=sys.stderr)
+                return 1
+            if args.markdown:
+                print(markdown(report), end="")
+            else:
+                _print(report)
         elif args.cmd == "embed":
             from hindsight.core.embed import OllamaEmbedder, index_spans
 

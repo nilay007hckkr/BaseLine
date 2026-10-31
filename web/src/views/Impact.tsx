@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { useApp } from "../state";
-import { api, type ImpactItem, type ImpactReport } from "../api/client";
+import { api, type ImpactItem, type ImpactReport, type ImpactRequest } from "../api/client";
 import { ErrorBox, PageHead, Provenance, ScoreBar, SubTabs, fmtDate } from "../ui";
 
 function Items({ items, empty }: { items: ImpactItem[]; empty: string }) {
@@ -90,10 +90,15 @@ export function Impact() {
   // a quest hands over the files to check when it opens this page
   const [preset] = useState(() => takePreset("impact"));
   const [files, setFiles] = useState((preset?.files ?? []).join("\n"));
+  const [pr, setPr] = useState("");
+  const [copied, setCopied] = useState("");
+  // a past commit, a list of files, or a GitHub pull request (the PR check)
   const mutation = useMutation({
-    mutationFn: api.impact,
+    mutationFn: (req: ImpactRequest | { pr: number }) =>
+      "pr" in req ? api.impactPr(req.pr) : api.impact(req),
     onSuccess: () => {
       unlock("impact");
+      setCopied("");
     },
   });
   const { mutate } = mutation;
@@ -102,13 +107,15 @@ export function Impact() {
     if (preset?.run && preset.files?.length) mutate({ files: preset.files, commit: null });
   }, [preset, mutate]);
   const report = mutation.data;
+  const vars = mutation.variables;
+  const prNumber = vars && "pr" in vars ? vars.pr : null;
 
   return (
     <>
       <PageHead
         label="Impact"
         title="What will this change affect?"
-        lede="Files you will change, or a past change."
+        lede="Files you will change, a past change, or an open pull request."
       />
       <div style={{ margin: "18px 0 30px" }}>
         <div className="row">
@@ -160,8 +167,48 @@ export function Impact() {
             Check files
           </button>
         </div>
+        <div className="row">
+          <input
+            value={pr}
+            onChange={(e) => {
+              setPr(e.target.value.replace(/\D/g, ""));
+            }}
+            inputMode="numeric"
+            placeholder="GitHub pull request number"
+            aria-label="Pull request number"
+          />
+          <button
+            disabled={!pr || mutation.isPending}
+            onClick={() => {
+              mutation.mutate({ pr: Number(pr) });
+            }}
+          >
+            Check PR
+          </button>
+        </div>
       </div>
       {mutation.isError ? <ErrorBox error={mutation.error} /> : null}
+      {report && prNumber !== null ? (
+        <div className="row">
+          <button
+            className="ghost"
+            onClick={() => {
+              void api
+                .impactPrComment(prNumber)
+                .then((md) => navigator.clipboard.writeText(md))
+                .then(() => {
+                  setCopied("Copied. Paste it as a comment on the PR; nothing was posted.");
+                })
+                .catch((e: unknown) => {
+                  setCopied(`Could not copy: ${e instanceof Error ? e.message : String(e)}`);
+                });
+            }}
+          >
+            Copy as PR comment
+          </button>
+          {copied ? <span className="muted small">{copied}</span> : null}
+        </div>
+      ) : null}
       {report ? <Report report={report} /> : null}
     </>
   );

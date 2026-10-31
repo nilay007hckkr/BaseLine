@@ -348,6 +348,88 @@
     }
    }
   },
+  "/api/impact/pr/{number}": {
+   "get": {
+    "summary": "Impact Of Pr",
+    "description": "PR check: the impact of a GitHub pull request's changed files (read-only).",
+    "operationId": "impact_of_pr_api_impact_pr__number__get",
+    "parameters": [
+     {
+      "name": "number",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "minimum": 1,
+       "title": "Number"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ImpactReport"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/impact/pr/{number}/comment": {
+   "get": {
+    "summary": "Impact Of Pr Comment",
+    "description": "The same summary as Markdown, ready to paste as a PR comment (nothing is posted).",
+    "operationId": "impact_of_pr_comment_api_impact_pr__number__comment_get",
+    "parameters": [
+     {
+      "name": "number",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "minimum": 1,
+       "title": "Number"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "text/plain": {
+        "schema": {
+         "type": "string"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
   "/api/commits": {
    "get": {
     "summary": "Commits",

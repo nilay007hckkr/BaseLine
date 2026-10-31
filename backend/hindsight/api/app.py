@@ -15,11 +15,12 @@ from fastapi import (
     File,
     Form,
     HTTPException,
+    Path,
     Query,
     UploadFile,
 )
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, PlainTextResponse
 from fastapi.staticfiles import StaticFiles
 
 from hindsight.api import llm_settings, service
@@ -258,6 +259,37 @@ def impact(req: ImpactRequest, conn: Conn, graph: Graph) -> ImpactReport:
     if not req.files and not req.commit:
         raise HTTPException(status_code=422, detail="give changed files or a commit")
     return impact_report(conn, files=req.files, commit=req.commit, graph=graph)
+
+
+def _pr_report(
+    number: int, conn: sqlite3.Connection, settings: Settings, graph: GraphReader
+) -> ImpactReport:
+    from hindsight.brain.prcheck import pr_report
+
+    try:
+        return pr_report(conn, settings, number, graph=graph)
+    except LookupError as exc:
+        raise HTTPException(status_code=404, detail=f"PR #{number}: {exc}") from exc
+    except RuntimeError as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
+
+
+@app.get("/api/impact/pr/{number}", response_model=ImpactReport)
+def impact_of_pr(
+    number: Annotated[int, Path(ge=1)], conn: Conn, settings: Cfg, graph: Graph
+) -> ImpactReport:
+    """PR check: the impact of a GitHub pull request's changed files (read-only)."""
+    return _pr_report(number, conn, settings, graph)
+
+
+@app.get("/api/impact/pr/{number}/comment", response_class=PlainTextResponse)
+def impact_of_pr_comment(
+    number: Annotated[int, Path(ge=1)], conn: Conn, settings: Cfg, graph: Graph
+) -> str:
+    """The same summary as Markdown, ready to paste as a PR comment (nothing is posted)."""
+    from hindsight.brain.prcheck import markdown
+
+    return markdown(_pr_report(number, conn, settings, graph))
 
 
 @app.get("/api/commits", response_model=list[CommitSummary])

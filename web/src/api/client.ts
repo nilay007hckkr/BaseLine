@@ -45,6 +45,14 @@ export function makeApi(base = "") {
     return (await res.json()) as T;
   }
 
+  async function text(path: string): Promise<string> {
+    const res = await fetch(`${base}/api${path}`);
+    if (!res.ok) {
+      throw new Error(`${String(res.status)} ${res.statusText}: ${await res.text()}`);
+    }
+    return res.text();
+  }
+
   function send<T>(method: string, path: string, body: unknown): Promise<T> {
     return request<T>(path, {
       method,
@@ -70,6 +78,8 @@ export function makeApi(base = "") {
     answerChecks: () => request<AnswerCheckSummary>("/answer-checks"),
     rateAnswer: (body: AnswerCheckRequest) => post<AnswerCheckSummary>("/answer-checks", body),
     impact: (body: ImpactRequest) => post<ImpactReport>("/impact", body),
+    impactPr: (n: number) => request<ImpactReport>(`/impact/pr/${String(n)}`),
+    impactPrComment: (n: number) => text(`/impact/pr/${String(n)}/comment`),
     commits: () => request<CommitSummary[]>("/commits?limit=40"),
     /** An empty key lets the server pick where to start (the most linked service, component or file).
      * The services view draws every service and the calls between them. */
