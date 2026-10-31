@@ -1,8 +1,36 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ArrowDown, ArrowUp, Search } from "lucide-react";
 import { useState } from "react";
-import { api, type LlmProvider, type LlmSettings, type ProviderName } from "../api/client";
+import {
+  api,
+  type LlmProvider,
+  type LlmSettings,
+  type ModelList,
+  type ProviderName,
+} from "../api/client";
 import { ErrorBox, Loading, PageHead } from "../ui";
+
+/** What "Check" found, in plain words: ready, not pulled, or not running. */
+function checkNote(p: LlmProvider, model: string, found: ModelList | undefined): string {
+  if (!found) {
+    return p.key_env
+      ? `Key lives in .env as ${p.key_env}`
+      : "Runs locally through Ollama; nothing leaves the machine";
+  }
+  if (found.error) {
+    return p.key_env ? found.error : `${found.error}: start it with \`ollama serve\``;
+  }
+  const m = model.trim();
+  const has = found.models.includes(m) || found.models.includes(`${m}:latest`);
+  if (m && !has) {
+    return p.key_env
+      ? `${m} is not offered by ${p.label}; pick another below`
+      : `${m} is not pulled: run \`ollama pull ${m}\``;
+  }
+  return m
+    ? `Ready: ${m} is available (${String(found.models.length)} models)`
+    : `${String(found.models.length)} models available · pick one above`;
+}
 
 interface Draft {
   order: ProviderName[];
@@ -100,16 +128,11 @@ function Provider({
           }}
           disabled={list.isFetching}
         >
-          <Search size={14} aria-hidden="true" /> {list.isFetching ? "Finding…" : "Find models"}
+          <Search size={14} aria-hidden="true" /> {list.isFetching ? "Checking…" : "Check"}
         </button>
       </div>
-      <p className="small muted provider-note">
-        {list.data?.error ??
-          (list.data
-            ? `${String(options.length)} models available · pick one above`
-            : p.key_env
-              ? `Key lives in .env as ${p.key_env}`
-              : "Runs locally through Ollama; nothing leaves the machine")}
+      <p className="small muted provider-note" role="status">
+        {checkNote(p, model, list.data)}
       </p>
     </div>
   );

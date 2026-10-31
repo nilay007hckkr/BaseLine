@@ -123,7 +123,17 @@ curl -s -X POST http://localhost:8000/api/incidents/2/investigate \
   -H 'content-type: application/json' -d '{}' | python -m json.tool | grep -E '"(status|mode)"'
 ```
 
-`"mode": "llm"` means the model wrote the claims. `"extractive"` means no model answered.
+`"mode": "llm"` means the model wrote the claims. `"extractive"` means no model answered; the
+answer's notes then say why (for example "Ollama (qwen2.5:7b) did not answer in time").
+
+In the dashboard, **More › Settings › Ollama › Check** says whether Ollama is running and whether
+the model in `.env` is pulled. On a laptop without a GPU a 7B model is slow; two settings in `.env`
+give it room (restart `make start` after changing them):
+
+```bash
+OLLAMA_TIMEOUT=300    # seconds one answer may take
+OLLAMA_NUM_CTX=8192   # context window in tokens; Ollama's default is smaller and cuts long prompts
+```
 
 ## Troubleshooting
 
@@ -134,4 +144,4 @@ curl -s -X POST http://localhost:8000/api/incidents/2/investigate \
 | `ollama ps` shows `100% CPU` | `nvidia-smi` must work (reboot after installing the driver); check `pacman -Q ollama-cuda`; read `journalctl -u ollama -b --no-pager \| tail -50` |
 | Out of memory, or `CPU/GPU` split | Use the smaller chat model (`gemma3:4b`), set `OLLAMA_MAX_LOADED_MODELS=1` (step 6), close other GPU programs |
 | Models pulled earlier are missing | The service reads `/var/lib/ollama`, not `~/.ollama`. Pull them again with the service running |
-| Hindsight still says "no LLM provider answered" | The model name in `.env` must match `ollama list` exactly, and `OLLAMA_HOST` must be `http://localhost:11434`. Restart `make dev` after editing `.env` |
+| Hindsight still says "no LLM provider answered" | Read the note under it, which names the reason. "not reachable": start Ollama. "not available": `ollama pull <model>` (the name in `.env` must match `ollama list`). "did not answer in time": raise `OLLAMA_TIMEOUT`. Restart `make start` after editing `.env` |

@@ -181,8 +181,14 @@ else
   record "live shop" "off"
 fi
 
-if have curl && curl -fsS -m 2 "$(envval OLLAMA_HOST http://localhost:11434)/api/version" >/dev/null 2>&1; then
-  record "local model" "Ollama is up"
+OLLAMA_URL="$(envval OLLAMA_HOST http://localhost:11434)"
+CHAT_MODEL="$(envval OLLAMA_CHAT_MODEL "")"
+if have curl && curl -fsS -m 2 "$OLLAMA_URL/api/version" >/dev/null 2>&1; then
+  if [ -n "$CHAT_MODEL" ] && ! curl -fsS -m 3 "$OLLAMA_URL/api/tags" 2>/dev/null       | grep -qF -e "\"name\":\"$CHAT_MODEL\"" -e "\"name\":\"$CHAT_MODEL:latest\""; then
+    record "local model" "Ollama is up, but $CHAT_MODEL is not pulled: run ollama pull $CHAT_MODEL"
+  else
+    record "local model" "Ollama is up${CHAT_MODEL:+ with $CHAT_MODEL}"
+  fi
 else
   record "local model" "Ollama not reachable: answers use cloud keys from .env, or quoted evidence (docs/OLLAMA_SETUP.md)"
 fi
