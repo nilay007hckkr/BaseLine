@@ -71,10 +71,11 @@ export function makeApi(base = "") {
     rateAnswer: (body: AnswerCheckRequest) => post<AnswerCheckSummary>("/answer-checks", body),
     impact: (body: ImpactRequest) => post<ImpactReport>("/impact", body),
     commits: () => request<CommitSummary[]>("/commits?limit=40"),
-    /** An empty key lets the server pick where to start (the most linked service, component or file). */
-    graph: (key: string, depth: number, code = false) =>
+    /** An empty key lets the server pick where to start (the most linked service, component or file).
+     * The services view draws every service and the calls between them. */
+    graph: (key: string, depth: number, code = false, services = false) =>
       request<GraphResponse>(
-        `/graph?${key ? `key=${encodeURIComponent(key)}&` : ""}depth=${String(depth)}${code ? "&code=true" : ""}`,
+        `/graph?${key ? `key=${encodeURIComponent(key)}&` : ""}depth=${String(depth)}${code ? "&code=true" : ""}${services ? "&view=services" : ""}`,
       ),
     graphStatus: () => request<GraphStatus>("/graph/status"),
     qaTests: () => request<QaTest[]>("/qa/tests"),

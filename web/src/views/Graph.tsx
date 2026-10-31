@@ -247,10 +247,12 @@ function Details({
   data,
   selected,
   onCentre,
+  overview = false,
 }: {
   data: GraphResponse;
   selected: string;
   onCentre: (id: string) => void;
+  overview?: boolean;
 }) {
   const node = data.nodes.find((n) => n.id === selected);
   if (!node) return null;
@@ -270,7 +272,7 @@ function Details({
             <ExternalLink size={15} aria-hidden="true" /> Open source
           </a>
         ) : null}
-        {node.id !== data.center ? (
+        {overview || node.id !== data.center ? (
           <button
             onClick={() => {
               onCentre(node.id);
@@ -305,14 +307,17 @@ export function Graph() {
   const [chosen, setChosen] = useState("");
   const [rotating, setRotating] = useState(true);
   const [code, setCode] = useState(false);
+  // the architecture first: every service and its calls; "around" follows one item's links
+  const [view, setView] = useState<"services" | "around">("services");
+  const services = view === "services" && !key;
   const hits = useQuery({
     queryKey: ["search", query],
     queryFn: () => api.search(query),
     enabled: query.trim().length >= 2,
   });
   const graph = useQuery({
-    queryKey: ["graph", key, depth, code],
-    queryFn: () => api.graph(key, depth, code),
+    queryKey: ["graph", key, depth, code, services],
+    queryFn: () => api.graph(key, depth, code && !services, services),
   });
   const symbols = (graph.data?.nodes ?? []).filter((n) => n.kind === "Symbol").length;
   const store = useQuery({ queryKey: ["graph-status"], queryFn: api.graphStatus });
@@ -339,6 +344,30 @@ export function Graph() {
         lede="Drag to turn. Click a shape to see how we know."
       />
       <div style={{ marginBottom: 18 }}>
+        <div className="row" role="group" aria-label="What the map shows">
+          <button
+            className={services ? "ghost active" : "ghost"}
+            aria-pressed={services}
+            onClick={() => {
+              setView("services");
+              setKey("");
+              setChosen("");
+            }}
+          >
+            Services
+          </button>
+          <button
+            className={services ? "ghost" : "ghost active"}
+            aria-pressed={!services}
+            onClick={() => {
+              // follow the service picked in the overview (or the one it centred on)
+              setKey(chosen || graph.data?.center || "");
+              setView("around");
+            }}
+          >
+            Around an item
+          </button>
+        </div>
         <div className="row">
           <input
             value={query}
@@ -355,13 +384,15 @@ export function Graph() {
             }}
             aria-label="How far to look"
             className="narrow"
+            disabled={services}
           >
             <option value={1}>Direct links</option>
             <option value={2}>Two steps out</option>
           </select>
           <button
-            className={code ? "ghost active" : "ghost"}
-            aria-pressed={code}
+            className={code && !services ? "ghost active" : "ghost"}
+            aria-pressed={code && !services}
+            disabled={services}
             onClick={() => {
               setCode(!code);
             }}
@@ -388,6 +419,7 @@ export function Graph() {
               key={h.key}
               className={h.key === key ? "chip small-chip active" : "chip small-chip"}
               onClick={() => {
+                setView("around");
                 setKey(h.key);
                 setChosen(h.key);
               }}
@@ -398,15 +430,26 @@ export function Graph() {
         </div>
       </div>
       {graph.isPending ? <Loading /> : null}
-      {graph.isError ? <ErrorBox error={graph.error} /> : null}
+      {graph.isError ? (
+        graph.error instanceof Error && graph.error.message.startsWith("404") ? (
+          <p className="muted">
+            Nothing to map yet: connect a repository on the workspace page, or ingest one with{" "}
+            <code>make ingest</code>.
+          </p>
+        ) : (
+          <ErrorBox error={graph.error} />
+        )
+      ) : null}
       {graph.data ? (
         <>
           <div className="map-layout">
             <Graph3D data={graph.data} theme={theme} rotating={rotating} onSelect={onSelect} />
             <Details
               data={graph.data}
+              overview={services}
               selected={selected}
               onCentre={(id) => {
+                setView("around");
                 setKey(id);
                 setChosen(id);
               }}
@@ -433,7 +476,14 @@ export function Graph() {
           {graph.data.truncated ? (
             <p className="muted small">Busy item: showing its most recent links only.</p>
           ) : null}
-          {code ? (
+          {services ? (
+            <p className="muted small">
+              {graph.data.nodes.length} services and {graph.data.edges.length} calls between them,
+              read from the source code. Click a service, then &ldquo;Centre the map here&rdquo; to
+              see its files, changes and people.
+            </p>
+          ) : null}
+          {code && !services ? (
             <p className="muted small">
               <Term id="codeStructure">Code structure</Term>:{" "}
               {symbols

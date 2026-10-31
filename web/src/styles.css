@@ -169,6 +169,9 @@ button.ghost:hover:not(:disabled) {
   color: var(--text);
   border-color: transparent;
 }
+button.ghost.active:hover:not(:disabled) {
+  color: var(--accent-ink); /* lit buttons keep dark text on green */
+}
 button.link {
   border: none;
   padding: 0 2px;

@@ -228,7 +228,37 @@ describe("dashboard", () => {
     expect(document.querySelector("pre.code")?.textContent).toContain("function chargeCard()");
   });
 
-  it("the map asks for the code structure layer only when it is switched on", async () => {
+  it("an empty graph gets a plain sentence, not a raw error", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn((input: RequestInfo | URL) => {
+        const url =
+          typeof input === "string" ? input : input instanceof URL ? input.href : input.url;
+        if (url.endsWith("/api/config")) {
+          return Promise.resolve(new Response(JSON.stringify(DEMO), { status: 200 }));
+        }
+        if (url.includes("/api/graph?")) {
+          return Promise.resolve(
+            new Response('{"detail":"the graph is empty: ingest a repository first"}', {
+              status: 404,
+              statusText: "Not Found",
+            }),
+          );
+        }
+        return new Promise(() => undefined);
+      }),
+    );
+    renderApp();
+    fireEvent.click(
+      within(await screen.findByRole("navigation", { name: "Main" })).getByRole("button", {
+        name: "Map",
+      }),
+    );
+    expect(await screen.findByText(/Nothing to map yet/, {}, { timeout: 4000 })).toBeDefined();
+    expect(screen.queryByText(/404 Not Found/)).toBeNull();
+  });
+
+  it("the map opens on the services view; code structure needs an item", async () => {
     const service = { id: "service:checkoutservice", kind: "Service", label: "checkoutservice" };
     const symbol = {
       id: "symbol:src/checkoutservice/main.go#PlaceOrder()@L12",
@@ -244,9 +274,11 @@ describe("dashboard", () => {
     });
     stubApi({
       "/api/config": DEMO,
-      // no key: the server picks where the map starts (any repository, not only the demo shop)
-      "/api/graph?depth=1": graph([service]),
-      "/api/graph?depth=1&code=true": graph([service, symbol]),
+      // first the architecture: every service and the calls between them
+      "/api/graph?depth=1&view=services": graph([service]),
+      // "Around an item" follows the service the overview centred on
+      "/api/graph?key=service%3Acheckoutservice&depth=1": graph([service]),
+      "/api/graph?key=service%3Acheckoutservice&depth=1&code=true": graph([service, symbol]),
     });
     renderApp();
     fireEvent.click(
@@ -255,6 +287,9 @@ describe("dashboard", () => {
       }),
     );
     const toggle = await screen.findByRole("button", { name: /Code structure/ });
+    expect((toggle as HTMLButtonElement).disabled).toBe(true); // services view: no centre yet
+    await screen.findByText(/calls between them/); // the overview has loaded
+    fireEvent.click(screen.getByRole("button", { name: "Around an item" }));
     expect(toggle.getAttribute("aria-pressed")).toBe("false");
     expect(screen.queryByText(/function or class shown/)).toBeNull();
     fireEvent.click(toggle);
@@ -265,8 +300,12 @@ describe("dashboard", () => {
         typeof input === "string" ? input : input instanceof URL ? input.href : input.url,
       );
     expect(
-      urls.filter((u) => u.includes("/api/graph?")).map((u) => u.includes("code=true")),
-    ).toEqual([false, true]);
+      urls
+        .filter((u) => u.includes("/api/graph?"))
+        .map((u) =>
+          u.includes("view=services") ? "services" : u.includes("code=true") ? "code" : "around",
+        ),
+    ).toEqual(["services", "around", "code"]);
   });
 });
 
