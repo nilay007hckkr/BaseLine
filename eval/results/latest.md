@@ -34,6 +34,25 @@ Checks that the impact check is not fitted to the main repository. Each reposito
 
 Result files: `eval/results/impact-20261030T195628Z.json`, `eval/results/impact-20261030T195436Z.json`
 
+## Why-answers (answer key: generated links + hand-written trick questions)
+
+- Repository: https://github.com/GoogleCloudPlatform/microservices-demo at `c7cb6d5`; code `c88a6c9`; model: none answered (ollama/qwen2.5:7b configured but did not reply; quoted answers)
+- Answerable (generated from explicit "Fixes #N" links, gold = the issue): **n = 25**, each asked twice: naming the commit hash, and naming only the file and the change
+- Result file: `eval/results/ask-20261031T224009Z.json` (created 2026-10-31T22:40:09Z)
+
+| Question names | Measure | Hindsight | Keyword search only |
+|---|---|---|---|
+| commit hash | Answered | 1.000 [1.000, 1.000] | - |
+| commit hash | Linked issue among the sources | 1.000 [1.000, 1.000] | 0.600 [0.400, 0.800] |
+| commit hash | Linked issue cited by a claim | 1.000 [1.000, 1.000] | - |
+| file + change | Answered | 0.920 [0.800, 1.000] | - |
+| file + change | Linked issue among the sources | 0.640 [0.440, 0.840] | 0.600 [0.400, 0.800] |
+| file + change | Linked issue cited by a claim | 0.280 [0.120, 0.440] | - |
+
+- Trick questions: not measured yet (eval/questions-trick.yaml is missing).
+
+Brackets are 95% bootstrap confidence intervals (1,000 resamples, seed 13). Protocol: docs/EVALUATION.md §3. A person checks 10 answers separately (the ask-handcheck CSV).
+
 ## Test healing (mutation harness, synthetic)
 
 - 27 cosmetic and 8 defect mutations of the demo shop's pages, applied in the test browser only; tests: `OB-289BD4D-CART`, `OB-3474`, `OB-3578`, `OB-593-CONTINUE`, `OB-593-PRODUCT`

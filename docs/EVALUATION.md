@@ -53,10 +53,28 @@ Mixed answer key (decided 2026-10-31), so that the team does not pick the questi
 - **Scope:** scored on the full graph. Ask explains changes that already happened, so this is not
   a prediction task and the replay rule of §1 does not apply. The answerable set only covers
   history with explicit links; it does not measure questions phrased in other words.
-- **What the first run changed:** before any number was recorded, the generated questions showed
-  two bugs (fixed in the same branch, with tests): a commit hash in a question counted as an
-  unmatched word (now it anchors that commit, like `git blame`), and keyword search missed words
-  whose porter stem is shorter than six letters ("rounding" → "round").
+- **Two variants per answerable question.** Naming the commit hash lets the commit's own links lead
+  to the issue, so that variant is close to guaranteed by the graph. The second variant drops the
+  hash and keeps only the file and the change's subject: search must find the commit first. Both
+  are reported; the second is the telling one.
+- **What the runs changed, in order (same 25 questions, so the later numbers are in-sample):**
+  1. Before any number was recorded, the generated questions showed two bugs (fixed with tests):
+     a commit hash counted as an unmatched word (now it anchors that commit, like `git blame`),
+     and keyword search missed words whose porter stem is shorter than six letters
+     ("rounding" → "round").
+  2. First recorded run (`ask-20261031T223810Z.json`, Ask code `a9622d3`): with the file and
+     change only, answered 0.84, linked issue among the sources 0.52 (keyword search alone 0.60),
+     cited 0.28. Cause: for a named file, Ask followed only its 40 latest commits.
+  3. Fix: also follow the file's older commits whose message matches the question
+     (`ask-20261031T224009Z.json`, code `c88a6c9`): answered 0.92, among the sources 0.64,
+     cited 0.28. With the hash: 1.00 on all three. The intervals still overlap with keyword
+     search; the trick questions (unseen) are the check that this did not make Ask answer more
+     when it should not.
+- **Failure analysis (file + change variant, `c88a6c9`):** 9 of 25 miss the issue. Most name busy
+  files (README.md, skaffold.yaml, .travis.yml) where many other commits share the question's
+  words; 2 end in "not found" because the matching text does not name the file. Another 9 find
+  the issue but quote other sources first: quoted answers lead with the best-covering passages,
+  and the issue's wording is often further from the question than the commit's.
 
 ## 4. Healing (mutation harness)
 - **Cosmetic mutations** (the healer should heal): id rename, class rename, a wrapper element inserted, sibling reorder, button text change that keeps its meaning. At least 20.

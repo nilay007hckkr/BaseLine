@@ -1,0 +1,1245 @@
+{
+  "name": "ask_answer_key",
+  "created_at": "2026-10-31T22:38:10Z",
+  "command": "make eval-ask",
+  "code_sha": "a9622d3fca8bcde47c953ef1c7b924b19287d50d",
+  "repo": {
+    "url": "https://github.com/GoogleCloudPlatform/microservices-demo",
+    "web": "https://github.com/GoogleCloudPlatform/microservices-demo",
+    "owner": "GoogleCloudPlatform",
+    "name": "microservices-demo",
+    "path": "/home/nilay/code/hindsight/data/repos/GoogleCloudPlatform__microservices-demo",
+    "head_sha": "c7cb6d5bfd6ea3aed768634ebbcb98cb7a523712",
+    "head_ts": 1793132320
+  },
+  "model": "none answered (ollama/qwen2.5:7b configured but did not reply; quoted answers)",
+  "questions_file": "eval/questions.yaml",
+  "trick_file": null,
+  "sets": {
+    "answerable": {
+      "n": 25,
+      "methods": {
+        "hindsight": {
+          "answered": {
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0
+          },
+          "gold_in_sources": {
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0
+          },
+          "gold_cited": {
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0
+          }
+        },
+        "keyword_only": {
+          "gold_in_sources": {
+            "value": 0.6,
+            "ci_low": 0.4,
+            "ci_high": 0.8
+          }
+        }
+      }
+    },
+    "answerable_no_hash": {
+      "n": 25,
+      "methods": {
+        "hindsight": {
+          "answered": {
+            "value": 0.84,
+            "ci_low": 0.68,
+            "ci_high": 0.96
+          },
+          "gold_in_sources": {
+            "value": 0.52,
+            "ci_low": 0.32,
+            "ci_high": 0.72
+          },
+          "gold_cited": {
+            "value": 0.28,
+            "ci_low": 0.12,
+            "ci_high": 0.44
+          }
+        },
+        "keyword_only": {
+          "gold_in_sources": {
+            "value": 0.6,
+            "ci_low": 0.4,
+            "ci_high": 0.8
+          }
+        }
+      }
+    }
+  },
+  "rows": [
+    {
+      "id": "q001",
+      "set": "answerable",
+      "question": "Why was src/frontend/main.go changed in commit 342a2d5 (\"Resolve compilation error in frontend\")?",
+      "gold": [
+        "gh:31"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": true,
+      "claims": 3,
+      "answer": "Commit 342a2d5 by Eno Compton on 2018-08-27 changed main.go: Resolve compilation error in frontend (#32) | Issue #31: Frontend doesn't compile. \u2014 \u201cCompiling the frontend at this commit (currently master) produces this error:\u201d",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/342a2d5754d5014cdda702465d7f0fa51ad18484",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/issues/31"
+      ],
+      "notes": [
+        "answered from the history of commit 342a2d5",
+        "no LLM provider answered; showing quoted evidence",
+        "Ollama (qwen2.5:7b) is not reachable at http://localhost:11434 (is it running?)"
+      ]
+    },
+    {
+      "id": "q001",
+      "set": "answerable_no_hash",
+      "question": "Why was src/frontend/main.go changed (\"Resolve compilation error in frontend\")?",
+      "gold": [
+        "gh:31"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": true,
+      "claims": 3,
+      "answer": "Pull request #3477: fix: resolve checkout frontend error rate >20% (P2 alert) \u2014 \u201cFile \u00b7 Change \u00b7 \u00b7 ------ \u00b7 -------- \u00b7 \u00b7 src/productcatalogservice/product_catalog.go \u00b7 Race condition fix: single parseCatalog() call + mutex sync \u00b7 \u00b7 src/productcatalogservice/product_catalog_test.go \u00b7 New concurrent race tests \u00b7 \u00b7 src/productcatalogservice/server.go \u00b7 gRPC keepalive + signal handler mutex fix \u00b7 \u00b7 src\u201d | Issue #31: Frontend doesn't compile. \u2014 \u201cCompiling the frontend at this commit (currently master) produces this error:\u201d",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/issues/31",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/3477"
+      ],
+      "notes": [
+        "no LLM provider answered; showing quoted evidence",
+        "Ollama (qwen2.5:7b) is not reachable at http://localhost:11434 (is it running?)"
+      ]
+    },
+    {
+      "id": "q002",
+      "set": "answerable",
+      "question": "Why was src/frontend/main.go changed in commit 0f23d6b (\"frontend: add simple /healthz endpoint\")?",
+      "gold": [
+        "gh:34"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": true,
+      "claims": 3,
+      "answer": "Commit 0f23d6b by Ahmet Alp Balkan on 2018-09-05 changed frontend.yaml, main.go: frontend: add simple /healthz endpoint | Issue #34: frontend: decouple healthcheck endpoint from path=/",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/0f23d6bbf9ac1f7b9f5f8e19cf71fa83f9d62d0b",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/issues/34"
+      ],
+      "notes": [
+        "answered from the history of commit 0f23d6b",
+        "no LLM provider answered; showing quoted evidence",
+        "Ollama (qwen2.5:7b) is not reachable at http://localhost:11434 (is it running?)"
+      ]
+    },
+    {
+      "id": "q002",
+      "set": "answerable_no_hash",
+      "question": "Why was src/frontend/main.go changed (\"frontend: add simple /healthz endpoint\")?",
+      "gold": [
+        "gh:34"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": false,
+      "keyword_gold_in_top": true,
+      "claims": 2,
+      "answer": "Commit 0f23d6b by Ahmet Alp Balkan on 2018-09-05 changed frontend.yaml, main.go: frontend: add simple /healthz endpoint | Pull request #3304: feat: structured health check endpoints with dependency status \u2014 \u201cWire /health (structured JSON) and /livez (simple liveness) endpoints into the frontend service\u201d",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/0f23d6bbf9ac1f7b9f5f8e19cf71fa83f9d62d0b",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/3304"
+      ],
+      "notes": [
+        "no LLM provider answered; showing quoted evidence",
+        "Ollama (qwen2.5:7b) is not reachable at http://localhost:11434 (is it running?)"
+      ]
+    },
+    {
+      "id": "q003",
+      "set": "answerable",
+      "question": "Why was src/emailservice/Dockerfile changed in commit 2924250 (\"emailservice Image Optimization\")?",
+      "gold": [
+        "gh:49"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": false,
+      "claims": 3,
+      "answer": "Commit 2924250 by Colin Nelson on 2018-09-25 changed Dockerfile: emailservice Image Optimization (#51) | Issue #49: emailservice: Make the image smaller",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/29242504491623edd1e6089c104c6fbce24646f7",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/issues/49"
+      ],
+      "notes": [
+        "answered from the history of commit 2924250",
+        "no LLM provider answered; showing quoted evidence",
+        "Ollama (qwen2.5:7b) is not reachable at http://localhost:11434 (is it running?)"
+      ]
+    },
+    {
+      "id": "q003",
+      "set": "answerable_no_hash",
+      "question": "Why was src/emailservice/Dockerfile changed (\"emailservice Image Optimization\")?",
+      "gold": [
+        "gh:49"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": false,
+      "gold_cited": false,
+      "keyword_gold_in_top": false,
+      "claims": 3,
+      "answer": "Commit be21220 by Mathieu Benoit on 2022-08-31 changed renovate.json, Dockerfile, logger.py and 3 more files: `python`:3.9 + `recommendation` and `emailservice` container images optimization (#984) \u2014 \u201coptimize recommendationservice Dockerfile like emailservice\u201d | Commit 2924250 by Colin Nelson on 2018-09-25 changed Dockerfile: emailservice Image Optimization (#51)",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/29242504491623edd1e6089c104c6fbce24646f7",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/be21220dcb7f276eb60495128a2b70e088824244"
+      ],
+      "notes": [
+        "no LLM provider answered; showing quoted evidence",
+        "Ollama (qwen2.5:7b) is not reachable at http://localhost:11434 (is it running?)"
+      ]
+    },
+    {
+      "id": "q004",
+      "set": "answerable",
+      "question": "Why was src/cartservice/src/services/HealthCheckService.cs changed in commit be65dd1 (\"cartservice: fix health Check() method signature\")?",
+      "gold": [
+        "gh:50"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": true,
+      "claims": 3,
+      "answer": "Commit be65dd1 by Ahmet Alp Balkan on 2018-09-28 changed HealthImpl.cs, cartservice.csproj: cartservice: fix health Check() method signature (#57) | Issue #50: cartservice: Health service is not registered",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/be65dd1fcd739d48e51ff60e3267cdc6b2b878f6",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/issues/50"
+      ],
+      "notes": [
+        "answered from the history of commit be65dd1",
+        "no LLM provider answered; showing quoted evidence",
+        "Ollama (qwen2.5:7b) is not reachable at http://localhost:11434 (is it running?)"
+      ]
+    },
+    {
+      "id": "q004",
+      "set": "answerable_no_hash",
+      "question": "Why was src/cartservice/src/services/HealthCheckService.cs changed (\"cartservice: fix health Check() method signature\")?",
+      "gold": [
+        "gh:50"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": false,
+      "keyword_gold_in_top": true,
+      "claims": 1,
+      "answer": "Commit be65dd1 by Ahmet Alp Balkan on 2018-09-28 changed HealthImpl.cs, cartservice.csproj: cartservice: fix health Check() method signature (#57)",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/be65dd1fcd739d48e51ff60e3267cdc6b2b878f6"
+      ],
+      "notes": [
+        "no LLM provider answered; showing quoted evidence",
+        "Ollama (qwen2.5:7b) is not reachable at http://localhost:11434 (is it running?)"
+      ]
+    },
+    {
+      "id": "q005",
+      "set": "answerable",
+      "question": "Why was .travis.yml changed in commit 51da493 (\"Fix build for skaffold 0.16\")?",
+      "gold": [
+        "gh:76"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": true,
+      "claims": 3,
+      "answer": "Commit 51da493 by Ahmet Alp Balkan on 2018-10-15 changed .travis.yml, skaffold.yaml: Fix build for skaffold 0.16 (#77) | Issue #76: Update skaffold config for compatibility with newer versions \u2014 \u201cRunning skaffold run on v 0.16.0 gives error: config version out of date: run skaffold fix\u201d",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/51da4930aef87c5a1192824407c9b76b5ef8e330",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/issues/76"
+      ],
+      "notes": [
+        "text matching the question's words is not about .travis.yml, so it is not used",
+        "answered from the history of commit 51da493",
+        "no LLM provider answered; showing quoted evidence",
+        "Ollama (qwen2.5:7b) is not reachable at http://localhost:11434 (is it running?)"
+      ]
+    },
+    {
+      "id": "q005",
+      "set": "answerable_no_hash",
+      "question": "Why was .travis.yml changed (\"Fix build for skaffold 0.16\")?",
+      "gold": [
+        "gh:76"
+      ],
+      "status": "not_found",
+      "mode": "none",
+      "gold_in_sources": false,
+      "gold_cited": false,
+      "keyword_gold_in_top": true,
+      "claims": 0,
+      "answer": "",
+      "cited": [],
+      "notes": [
+        "text matching the question's words is not about .travis.yml, so it is not used",
+        "best evidence covers 38% of the question (needs 60%)"
+      ]
+    },
+    {
+      "id": "q006",
+      "set": "answerable",
+      "question": "Why was src/adservice/Dockerfile changed in commit 52a9d34 (\"Adservice: Add libc6-compat runtime dependency\")?",
+      "gold": [
+        "gh:89"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": true,
+      "claims": 3,
+      "answer": "Commit 52a9d34 by Romain Vrignaud on 2018-10-29 changed Dockerfile: Adservice: Add libc6-compat runtime dependency (#90) | Issue #89: Missing libcrypt dependency in adservice \u2014 \u201cWhen starting up, adservice throw a large stacktrace with what seems to be a missing libcrypt dependency: java.lang.IllegalArgumentException: Failed to load any of the given libraries: [netty_tcnative_linux_x86_64, netty_tcnative_linux_x86_64_fedora, netty_tcnative_x86_64, netty_tcnative] at io.netty.util.internal.Nati\u201d",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/52a9d346f651f51b121d716fe8ec5f9efa39dbfe",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/issues/89"
+      ],
+      "notes": [
+        "answered from the history of commit 52a9d34",
+        "no LLM provider answered; showing quoted evidence",
+        "Ollama (qwen2.5:7b) is not reachable at http://localhost:11434 (is it running?)"
+      ]
+    },
+    {
+      "id": "q006",
+      "set": "answerable_no_hash",
+      "question": "Why was src/adservice/Dockerfile changed (\"Adservice: Add libc6-compat runtime dependency\")?",
+      "gold": [
+        "gh:89"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": false,
+      "keyword_gold_in_top": true,
+      "claims": 2,
+      "answer": "Commit 52a9d34 by Romain Vrignaud on 2018-10-29 changed Dockerfile: Adservice: Add libc6-compat runtime dependency (#90) | Pull request #3577: perf(adservice): optimize Docker image layers by copying only installDist artifacts \u2014 \u201cBackground In src/adservice/Dockerfile, the runtime container stage previously copied the entire builder stage workspace: dockerfile WORKDIR /app COPY --from=builder /app .\u201d",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/52a9d346f651f51b121d716fe8ec5f9efa39dbfe",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/3577"
+      ],
+      "notes": [
+        "no LLM provider answered; showing quoted evidence",
+        "Ollama (qwen2.5:7b) is not reachable at http://localhost:11434 (is it running?)"
+      ]
+    },
+    {
+      "id": "q007",
+      "set": "answerable",
+      "question": "Why was README.md changed in commit 8b5d64b (\"README: add disk space + IP troubleshooting\")?",
+      "gold": [
+        "gh:94"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": false,
+      "claims": 3,
+      "answer": "Commit 8b5d64b by Ahmet Alp Balkan on 2018-11-07 changed README.md: README: add disk space + IP troubleshooting (#95) | Issue #94: \"No Space Left on Device Error\" - some recommendations in main README.md",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/8b5d64b61f28665e9fc71e46ae1484423dedad2b",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/issues/94"
+      ],
+      "notes": [
+        "answered from the history of commit 8b5d64b",
+        "no LLM provider answered; showing quoted evidence",
+        "Ollama (qwen2.5:7b) is not reachable at http://localhost:11434 (is it running?)"
+      ]
+    },
+    {
+      "id": "q007",
+      "set": "answerable_no_hash",
+      "question": "Why was README.md changed (\"README: add disk space + IP troubleshooting\")?",
+      "gold": [
+        "gh:94"
+      ],
+      "status": "not_found",
+      "mode": "none",
+      "gold_in_sources": false,
+      "gold_cited": false,
+      "keyword_gold_in_top": false,
+      "claims": 0,
+      "answer": "",
+      "cited": [],
+      "notes": [
+        "text matching the question's words is not about readme.md, so it is not used",
+        "best evidence covers 46% of the question (needs 60%)"
+      ]
+    },
+    {
+      "id": "q008",
+      "set": "answerable",
+      "question": "Why was README.md changed in commit 8dabe7f (\"remove gcr repo name from images\")?",
+      "gold": [
+        "gh:17"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": false,
+      "claims": 3,
+      "answer": "Commit 8dabe7f by Dave Stanke on 2018-12-03 changed README.md, cloudbuild.yaml, adservice.yaml and 11 more files: remove gcr repo name from images (#98) | Issue #17: Don't hardcode the GCP project name",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/8dabe7ff94368a9a03da124dc2b2c2c0e659c961",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/issues/17"
+      ],
+      "notes": [
+        "answered from the history of commit 8dabe7f",
+        "no LLM provider answered; showing quoted evidence",
+        "Ollama (qwen2.5:7b) is not reachable at http://localhost:11434 (is it running?)"
+      ]
+    },
+    {
+      "id": "q008",
+      "set": "answerable_no_hash",
+      "question": "Why was README.md changed (\"remove gcr repo name from images\")?",
+      "gold": [
+        "gh:17"
+      ],
+      "status": "not_found",
+      "mode": "none",
+      "gold_in_sources": false,
+      "gold_cited": false,
+      "keyword_gold_in_top": false,
+      "claims": 0,
+      "answer": "",
+      "cited": [],
+      "notes": [
+        "text matching the question's words is not about readme.md, so it is not used",
+        "best evidence covers 50% of the question (needs 60%)"
+      ]
+    },
+    {
+      "id": "q009",
+      "set": "answerable",
+      "question": "Why was src/productcatalogservice/server.go changed in commit c91dca7 (\"Toggle bug in ProductCatalogService for demos\")?",
+      "gold": [
+        "gh:84"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": true,
+      "claims": 3,
+      "answer": "Commit c91dca7 by Th\u00e9o Chamley on 2018-12-17 changed README.md, server.go: Toggle bug in ProductCatalogService for demos (#85) | Issue #84: Introducing bug in ProductCatalogService for demos",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/c91dca764f5f29b26428fe21f44cee27016543e5",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/issues/84"
+      ],
+      "notes": [
+        "answered from the history of commit c91dca7",
+        "no LLM provider answered; showing quoted evidence",
+        "Ollama (qwen2.5:7b) is not reachable at http://localhost:11434 (is it running?)"
+      ]
+    },
+    {
+      "id": "q009",
+      "set": "answerable_no_hash",
+      "question": "Why was src/productcatalogservice/server.go changed (\"Toggle bug in ProductCatalogService for demos\")?",
+      "gold": [
+        "gh:84"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": false,
+      "keyword_gold_in_top": true,
+      "claims": 2,
+      "answer": "Commit c91dca7 by Th\u00e9o Chamley on 2018-12-17 changed README.md, server.go: Toggle bug in ProductCatalogService for demos (#85) | Pull request #3477: fix: resolve checkout frontend error rate >20% (P2 alert) \u2014 \u201cBug 2: gRPC Connection Instability (P2) **Files:** src/frontend/main.go, src/checkoutservice/main.go, src/productcatalogservice/server.go\u201d",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/c91dca764f5f29b26428fe21f44cee27016543e5",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/3477"
+      ],
+      "notes": [
+        "no LLM provider answered; showing quoted evidence",
+        "Ollama (qwen2.5:7b) is not reachable at http://localhost:11434 (is it running?)"
+      ]
+    },
+    {
+      "id": "q010",
+      "set": "answerable",
+      "question": "Why was README.md changed in commit ea424cb (\"add skaffold version note\")?",
+      "gold": [
+        "gh:127"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": true,
+      "claims": 3,
+      "answer": "Commit ea424cb by Ahmet Alp Balkan on 2019-01-22 changed README.md: add skaffold version note | Issue #127: skaffold version skew causing issues",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/ea424cb9f7a23f69d0ce1b7793c28ec6660550df",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/issues/127"
+      ],
+      "notes": [
+        "answered from the history of commit ea424cb",
+        "no LLM provider answered; showing quoted evidence",
+        "Ollama (qwen2.5:7b) is not reachable at http://localhost:11434 (is it running?)"
+      ]
+    },
+    {
+      "id": "q010",
+      "set": "answerable_no_hash",
+      "question": "Why was README.md changed (\"add skaffold version note\")?",
+      "gold": [
+        "gh:127"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": false,
+      "gold_cited": false,
+      "keyword_gold_in_top": true,
+      "claims": 3,
+      "answer": "Commit 577eeb3 by Drew Brown on 2022-11-04 changed productcatalogservice.yaml, README.md, README.md and 18 more files: feat!: Add distributed tracing to Online Boutique (#1180) \u2014 \u201crestore original skaffold config\u201d | Commit f8e94cb by lbg-matthew-mcleod on 2022-11-04 changed ci-main.yaml, ci-pr.yaml, README.md and 1 more files: feat: Add skaffold kustomize (#1228)",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/577eeb38c8c2a01a6a018bf262e1dfa87073980b",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/f8e94cb984c3c4c1795d15fb3436ff5e2e23d837"
+      ],
+      "notes": [
+        "no LLM provider answered; showing quoted evidence",
+        "Ollama (qwen2.5:7b) is not reachable at http://localhost:11434 (is it running?)"
+      ]
+    },
+    {
+      "id": "q011",
+      "set": "answerable",
+      "question": "Why was README.md changed in commit 1d452f4 (\"Adds make-release script, static k8s manifests\")?",
+      "gold": [
+        "gh:75"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": false,
+      "claims": 3,
+      "answer": "Commit 1d452f4 by Megan O'Keefe on 2019-01-29 changed README.md, README.md, make-docker-images.sh and 3 more files: Adds make-release script, static k8s manifests (#132) | Issue #75: Provide tagged releases/images",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/1d452f449a56608e72d88372ae47b8dce9e364c8",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/issues/75"
+      ],
+      "notes": [
+        "answered from the history of commit 1d452f4",
+        "no LLM provider answered; showing quoted evidence",
+        "Ollama (qwen2.5:7b) is not reachable at http://localhost:11434 (is it running?)"
+      ]
+    },
+    {
+      "id": "q011",
+      "set": "answerable_no_hash",
+      "question": "Why was README.md changed (\"Adds make-release script, static k8s manifests\")?",
+      "gold": [
+        "gh:75"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": false,
+      "gold_cited": false,
+      "keyword_gold_in_top": false,
+      "claims": 1,
+      "answer": "Commit 1d452f4 by Megan O'Keefe on 2019-01-29 changed README.md, README.md, make-docker-images.sh and 3 more files: Adds make-release script, static k8s manifests (#132)",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/1d452f449a56608e72d88372ae47b8dce9e364c8"
+      ],
+      "notes": [
+        "no LLM provider answered; showing quoted evidence",
+        "Ollama (qwen2.5:7b) is not reachable at http://localhost:11434 (is it running?)"
+      ]
+    },
+    {
+      "id": "q012",
+      "set": "answerable",
+      "question": "Why was src/loadgenerator/locustfile.py changed in commit 458bf50 (\"credit card expired\")?",
+      "gold": [
+        "gh:164"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": false,
+      "claims": 3,
+      "answer": "Commit 458bf50 by Ahmet Alp Balkan on 2019-02-27 changed locustfile.py: credit card expired (#167) | Issue #164: Loadgenerator service cart checkout request is failing",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/458bf50b95b3cf367f43dc87bf430f8159076760",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/issues/164"
+      ],
+      "notes": [
+        "answered from the history of commit 458bf50",
+        "no LLM provider answered; showing quoted evidence",
+        "Ollama (qwen2.5:7b) is not reachable at http://localhost:11434 (is it running?)"
+      ]
+    },
+    {
+      "id": "q012",
+      "set": "answerable_no_hash",
+      "question": "Why was src/loadgenerator/locustfile.py changed (\"credit card expired\")?",
+      "gold": [
+        "gh:164"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": false,
+      "gold_cited": false,
+      "keyword_gold_in_top": false,
+      "claims": 3,
+      "answer": "paymentservice \u00b7 Node.js \u00b7 Charges the given credit card info (mock) with the given amount and returns a transaction ID. | Commit 458bf50 by Ahmet Alp Balkan on 2019-02-27 changed locustfile.py: credit card expired (#167)",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/blob/HEAD/README.md",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/458bf50b95b3cf367f43dc87bf430f8159076760"
+      ],
+      "notes": [
+        "no LLM provider answered; showing quoted evidence",
+        "Ollama (qwen2.5:7b) is not reachable at http://localhost:11434 (is it running?)"
+      ]
+    },
+    {
+      "id": "q013",
+      "set": "answerable",
+      "question": "Why was docs/releasing/make-release-artifacts.sh changed in commit a0a9852 (\"hack: comment out autogenerated warning\")?",
+      "gold": [
+        "gh:181"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": false,
+      "claims": 3,
+      "answer": "Commit a0a9852 by Ahmet Alp Balkan on 2019-03-08 changed make-release-artifacts.sh, istio-manifests.yaml, kubernetes-manifests.yaml: hack: comment out autogenerated warning (#182) | Issue #181: Kubernetes release manifests invalid",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/a0a9852afe969ff6d70e59f5ea75942b971eea78",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/issues/181"
+      ],
+      "notes": [
+        "answered from the history of commit a0a9852",
+        "no LLM provider answered; showing quoted evidence",
+        "Ollama (qwen2.5:7b) is not reachable at http://localhost:11434 (is it running?)"
+      ]
+    },
+    {
+      "id": "q013",
+      "set": "answerable_no_hash",
+      "question": "Why was docs/releasing/make-release-artifacts.sh changed (\"hack: comment out autogenerated warning\")?",
+      "gold": [
+        "gh:181"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": false,
+      "gold_cited": false,
+      "keyword_gold_in_top": false,
+      "claims": 3,
+      "answer": "Commit a0a9852 by Ahmet Alp Balkan on 2019-03-08 changed make-release-artifacts.sh, istio-manifests.yaml, kubernetes-manifests.yaml: hack: comment out autogenerated warning (#182) | Commit 34da24c by Greg Bray on 2023-03-17 changed README.md, cloudshell-tutorial.md, service-mesh.md and 9 more files: Introduce Istio/ASM Kustomize component (#1601) \u2014 \u201cupdate hack/make-release-artifacts.sh and kustomize/kustomization.yaml\u201d",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/34da24cb6d51e3039c835841eda4d4dae5daf716",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/a0a9852afe969ff6d70e59f5ea75942b971eea78"
+      ],
+      "notes": [
+        "no LLM provider answered; showing quoted evidence",
+        "Ollama (qwen2.5:7b) is not reachable at http://localhost:11434 (is it running?)"
+      ]
+    },
+    {
+      "id": "q014",
+      "set": "answerable",
+      "question": "Why was README.md changed in commit 61dd049 (\"Fix skaffold install link\")?",
+      "gold": [
+        "gh:260"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": true,
+      "claims": 3,
+      "answer": "Commit 61dd049 by Ahmet Alp Balkan on 2019-11-04 changed README.md: Fix skaffold install link | Issue #260: Link in README.md to install skaffold not working",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/61dd04992bd2392ffbd05a98d3bff01111c12bf7",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/issues/260"
+      ],
+      "notes": [
+        "answered from the history of commit 61dd049",
+        "no LLM provider answered; showing quoted evidence",
+        "Ollama (qwen2.5:7b) is not reachable at http://localhost:11434 (is it running?)"
+      ]
+    },
+    {
+      "id": "q014",
+      "set": "answerable_no_hash",
+      "question": "Why was README.md changed (\"Fix skaffold install link\")?",
+      "gold": [
+        "gh:260"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": true,
+      "claims": 2,
+      "answer": "Issue #260: Link in README.md to install skaffold not working | Pull request #1248: feat: Add istio deployment \u2014 \u201cThe commit installs istio through helm charts using skaffold.\u201d",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/issues/260",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/1248"
+      ],
+      "notes": [
+        "no LLM provider answered; showing quoted evidence",
+        "Ollama (qwen2.5:7b) is not reachable at http://localhost:11434 (is it running?)"
+      ]
+    },
+    {
+      "id": "q015",
+      "set": "answerable",
+      "question": "Why was src/cartservice/src/Dockerfile changed in commit 0d635b9 (\"cartservice: add libssl to allow connecting to external redis instances\")?",
+      "gold": [
+        "gh:363"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": false,
+      "claims": 3,
+      "answer": "Commit 0d635b9 by Janos Lenart on 2020-08-26 changed Dockerfile: cartservice: add libssl to allow connecting to external redis instances (#388) | Issue #363: Remote Redis server \u2014 \u201cWhen I set the ENV variable REDIS_ADDR, the pod crashes with \"No usable version of libssl was found\".\u201d",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/0d635b9a0e9bba0fcb0e9523801e94c59a9ded8d",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/issues/363"
+      ],
+      "notes": [
+        "answered from the history of commit 0d635b9",
+        "no LLM provider answered; showing quoted evidence",
+        "Ollama (qwen2.5:7b) is not reachable at http://localhost:11434 (is it running?)"
+      ]
+    },
+    {
+      "id": "q015",
+      "set": "answerable_no_hash",
+      "question": "Why was src/cartservice/src/Dockerfile changed (\"cartservice: add libssl to allow connecting to external redis instances\")?",
+      "gold": [
+        "gh:363"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": false,
+      "gold_cited": false,
+      "keyword_gold_in_top": false,
+      "claims": 2,
+      "answer": "Commit 0d635b9 by Janos Lenart on 2020-08-26 changed Dockerfile: cartservice: add libssl to allow connecting to external redis instances (#388) | Deploy advanced scenario of Online Boutique: sh helm upgrade onlineboutique oci://us-docker.pkg.dev/online-boutique-ci/charts/onlineboutique \\ --install \\ --create-namespace \\ --set images.repository=us-docker.pkg.dev/my-project/microservices-demo \\ --set frontend.externalService=false \\ --set redis.create=false \\ --se",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/blob/HEAD/helm-chart/README.md",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/0d635b9a0e9bba0fcb0e9523801e94c59a9ded8d"
+      ],
+      "notes": [
+        "no LLM provider answered; showing quoted evidence",
+        "Ollama (qwen2.5:7b) is not reachable at http://localhost:11434 (is it running?)"
+      ]
+    },
+    {
+      "id": "q016",
+      "set": "answerable",
+      "question": "Why was src/cartservice/src/Program.cs changed in commit 1167a58 (\"Fix dotnet CLI tests for Github actions\")?",
+      "gold": [
+        "gh:428"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": false,
+      "claims": 3,
+      "answer": "Commit 1167a58 by deesejohn on 2021-03-25 changed ci-master.yaml, ci-pr.yaml, .gitignore and 14 more files: Fix dotnet CLI tests for Github actions (#516) | Issue #428: Fix dotnet CLI tests for Github actions",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/1167a58fb79953142a973958e37975105747c2e5",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/issues/428"
+      ],
+      "notes": [
+        "answered from the history of commit 1167a58",
+        "no LLM provider answered; showing quoted evidence",
+        "Ollama (qwen2.5:7b) is not reachable at http://localhost:11434 (is it running?)"
+      ]
+    },
+    {
+      "id": "q016",
+      "set": "answerable_no_hash",
+      "question": "Why was src/cartservice/src/Program.cs changed (\"Fix dotnet CLI tests for Github actions\")?",
+      "gold": [
+        "gh:428"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": false,
+      "claims": 3,
+      "answer": "Pull request #700: Configure Renovate \u2014 \u201csrc/cartservice/src/Dockerfile (dockerfile)\u201d | Commit 1167a58 by deesejohn on 2021-03-25 changed ci-master.yaml, ci-pr.yaml, .gitignore and 14 more files: Fix dotnet CLI tests for Github actions (#516)",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/1167a58fb79953142a973958e37975105747c2e5",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/700"
+      ],
+      "notes": [
+        "no LLM provider answered; showing quoted evidence",
+        "Ollama (qwen2.5:7b) is not reachable at http://localhost:11434 (is it running?)"
+      ]
+    },
+    {
+      "id": "q017",
+      "set": "answerable",
+      "question": "Why was src/cartservice/src/cartstore/RedisCartStore.cs changed in commit efeba9e (\"Enhance cartservice's Redis reconnection policy\")?",
+      "gold": [
+        "gh:561"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": true,
+      "claims": 3,
+      "answer": "Commit efeba9e by Nim Jayawardena on 2021-07-13 changed RedisCartStore.cs: Enhance cartservice's Redis reconnection policy (#578) | Pull request #578: Enhance cartservice's Redis reconnection policy",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/efeba9e75269a8fa306eb9c7cc8ce65131a14a59",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/578"
+      ],
+      "notes": [
+        "text matching the question's words is not about cartservice, src/cartservice/src/cartstore/rediscartstore.cs, so it is not used",
+        "answered from the history of commit efeba9e",
+        "no LLM provider answered; showing quoted evidence",
+        "Ollama (qwen2.5:7b) is not reachable at http://localhost:11434 (is it running?)"
+      ]
+    },
+    {
+      "id": "q017",
+      "set": "answerable_no_hash",
+      "question": "Why was src/cartservice/src/cartstore/RedisCartStore.cs changed (\"Enhance cartservice's Redis reconnection policy\")?",
+      "gold": [
+        "gh:561"
+      ],
+      "status": "not_found",
+      "mode": "none",
+      "gold_in_sources": false,
+      "gold_cited": false,
+      "keyword_gold_in_top": true,
+      "claims": 0,
+      "answer": "",
+      "cited": [],
+      "notes": [
+        "text matching the question's words is not about cartservice, src/cartservice/src/cartstore/rediscartstore.cs, so it is not used",
+        "best evidence covers 55% of the question (needs 60%)"
+      ]
+    },
+    {
+      "id": "q018",
+      "set": "answerable",
+      "question": "Why was docs/development-guide.md changed in commit faef8b8 (\"Use skaffold modules & update docs\")?",
+      "gold": [
+        "gh:492"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": true,
+      "claims": 3,
+      "answer": "Commit faef8b8 by Nim Jayawardena on 2021-10-11 changed development-guide.md, skaffold.yaml: Use skaffold modules & update docs (#609) | Pull request #609: Use skaffold modules & update relevant docs",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/faef8b8800e8e8c9c91fbbbb413a73b2c1042fcf",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/609"
+      ],
+      "notes": [
+        "answered from the history of commit faef8b8",
+        "no LLM provider answered; showing quoted evidence",
+        "Ollama (qwen2.5:7b) is not reachable at http://localhost:11434 (is it running?)"
+      ]
+    },
+    {
+      "id": "q018",
+      "set": "answerable_no_hash",
+      "question": "Why was docs/development-guide.md changed (\"Use skaffold modules & update docs\")?",
+      "gold": [
+        "gh:492"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": false,
+      "keyword_gold_in_top": true,
+      "claims": 3,
+      "answer": "Pull request #1447: Use skaffold 2.0.2+ in development-guide.md | Commit 740f3e9 by Nim Jayawardena on 2023-01-19 changed development-guide.md: Use skaffold 2.0.2+ in development-guide.md (#1447)",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/740f3e9f82edd5cda5da896b8e326d59c73d4e7e",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/1447"
+      ],
+      "notes": [
+        "no LLM provider answered; showing quoted evidence",
+        "Ollama (qwen2.5:7b) is not reachable at http://localhost:11434 (is it running?)"
+      ]
+    },
+    {
+      "id": "q019",
+      "set": "answerable",
+      "question": "Why was src/currencyservice/server.js changed in commit 3f437db (\"node 12 -> node 16, grpc -> grpc-js\")?",
+      "gold": [
+        "gh:538"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": false,
+      "claims": 3,
+      "answer": "Commit 3f437db by Megan O'Keefe on 2021-11-25 changed Dockerfile, package.json, server.js and 3 more files: node 12 -> node 16, grpc -> grpc-js (#630) | Pull request #630: node 12 -> node 16, grpc -> grpc-js \u2014 \u201cUpgrades the node base images for currency and payment service from Node 12 to Node 16.\u201d",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/3f437db38680ee8aa9e1a0b195ccd2d6bb30deaf",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/630"
+      ],
+      "notes": [
+        "answered from the history of commit 3f437db",
+        "no LLM provider answered; showing quoted evidence",
+        "Ollama (qwen2.5:7b) is not reachable at http://localhost:11434 (is it running?)"
+      ]
+    },
+    {
+      "id": "q019",
+      "set": "answerable_no_hash",
+      "question": "Why was src/currencyservice/server.js changed (\"node 12 -> node 16, grpc -> grpc-js\")?",
+      "gold": [
+        "gh:538"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": false,
+      "keyword_gold_in_top": false,
+      "claims": 3,
+      "answer": "currencyservice \u00b7 Node.js \u00b7 Converts one money amount to another currency. | Pull request #3379: feat(currencyservice): reimplement in C++ with contract tests \u2014 \u201cReplaces the Node.js currencyservice with a C++ reimplementation (src/currencyservice-cpp/) that fixes two known bugs in the original:\u201d",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/blob/HEAD/README.md",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/3379"
+      ],
+      "notes": [
+        "no LLM provider answered; showing quoted evidence",
+        "Ollama (qwen2.5:7b) is not reachable at http://localhost:11434 (is it running?)"
+      ]
+    },
+    {
+      "id": "q020",
+      "set": "answerable",
+      "question": "Why was src/frontend/handlers.go changed in commit 09956ca (\"improvement: add cluster, pod and zonal details to the page footer\")?",
+      "gold": [
+        "gh:628"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": false,
+      "claims": 3,
+      "answer": "Commit 09956ca by Shabir Mohamed Abdul Samadh on 2021-11-26 changed handlers.go, footer.html: improvement: add cluster, pod and zonal details to the page footer (#636) | Pull request #636: improvement: add cluster, pod and zonal details to the page footer",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/09956ca431a02be0829ca29ed64c45d7c08c8dac",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/636"
+      ],
+      "notes": [
+        "answered from the history of commit 09956ca",
+        "no LLM provider answered; showing quoted evidence",
+        "Ollama (qwen2.5:7b) is not reachable at http://localhost:11434 (is it running?)"
+      ]
+    },
+    {
+      "id": "q020",
+      "set": "answerable_no_hash",
+      "question": "Why was src/frontend/handlers.go changed (\"improvement: add cluster, pod and zonal details to the page footer\")?",
+      "gold": [
+        "gh:628"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": false,
+      "gold_cited": false,
+      "keyword_gold_in_top": false,
+      "claims": 2,
+      "answer": "Commit 09956ca by Shabir Mohamed Abdul Samadh on 2021-11-26 changed handlers.go, footer.html: improvement: add cluster, pod and zonal details to the page footer (#636) | Pull request #636: improvement: add cluster, pod and zonal details to the page footer",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/09956ca431a02be0829ca29ed64c45d7c08c8dac",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/636"
+      ],
+      "notes": [
+        "no LLM provider answered; showing quoted evidence",
+        "Ollama (qwen2.5:7b) is not reachable at http://localhost:11434 (is it running?)"
+      ]
+    },
+    {
+      "id": "q021",
+      "set": "answerable",
+      "question": "Why was src/adservice/build.gradle changed in commit f9dedc7 (\"Upgrade log4j from 2.13.3 to 2.15.0\")?",
+      "gold": [
+        "gh:655"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": true,
+      "claims": 3,
+      "answer": "Commit f9dedc7 by Nim Jayawardena on 2021-12-10 changed build.gradle: Upgrade log4j from 2.13.3 to 2.15.0 (#656) | Pull request #656: Upgrade log4j from 2.13.3 to 2.15.0",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/f9dedc7946fc8269bdb4f6df2b0d5acc65b20c1c",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/656"
+      ],
+      "notes": [
+        "answered from the history of commit f9dedc7",
+        "no LLM provider answered; showing quoted evidence",
+        "Ollama (qwen2.5:7b) is not reachable at http://localhost:11434 (is it running?)"
+      ]
+    },
+    {
+      "id": "q021",
+      "set": "answerable_no_hash",
+      "question": "Why was src/adservice/build.gradle changed (\"Upgrade log4j from 2.13.3 to 2.15.0\")?",
+      "gold": [
+        "gh:655"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": true,
+      "claims": 3,
+      "answer": "Issue #655: Vulnerable Log4J version (CVE-2021-44228) \u2014 \u201cIncluded via: https://github.com/GoogleCloudPlatform/microservices-demo/blob/master/src/adservice/build.gradle#L48\u201d | Pull request #700: Configure Renovate \u2014 \u201csrc/adservice/settings.gradle (gradle)\u201d",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/issues/655",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/700"
+      ],
+      "notes": [
+        "no LLM provider answered; showing quoted evidence",
+        "Ollama (qwen2.5:7b) is not reachable at http://localhost:11434 (is it running?)"
+      ]
+    },
+    {
+      "id": "q022",
+      "set": "answerable",
+      "question": "Why was src/paymentservice/index.js changed in commit 2e796c9 (\"Turn off GCP integrations by default\")?",
+      "gold": [
+        "gh:663"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": true,
+      "claims": 3,
+      "answer": "Commit 2e796c9 by Megan O'Keefe on 2021-12-29 changed README.md, gcp-instrumentation.md, adservice.yaml and 9 more files: Turn off GCP integrations by default (#665) | Pull request #665: Turn off GCP integrations by default",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/2e796c9dbb439f3fef16d748eb321723d4f6d035",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/665"
+      ],
+      "notes": [
+        "answered from the history of commit 2e796c9",
+        "no LLM provider answered; showing quoted evidence",
+        "Ollama (qwen2.5:7b) is not reachable at http://localhost:11434 (is it running?)"
+      ]
+    },
+    {
+      "id": "q022",
+      "set": "answerable_no_hash",
+      "question": "Why was src/paymentservice/index.js changed (\"Turn off GCP integrations by default\")?",
+      "gold": [
+        "gh:663"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": true,
+      "claims": 3,
+      "answer": "Pull request #665: Turn off GCP integrations by default | Commit 2e796c9 by Megan O'Keefe on 2021-12-29 changed README.md, gcp-instrumentation.md, adservice.yaml and 9 more files: Turn off GCP integrations by default (#665)",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/2e796c9dbb439f3fef16d748eb321723d4f6d035",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/665"
+      ],
+      "notes": [
+        "no LLM provider answered; showing quoted evidence",
+        "Ollama (qwen2.5:7b) is not reachable at http://localhost:11434 (is it running?)"
+      ]
+    },
+    {
+      "id": "q023",
+      "set": "answerable",
+      "question": "Why was src/currencyservice/server.js changed in commit 515f5c5 (\"Use pino instead of console.log\")?",
+      "gold": [
+        "gh:674"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": true,
+      "claims": 3,
+      "answer": "Commit 515f5c5 by DracFiendMG on 2023-11-23 changed server.js, index.js, logger.js and 1 more files: Use pino instead of console.log  (#2263) \u2014 \u201cUse pino instead of console.log (#2263)\u201d | Pull request #2263: Use pino instead of console.log ",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/515f5c5e6c995d7d6ccf75fed1bd056976fa3efa",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/2263"
+      ],
+      "notes": [
+        "answered from the history of commit 515f5c5",
+        "no LLM provider answered; showing quoted evidence",
+        "Ollama (qwen2.5:7b) is not reachable at http://localhost:11434 (is it running?)"
+      ]
+    },
+    {
+      "id": "q023",
+      "set": "answerable_no_hash",
+      "question": "Why was src/currencyservice/server.js changed (\"Use pino instead of console.log\")?",
+      "gold": [
+        "gh:674"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": true,
+      "claims": 3,
+      "answer": "Issue #674: Use `pino` instead of `console.log` \u2014 \u201cUse pino instead of console.log\u201d | Commit 515f5c5 by DracFiendMG on 2023-11-23 changed server.js, index.js, logger.js and 1 more files: Use pino instead of console.log  (#2263) \u2014 \u201cUse pino instead of console.log (#2263)\u201d",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/515f5c5e6c995d7d6ccf75fed1bd056976fa3efa",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/issues/674"
+      ],
+      "notes": [
+        "no LLM provider answered; showing quoted evidence",
+        "Ollama (qwen2.5:7b) is not reachable at http://localhost:11434 (is it running?)"
+      ]
+    },
+    {
+      "id": "q024",
+      "set": "answerable",
+      "question": "Why was helm-chart/templates/adservice.yaml changed in commit 342916b (\"fix: nest .Values.seccompProfile.enable and .Values.securityContext.enabled correctly\")?",
+      "gold": [
+        "gh:2872",
+        "gh:2873"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": true,
+      "claims": 3,
+      "answer": "Commit 342916b by CarstenSon on 2025-01-29 changed adservice.yaml, cartservice.yaml, checkoutservice.yaml and 9 more files: fix: nest .Values.seccompProfile.enable and .Values.securityContext.enabled correctly (#2874) | Pull request #2874: fix: nest .Values.seccompProfile.enable and .Values.securityContext.enabled correctly",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/342916bac6b256ee5d8f949c5616fb1627a8992d",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/2874"
+      ],
+      "notes": [
+        "answered from the history of commit 342916b",
+        "no LLM provider answered; showing quoted evidence",
+        "Ollama (qwen2.5:7b) is not reachable at http://localhost:11434 (is it running?)"
+      ]
+    },
+    {
+      "id": "q024",
+      "set": "answerable_no_hash",
+      "question": "Why was helm-chart/templates/adservice.yaml changed (\"fix: nest .Values.seccompProfile.enable and .Values.securityContext.enabled correctly\")?",
+      "gold": [
+        "gh:2872",
+        "gh:2873"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": true,
+      "claims": 3,
+      "answer": "Commit f8e2900 by Mathieu Benoit on 2022-12-08 changed helm-chart-ci.yaml, make-helm-chart.sh, make-release.sh and 20 more files: Online Boutique's Helm chart (#1353) \u2014 \u201cLink to values.yaml in helm-chart/README.md\u201d | Issue #2873: secCompProfile without securityContext enabled leads to errors \u2014 \u201cset .Values.securityContext.enable to 'false' and .Values.seccompProfile.type 2.\u201d",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/f8e290019aea0b0e056e4765e624ce19541e886a",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/issues/2873"
+      ],
+      "notes": [
+        "no LLM provider answered; showing quoted evidence",
+        "Ollama (qwen2.5:7b) is not reachable at http://localhost:11434 (is it running?)"
+      ]
+    },
+    {
+      "id": "q025",
+      "set": "answerable",
+      "question": "Why was skaffold.yaml changed in commit 79be00a (\"Fix loadgenerator in skaffold.yaml\")?",
+      "gold": [
+        "gh:2927"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": true,
+      "gold_cited": true,
+      "keyword_gold_in_top": true,
+      "claims": 3,
+      "answer": "Commit 79be00a by Mathieu Benoit on 2025-06-27 changed skaffold.yaml: Fix loadgenerator in skaffold.yaml (#2986) | Pull request #2986: Fix loadgenerator in skaffold.yaml",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/79be00aea1877384fe26ea5fa843dc610a8d6a9d",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/2986"
+      ],
+      "notes": [
+        "answered from the history of commit 79be00a",
+        "no LLM provider answered; showing quoted evidence",
+        "Ollama (qwen2.5:7b) is not reachable at http://localhost:11434 (is it running?)"
+      ]
+    },
+    {
+      "id": "q025",
+      "set": "answerable_no_hash",
+      "question": "Why was skaffold.yaml changed (\"Fix loadgenerator in skaffold.yaml\")?",
+      "gold": [
+        "gh:2927"
+      ],
+      "status": "answered",
+      "mode": "extractive",
+      "gold_in_sources": false,
+      "gold_cited": false,
+      "keyword_gold_in_top": true,
+      "claims": 3,
+      "answer": "Commit 79be00a by Mathieu Benoit on 2025-06-27 changed skaffold.yaml: Fix loadgenerator in skaffold.yaml (#2986) | Pull request #2986: Fix loadgenerator in skaffold.yaml",
+      "cited": [
+        "https://github.com/GoogleCloudPlatform/microservices-demo/commit/79be00aea1877384fe26ea5fa843dc610a8d6a9d",
+        "https://github.com/GoogleCloudPlatform/microservices-demo/pull/2986"
+      ],
+      "notes": [
+        "no LLM provider answered; showing quoted evidence",
+        "Ollama (qwen2.5:7b) is not reachable at http://localhost:11434 (is it running?)"
+      ]
+    }
+  ]
+}
