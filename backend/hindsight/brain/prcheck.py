@@ -38,7 +38,10 @@ def pr_report(
     if not pr["files"]:
         raise LookupError(f"PR #{number} changes no files")
     report = impact_report(conn, files=pr["files"], graph=graph)
-    notes = [f"PR #{number} ({pr['state']}): {pr['title']} · {len(pr['files'])} files changed"]
+    n = len(pr["files"])
+    notes = [
+        f"PR #{number} ({pr['state']}): {pr['title']} · {n} file{'' if n == 1 else 's'} changed"
+    ]
     if pr["truncated"]:
         notes.append(f"only the first {len(pr['files'])} changed files were read")
     if pr["added"]:
@@ -84,8 +87,8 @@ def markdown(report: ImpactReport, title: str = "Hindsight impact check") -> str
     lines += _items("Services and components likely affected", report.components)
     lines += _items("Files that usually change with these", report.files, code=True)
     lines += _items("Tests to re-run", report.tests, code=True)
-    lines += _items("Docs to re-read", report.docs, code=True)
-    lines += _items("Runbooks", report.runbooks, code=True)
+    lines += _items("Docs to re-read", report.docs)
+    lines += _items("Runbooks", report.runbooks)
     lines += _items("People who know this code", report.people)
     if not (report.components or report.files or report.tests or report.docs):
         lines += ["Not found: no history or code links for these files.", ""]
