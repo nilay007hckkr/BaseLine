@@ -4,13 +4,15 @@ PS 06 (Project Brain) is the core and fills the 3 minutes. Incidents (PS 04) and
 built on the same graph and shown as **additional features** after the core, or when judges ask
 (they sit after a divider in the top bar; `SHOW_FROZEN=false` hides them).
 
-**Setup on stage:** `make start` (`LIVE=1` if the shop's cluster is not up yet, for live
-Incidents), dashboard open on Home (tour skipped; **Tour** replays it). Run the PR check once
-before going on stage, so it is cached if the venue Wi-Fi or GitHub's rate limit fails. Every
-question below was run on the real data; the numbers quoted are from
-`eval/results/ask-20261031T230652Z.json` and `impact-20261030T185851Z.json` (re-read them from
+**Setup on stage:** `OLLAMA_CHAT_MODEL=gemma3:4b make start` on the build machine (no live
+shop: its cluster is off to save memory), dashboard open on Home (tour skipped; **Tour** replays
+it). Run the PR check once before going on stage, so it is cached if the venue Wi-Fi or GitHub's
+rate limit fails. Every question below was run on the real data; the numbers quoted are from
+`eval/results/ask-20261031T232825Z.json` and `impact-20261031T232737Z.json` (re-read them from
 **Proof** on the day).
 **Fallback:** quoted answers work with no model and no network; the PR check falls back to its cached copy.
+**Without the live shop:** Incidents shows the recorded incidents and Tests the recorded runs;
+do not press **Run** on Tests (it needs the shop; `make target-up` brings it back, slowly).
 
 | Time | Action | What to say |
 |---|---|---|
@@ -26,7 +28,7 @@ question below was run on the real data; the numbers quoted are from
 | Page | Action | What to say |
 |---|---|---|
 | **Incidents** | Open the latest incident: the broken service (**culprit**) vs the services that only suffered (**victims**: the frontend logs the most errors), the log templates as evidence, the candidate change and runbook steps. | "Same graph: the change the impact check would have flagged is the candidate here, labelled as a candidate, not a cause." Faults are injected on purpose into the local shop; say so. |
-| **Tests** | A browser test generated from a ticket (it cites the issue or PR). A renamed button **heals**, with its score breakdown, and waits for approval; a real defect is **refused**, with the reasons. | "Healing that hides bugs is worse than no tests: it never edits assertions and refuses when there is defect evidence." |
+| **Tests** | A browser test generated from a ticket (it cites the issue or PR) and its recorded runs. Then **Proof › Healing**: renamed or restyled buttons heal, real defects are refused, measured on the mutation harness. | "Healing that hides bugs is worse than no tests: it never edits assertions and refuses when there is defect evidence." |
 | **Proof** › Incidents, Healing | The numbers, each marked synthetic. | Healing (mutation harness): 0 false heals; heal rate 1.00 (n = 21) vs 0.33 for same-tag-and-text. Incidents (10 injected faults): culprit first 0.50. **Do not quote "change Hit@1"**: in 7 of 10 runs the guilty change was a release commit touching every service. |
 
 ## Judge Q&A
