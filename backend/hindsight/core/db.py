@@ -52,6 +52,8 @@ CREATE TABLE IF NOT EXISTS spans(
 CREATE VIRTUAL TABLE IF NOT EXISTS spans_fts USING fts5(
   text, content='spans', content_rowid='id', tokenize='porter unicode61'
 );
+-- read-only view of the indexed words and how many texts use each (typo correction in answers)
+CREATE VIRTUAL TABLE IF NOT EXISTS spans_vocab USING fts5vocab(spans_fts, 'row');
 CREATE TRIGGER IF NOT EXISTS spans_ai AFTER INSERT ON spans BEGIN
   INSERT INTO spans_fts(rowid, text) VALUES (new.id, new.text);
 END;

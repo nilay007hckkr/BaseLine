@@ -301,3 +301,24 @@ def test_a_source_must_say_the_question_s_most_specific_word(tmp_path):
     assert false_premise.status == "not_found"
     assert any("'mongodb', the question's most specific word" in n for n in false_premise.notes)
     assert ask(conn, "Why was cart storage moved?").status == "answered"
+
+
+def test_a_typo_is_read_as_the_word_the_history_uses(tmp_path):
+    """FIXTURE: 'fronend' appears nowhere; 'frontend' is common. Short or unlike words stay as typed."""
+    from hindsight.brain.ask import correct_typos
+    from hindsight.core.db import add_span, connect, upsert_node
+
+    conn = connect(tmp_path / "db.sqlite")
+    with conn:
+        for i in range(4):
+            text = f"frontend: add a simple healthz endpoint for probes, step {i}"
+            nid = upsert_node(conn, "Commit", f"commit:{i:040d}", title=text, ts=1_600_000_000 + i)
+            add_span(conn, nid, "commit_msg", text, ts=1_600_000_000 + i)
+    fixed, typos = correct_typos(conn, "Why does fronend have a healthz endpoint?")
+    assert typos == [("fronend", "frontend")] and "frontend" in fixed
+    assert (
+        correct_typos(conn, "Why was Kafka added?")[1] == []
+    )  # unlike any word: kept, not guessed
+    a = ask(conn, "Why does fronend have a healthz endpoint?")
+    assert a.status == "answered" and a.question == "Why does fronend have a healthz endpoint?"
+    assert any("read 'fronend' as 'frontend'" in n for n in a.notes)

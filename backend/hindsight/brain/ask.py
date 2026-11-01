@@ -12,6 +12,7 @@
 
 from __future__ import annotations
 
+import difflib
 import json
 import re
 import sqlite3
@@ -92,6 +93,31 @@ def _df(conn: sqlite3.Connection, term: str) -> int:
             "SELECT COUNT(*) FROM spans_fts WHERE spans_fts MATCH ?", (fts_term(term),)
         ).fetchone()[0]
     )
+
+
+TYPO_MIN_LEN = 5  # shorter words are too easy to confuse
+TYPO_MIN_DF = 3  # the corrected word must be common in the history
+TYPO_CUTOFF = 0.85  # near-identical spelling only ("fronend" ~ "frontend")
+
+
+def correct_typos(conn: sqlite3.Connection, question: str) -> tuple[str, list[tuple[str, str]]]:
+    """Replace a question word that no history mentions with the one indexed word it is clearly a
+    misspelling of. Code decides: only words of 5+ letters, a near-identical spelling, a word the
+    history uses at least 3 times. Returns the question to search with and the (typo, word) pairs."""
+    fixes: list[tuple[str, str]] = []
+    for word in content_terms(question):
+        if len(word) < TYPO_MIN_LEN or _df(conn, word) > 0:
+            continue
+        rows = conn.execute(
+            "SELECT term FROM spans_vocab WHERE substr(term, 1, 1) = ? AND length(term)"
+            " BETWEEN ? AND ? AND doc >= ?",
+            (word[0], len(word) - 2, len(word) + 2, TYPO_MIN_DF),
+        ).fetchall()
+        close = difflib.get_close_matches(word, [r[0] for r in rows], n=1, cutoff=TYPO_CUTOFF)
+        if close:
+            fixes.append((word, close[0]))
+            question = re.sub(rf"(?i)\b{re.escape(word)}\b", close[0], question)
+    return question, fixes
 
 
 def _anchors(conn: sqlite3.Connection, question: str, file: str | None) -> list[int]:
@@ -571,8 +597,10 @@ def ask(
     dense: Callable[[str], list[int]] | None = None,
     support_check: bool = False,
 ) -> Answer:
-    terms = content_terms(question)
     base = {"question": question, "checker": CHECKER}
+    # a word no history mentions may be a typo of one it often does ("fronend" -> "frontend")
+    question, typos = correct_typos(conn, question)
+    terms = content_terms(question)
     if not terms:
         return Answer(
             status="not_found", mode="none", notes=["the question has no searchable terms"], **base
@@ -580,7 +608,8 @@ def ask(
     n_docs = int(conn.execute("SELECT COUNT(*) FROM spans").fetchone()[0]) or 1
     dfs = {t: _df(conn, t) for t in terms}
     weights = {t: idf(dfs[t], n_docs) for t in terms}
-    notes = [f"no project history mentions '{t}'" for t in terms if dfs[t] == 0]
+    notes = [f"read '{a}' as '{b}' (no project history mentions '{a}')" for a, b in typos]
+    notes += [f"no project history mentions '{t}'" for t in terms if dfs[t] == 0]
 
     if file is None and line_start is None:
         # a function or class named in the question: read the history of its lines (git blame)
